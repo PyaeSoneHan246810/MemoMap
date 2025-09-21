@@ -11,13 +11,19 @@ struct TabBarView: View {
     var body: some View {
         TabView {
             Tab("Memories", systemImage: "map") {
-                MemoriesScreenView()
+                NavigationStack {
+                    MemoriesScreenView()
+                }
             }
             Tab("Feed", systemImage: "photo.stack") {
-                FeedScreenView()
+                NavigationStack {
+                    FeedScreenView()
+                }
             }
             Tab("Profile", systemImage: "person") {
-                ProfileScreenView()
+                NavigationStack {
+                    ProfileScreenView()
+                }
             }
         }
     }

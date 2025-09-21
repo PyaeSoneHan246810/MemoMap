@@ -6,13 +6,44 @@
 //
 
 import SwiftUI
+import MapboxMaps
 
 struct MemoriesScreenView: View {
+    init() {
+        setUpNavigationTitleColor()
+    }
     var body: some View {
-        Text("Memories")
+        Map {
+            
+        }
+        .ignoresSafeArea()
+        .navigationTitle("Memories")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
+                    SettingsScreenView()
+                } label: {
+                    Label("Settings", systemImage: "gear")
+                }
+            }
+        }
+    }
+}
+
+private extension MemoriesScreenView {
+    func setUpNavigationTitleColor() {
+        UINavigationBar.appearance().largeTitleTextAttributes = [
+            .foregroundColor: UIColor.white
+        ]
+        UINavigationBar.appearance().titleTextAttributes = [
+            .foregroundColor: UIColor.white
+        ]
     }
 }
 
 #Preview {
-    MemoriesScreenView()
+    NavigationStack {
+        MemoriesScreenView()
+    }
 }
