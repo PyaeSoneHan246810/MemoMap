@@ -42,8 +42,11 @@ struct SettingsScreenView: View {
             }
             logOutButtonView
         }
-        .navigationTitle("Settings")
-        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Settings")
+            }
+        }
     }
 }
 
