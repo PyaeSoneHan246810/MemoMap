@@ -9,17 +9,16 @@ import SwiftUI
 import MapboxMaps
 
 struct MemoriesScreenView: View {
-    init() {
-        setUpNavigationTitleColor()
-    }
     var body: some View {
         Map {
             
         }
         .ignoresSafeArea()
-        .navigationTitle("Memories")
-        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Memories")
+                    .foregroundStyle(.white)
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink {
                     SettingsScreenView()
@@ -28,17 +27,6 @@ struct MemoriesScreenView: View {
                 }
             }
         }
-    }
-}
-
-private extension MemoriesScreenView {
-    func setUpNavigationTitleColor() {
-        UINavigationBar.appearance().largeTitleTextAttributes = [
-            .foregroundColor: UIColor.white
-        ]
-        UINavigationBar.appearance().titleTextAttributes = [
-            .foregroundColor: UIColor.white
-        ]
     }
 }
 
