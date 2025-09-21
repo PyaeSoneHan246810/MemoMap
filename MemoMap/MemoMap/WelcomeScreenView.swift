@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct WelcomeScreenView: View {
+    @AppStorage("isOnboardingCompleted") private var isOnboardingCompleted: Bool = false
+    @State private var isOnboardingSheetPresented: Bool = false
     var body: some View {
         VStack(spacing: 0.0) {
             Spacer().frame(height: 136.0)
@@ -17,6 +19,18 @@ struct WelcomeScreenView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .padding(.horizontal, 16.0)
+        .sheet(isPresented: $isOnboardingSheetPresented) {
+            OnboardingScreenView(
+                isOnboardingCompleted: $isOnboardingCompleted
+            )
+            .interactiveDismissDisabled()
+        }
+        .onAppear {
+            isOnboardingSheetPresented = !isOnboardingCompleted
+        }
+        .onChange(of: isOnboardingCompleted) {
+            isOnboardingSheetPresented = !isOnboardingCompleted
+        }
     }
 }
 

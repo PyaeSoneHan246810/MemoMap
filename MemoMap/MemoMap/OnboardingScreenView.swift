@@ -33,6 +33,7 @@ struct OnboardingScreenView: View {
             animationName: "animation_onboarding_3"
         )
     ]
+    @Binding var isOnboardingCompleted: Bool
     @State private var selectedTabIndex: Int = 0
     private var isFirstTab: Bool {
         selectedTabIndex == 0
@@ -106,7 +107,7 @@ private extension OnboardingScreenView {
             Group {
                 if isLastTab {
                     Button{
-
+                        isOnboardingCompleted = true
                     } label: {
                         Text("Get started")
                             .frame(maxWidth: .infinity)
@@ -167,5 +168,7 @@ private extension OnboardingScreenView {
 }
 
 #Preview {
-    OnboardingScreenView()
+    OnboardingScreenView(
+        isOnboardingCompleted: .constant(false)
+    )
 }
