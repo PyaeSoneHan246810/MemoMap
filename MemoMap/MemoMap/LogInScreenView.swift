@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct LogInScreenView: View {
+    @Environment(AppSessionViewModel.self) private var appSessionViewModel
     @State private var emailAddress: String = ""
     @State private var password: String = ""
     var body: some View {
@@ -58,7 +59,7 @@ private extension LogInScreenView {
     }
     var signInButtonView: some View {
         Button {
-            
+            appSessionViewModel.changeAppSession(.authenticated)
         } label: {
             Text("Sign in")
                 .frame(maxWidth: .infinity)
@@ -70,7 +71,9 @@ private extension LogInScreenView {
 }
 
 #Preview {
+    @Previewable @State var appSessionViewModel: AppSessionViewModel = .init()
     NavigationStack {
         LogInScreenView()
     }
+    .environment(appSessionViewModel)
 }

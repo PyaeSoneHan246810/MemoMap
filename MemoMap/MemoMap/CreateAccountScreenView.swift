@@ -26,6 +26,7 @@ struct CreateAccountInfo {
 }
 
 struct CreateAccountScreenView: View {
+    @Environment(AppSessionViewModel.self) private var appSessionViewModel
     @State private var currentCreateAccountSection: CreateAccountSection = .accountInfo
     @State private var createAccountInfo: CreateAccountInfo = .init()
     var body: some View {
@@ -174,7 +175,7 @@ private extension CreateAccountScreenView {
             .buttonBorderShape(.roundedRectangle(radius: 8.0))
             .controlSize(.large)
             Button {
-
+                appSessionViewModel.changeAppSession(.authenticated)
             } label: {
                 Text("Sign up")
                     .frame(maxWidth: .infinity)
@@ -187,7 +188,9 @@ private extension CreateAccountScreenView {
 }
 
 #Preview {
+    @Previewable @State var appSessionViewModel: AppSessionViewModel = .init()
     NavigationStack {
         CreateAccountScreenView()
     }
+    .environment(appSessionViewModel)
 }
