@@ -21,21 +21,25 @@ struct ProfileScreenView: View {
             }
         }
         .scrollIndicators(.hidden)
-        .ignoresSafeArea()
+        .ignoresSafeArea(.all, edges: .top)
         .background(Color(uiColor: .secondarySystemBackground))
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink {
-                    SettingsScreenView()
-                } label: {
-                    Label("Settings", systemImage: "gear")
-                }
-            }
+            toolbarContentView
         }
     }
 }
 
 private extension ProfileScreenView {
+    @ToolbarContentBuilder
+    var toolbarContentView: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            NavigationLink {
+                SettingsScreenView()
+            } label: {
+                Label("Settings", systemImage: "gear")
+            }
+        }
+    }
     var coverPhotoView: some View {
         Rectangle()
             .frame(height: 240.0)
@@ -125,11 +129,10 @@ private extension ProfileScreenView {
         }
     }
     var memoriesView: some View {
-        VStack(spacing: 16.0) {
+        LazyVStack(spacing: 16.0) {
             ForEach(1...5, id: \.self) { _ in
                 MemoryPostView(memoryPostInfo: MemoryPostView.previewMemoryPostInfo)
             }
-            Spacer().frame(height: 60.0)
         }
         .padding(.vertical, 16.0)
         .background(Color(uiColor: .secondarySystemBackground))
