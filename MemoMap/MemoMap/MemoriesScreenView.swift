@@ -14,17 +14,27 @@ struct MemoriesScreenView: View {
             
         }
         .ignoresSafeArea()
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text("Memories")
-                    .foregroundStyle(.white)
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink {
-                    SettingsScreenView()
-                } label: {
-                    Label("Settings", systemImage: "gear")
-                }
+            toolbarContentView
+        }
+    }
+}
+
+private extension MemoriesScreenView {
+    @ToolbarContentBuilder
+    var toolbarContentView: some ToolbarContent {
+        ToolbarItem(placement: .title) {
+            Text("Memories")
+                .foregroundStyle(.white)
+                .font(.title2)
+                .fontWeight(.semibold)
+        }
+        ToolbarItem(placement: .topBarTrailing) {
+            NavigationLink {
+                SettingsScreenView()
+            } label: {
+                Label("Settings", systemImage: "gear")
             }
         }
     }
