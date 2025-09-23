@@ -47,6 +47,7 @@ struct SettingsScreenView: View {
                 Text("Settings")
             }
         }
+        .toolbarVisibility(.hidden, for: .tabBar)
     }
 }
 

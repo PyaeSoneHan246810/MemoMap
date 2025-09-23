@@ -37,7 +37,7 @@ private extension FeedScreenView {
         }
         ToolbarItem(placement: .topBarTrailing) {
             NavigationLink {
-                
+                CommunityScreenView()
             } label: {
                 Label("Community", systemImage: "person.3")
             }
