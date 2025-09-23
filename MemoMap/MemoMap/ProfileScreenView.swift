@@ -127,9 +127,7 @@ private extension ProfileScreenView {
     var memoriesView: some View {
         VStack(spacing: 16.0) {
             ForEach(1...5, id: \.self) { _ in
-                RoundedRectangle(cornerRadius: 12.0)
-                    .frame(height: 200.0)
-                    .foregroundStyle(Color(uiColor: .systemBackground))
+                MemoryPostView(memoryPostInfo: MemoryPostView.previewMemoryPostInfo)
             }
             Spacer().frame(height: 60.0)
         }
