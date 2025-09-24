@@ -12,6 +12,7 @@
 		045DBC602E80298F006A2CFE /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 045DBC5F2E80298F006A2CFE /* FirebaseFirestore */; };
 		045DBC622E80298F006A2CFE /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 045DBC612E80298F006A2CFE /* FirebaseStorage */; };
 		045DBD782E807A90006A2CFE /* MapboxMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 045DBD772E807A90006A2CFE /* MapboxMaps */; };
+		046899D92E8437BE007C62AC /* SearchBar in Frameworks */ = {isa = PBXBuildFile; productRef = 046899D82E8437BE007C62AC /* SearchBar */; };
 		0494C74A2E7F1F5C00EBCB60 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 0494C7492E7F1F5C00EBCB60 /* Lottie */; };
 /* End PBXBuildFile section */
 
@@ -48,6 +49,7 @@
 				045DBD782E807A90006A2CFE /* MapboxMaps in Frameworks */,
 				045DBC5C2E80298F006A2CFE /* FirebaseAnalytics in Frameworks */,
 				045DBC602E80298F006A2CFE /* FirebaseFirestore in Frameworks */,
+				046899D92E8437BE007C62AC /* SearchBar in Frameworks */,
 				045DBC5E2E80298F006A2CFE /* FirebaseAuth in Frameworks */,
 				045DBC622E80298F006A2CFE /* FirebaseStorage in Frameworks */,
 				0494C74A2E7F1F5C00EBCB60 /* Lottie in Frameworks */,
@@ -99,6 +101,7 @@
 				045DBC5F2E80298F006A2CFE /* FirebaseFirestore */,
 				045DBC612E80298F006A2CFE /* FirebaseStorage */,
 				045DBD772E807A90006A2CFE /* MapboxMaps */,
+				046899D82E8437BE007C62AC /* SearchBar */,
 			);
 			productName = MemoMap;
 			productReference = 0494C5662E7EFE2000EBCB60 /* MemoMap.app */;
@@ -132,6 +135,7 @@
 				0494C7482E7F1F5C00EBCB60 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				045DBC5A2E80298F006A2CFE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				045DBD762E807A90006A2CFE /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */,
+				046899D72E8437BE007C62AC /* XCRemoteSwiftPackageReference "SearchBar" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0494C5672E7EFE2000EBCB60 /* Products */;
@@ -397,6 +401,14 @@
 				minimumVersion = 11.0.0;
 			};
 		};
+		046899D72E8437BE007C62AC /* XCRemoteSwiftPackageReference "SearchBar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SzpakKamil/SearchBar";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.4;
+			};
+		};
 		0494C7482E7F1F5C00EBCB60 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios";
@@ -432,6 +444,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 045DBD762E807A90006A2CFE /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */;
 			productName = MapboxMaps;
+		};
+		046899D82E8437BE007C62AC /* SearchBar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 046899D72E8437BE007C62AC /* XCRemoteSwiftPackageReference "SearchBar" */;
+			productName = SearchBar;
 		};
 		0494C7492E7F1F5C00EBCB60 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;
