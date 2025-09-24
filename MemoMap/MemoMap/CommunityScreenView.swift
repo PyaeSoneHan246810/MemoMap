@@ -36,7 +36,7 @@ private extension CommunityScreenView {
     var toolbarContentView: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
             NavigationLink {
-                
+                SearchUsersScreenView()
             } label: {
                 Label("Follow user", systemImage: "person.badge.plus")
             }
