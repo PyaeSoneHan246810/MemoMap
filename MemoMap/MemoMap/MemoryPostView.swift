@@ -11,7 +11,7 @@ import AVKit
 struct MemoryPostView: View {
     let memoryPostInfo: MemoryPostInfo
     @Binding var userProfileScreenModel: UserProfileScreenModel?
-    @State private var isLocationSheetPresented: Bool = false
+    @State private var isViewOnMapSheetPresented: Bool = false
     var body: some View {
         VStack(spacing: 12.0) {
             Spacer().frame(height: 16.0)
@@ -35,8 +35,8 @@ struct MemoryPostView: View {
         }
         .background(Color(uiColor: .systemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 12.0))
-        .sheet(isPresented: $isLocationSheetPresented) {
-            
+        .sheet(isPresented: $isViewOnMapSheetPresented) {
+            ViewOnMapScreenView()
         }
     }
 }
@@ -173,7 +173,7 @@ private extension MemoryPostView {
                 .fontWeight(.medium)
             Spacer()
             Button("View on map", systemImage: "map") {
-                isLocationSheetPresented = true
+                isViewOnMapSheetPresented = true
             }
             .buttonStyle(.bordered)
             .foregroundStyle(.primary)
