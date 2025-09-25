@@ -9,6 +9,7 @@ import SwiftUI
 
 struct FeedScreenView: View {
     @Environment(\.colorScheme) private var colorScheme
+    @State private var userProfileScreenModel: UserProfileScreenModel? = nil
     private var toolbarBackgroundColor: Color {
         colorScheme == .light ? .white : .black
     }
@@ -22,6 +23,11 @@ struct FeedScreenView: View {
         }
         .safeAreaInset(edge: .top) {
             postAndSearchBarView
+        }
+        .navigationDestination(item: $userProfileScreenModel) {
+            UserProfileScreenView(
+                userProfileScreenModel: $0
+            )
         }
     }
 }
@@ -86,11 +92,9 @@ private extension FeedScreenView {
     }
     var memoriesFeedView: some View {
         ScrollView(.vertical) {
-            LazyVStack(spacing: 16.0) {
-                ForEach(1...5, id: \.self) { _ in
-                    MemoryPostView(memoryPostInfo: MemoryPostView.previewMemoryPostInfo)
-                }
-            }
+            MemoriesView(
+                userProfileScreenModel: $userProfileScreenModel
+            )
         }
         .scrollIndicators(.hidden)
         .contentMargins(.top, 10.0)

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CommunityScreenView: View {
     @State private var selectedConnectionType: ConnectionType = .followers
+    @State private var userProfileScreenModel: UserProfileScreenModel? = nil
     var body: some View {
         VStack(spacing: 0.0) {
             connectionTypePickerView
@@ -20,6 +21,11 @@ struct CommunityScreenView: View {
             toolbarContentView
         }
         .toolbarVisibility(.hidden, for: .tabBar)
+        .navigationDestination(item: $userProfileScreenModel) {
+            UserProfileScreenView(
+                userProfileScreenModel: $0
+            )
+        }
     }
 }
 
@@ -59,7 +65,8 @@ private extension CommunityScreenView {
             LazyVStack(spacing: 16.0) {
                 ForEach(0...5, id: \.self) { _ in
                     UserProfileView(
-                        userProfileInfo: UserProfileView.previewUserProfileInfo1
+                        userProfileInfo: UserProfileView.previewUserProfileInfo1,
+                        userProfileScreenModel: $userProfileScreenModel
                     )
                 }
             }
