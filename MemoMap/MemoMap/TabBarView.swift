@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct TabBarView: View {
+    @State private var isVerifyAccountSheetPresented: Bool = true
     var body: some View {
         TabView {
             Tab("Memories", systemImage: "map") {
@@ -25,6 +26,11 @@ struct TabBarView: View {
                     ProfileScreenView()
                 }
             }
+        }
+        .sheet(isPresented: $isVerifyAccountSheetPresented) {
+            VerifyAccountScreenView(
+                isPresented: $isVerifyAccountSheetPresented
+            )
         }
     }
 }

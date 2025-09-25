@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct VerifyAccountScreenView: View {
+    @Binding var isPresented: Bool
     var body: some View {
         VStack(spacing: 0.0) {
             Spacer().frame(height: 20.0)
@@ -52,7 +53,7 @@ extension VerifyAccountScreenView {
     var buttonsView: some View {
         VStack(spacing: 12.0) {
             Button {
-
+                isPresented = false
             } label: {
                 Text("I've verified")
                     .frame(maxWidth: .infinity)
@@ -74,5 +75,7 @@ extension VerifyAccountScreenView {
 }
 
 #Preview {
-    VerifyAccountScreenView()
+    VerifyAccountScreenView(
+        isPresented: .constant(false)
+    )
 }
