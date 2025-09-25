@@ -11,6 +11,7 @@ import SearchBar
 struct SearchUsersScreenView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var searchText: String = ""
+    @State private var userProfileScreenModel: UserProfileScreenModel? = nil
     var body: some View {
         VStack(spacing: 0.0) {
             topBarView
@@ -20,6 +21,11 @@ struct SearchUsersScreenView: View {
             }
         }
         .navigationBarBackButtonHidden()
+        .navigationDestination(item: $userProfileScreenModel) {
+            UserProfileScreenView(
+                userProfileScreenModel: $0
+            )
+        }
     }
 }
 
@@ -106,7 +112,10 @@ private extension SearchUsersScreenView {
             ScrollView(.vertical) {
                 LazyVStack(spacing: 16.0) {
                     ForEach(1...5, id: \.self) { _ in
-                        UserProfileView(userProfileInfo: UserProfileView.previewUserProfileInfo1)
+                        UserProfileView(
+                            userProfileInfo: UserProfileView.previewUserProfileInfo1,
+                            userProfileScreenModel: $userProfileScreenModel
+                        )
                     }
                 }
             }

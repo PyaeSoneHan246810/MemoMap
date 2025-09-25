@@ -10,6 +10,7 @@ import AVKit
 
 struct MemoryPostView: View {
     let memoryPostInfo: MemoryPostInfo
+    @Binding var userProfileScreenModel: UserProfileScreenModel?
     @State private var isLocationSheetPresented: Bool = false
     var body: some View {
         VStack(spacing: 12.0) {
@@ -81,20 +82,32 @@ extension MemoryPostView {
 private extension MemoryPostView {
     var profileInfoView: some View {
         HStack(spacing: 12.0) {
-            Image(.profilePlaceholder)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 52.0, height: 52.0)
-                .foregroundStyle(Color(uiColor: .secondarySystemBackground))
+            profilePhotoView
             VStack(alignment: .leading, spacing: 0.0) {
-                Text(memoryPostInfo.userDisplayName)
-                    .font(.headline)
+                displayNameView
                 Text(memoryPostInfo.ago)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    var profilePhotoView: some View {
+        Image(.profilePlaceholder)
+            .resizable()
+            .scaledToFit()
+            .frame(width: 52.0, height: 52.0)
+            .foregroundStyle(Color(uiColor: .secondarySystemBackground))
+            .onTapGesture {
+                navigateToUserProfile()
+            }
+    }
+    var displayNameView: some View {
+        Text(memoryPostInfo.userDisplayName)
+            .font(.headline)
+            .onTapGesture {
+                navigateToUserProfile()
+            }
     }
     var moreButtonView: some View {
         Button {
@@ -196,20 +209,17 @@ private extension MemoryPostView {
     }
 }
 
-struct TagView: View {
-    let text: String
-    var body: some View {
-        Text(text)
-            .font(.footnote)
-            .padding(.horizontal, 10.0)
-            .padding(.vertical, 4.0)
-            .background(Color(uiColor: .secondarySystemBackground), in: .capsule)
+private extension MemoryPostView {
+    func navigateToUserProfile() {
+        let userProfileScreenModel: UserProfileScreenModel = .init(userId: "userId")
+        self.userProfileScreenModel = userProfileScreenModel
     }
 }
 
 #Preview {
     MemoryPostView(
-        memoryPostInfo: MemoryPostView.previewMemoryPostInfo
+        memoryPostInfo: MemoryPostView.previewMemoryPostInfo,
+        userProfileScreenModel: .constant(nil)
     )
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background(Color(uiColor: .systemFill))

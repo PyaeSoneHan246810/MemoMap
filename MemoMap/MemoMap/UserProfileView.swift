@@ -9,6 +9,7 @@ import SwiftUI
 
 struct UserProfileView: View {
     let userProfileInfo: UserProfileInfo
+    @Binding var userProfileScreenModel: UserProfileScreenModel?
     var body: some View {
         HStack(spacing: 12.0) {
             profilePhotoView
@@ -51,12 +52,18 @@ private extension UserProfileView {
             .resizable()
             .frame(width: 60.0, height: 60.0)
             .foregroundStyle(Color(uiColor: .secondarySystemBackground))
+            .onTapGesture {
+                navigateToUserProfile()
+            }
     }
     var userInfoView: some View {
         VStack(alignment: .leading, spacing: 2.0) {
             Text("Display Name")
                 .font(.callout)
                 .fontWeight(.medium)
+                .onTapGesture {
+                    navigateToUserProfile()
+                }
             Text("@username")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
@@ -93,11 +100,20 @@ private extension UserProfileView {
     }
 }
 
+private extension UserProfileView {
+    func navigateToUserProfile() {
+        let userProfileScreenModel: UserProfileScreenModel = .init(userId: "userId")
+        self.userProfileScreenModel = userProfileScreenModel
+    }
+}
+
 #Preview {
     UserProfileView(
-        userProfileInfo: UserProfileView.previewUserProfileInfo1
+        userProfileInfo: UserProfileView.previewUserProfileInfo1,
+        userProfileScreenModel: .constant(nil)
     )
     UserProfileView(
-        userProfileInfo: UserProfileView.previewUserProfileInfo2
+        userProfileInfo: UserProfileView.previewUserProfileInfo2,
+        userProfileScreenModel: .constant(nil)
     )
 }
