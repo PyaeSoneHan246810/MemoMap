@@ -38,11 +38,11 @@ struct MemoryPostView: View {
         .sheet(item: $currentSheetType) { sheetType in
             switch sheetType {
             case .viewOnMap:
-                ViewOnMapView()
+                viewOnMapSheetView
             case .hearts:
-                Text("Hearts")
+                heartsSheetView
             case .comments:
-                CommentsView()
+                commentsSheetView
             }
         }
     }
@@ -228,6 +228,19 @@ private extension MemoryPostView {
         }
         .controlSize(.large)
         .tint(.primary)
+    }
+    var viewOnMapSheetView: some View {
+        NavigationStack {
+            ViewOnMapView()
+        }
+    }
+    var heartsSheetView: some View {
+        Text("Hearts")
+    }
+    var commentsSheetView: some View {
+        NavigationStack {
+            CommentsView()
+        }
     }
 }
 

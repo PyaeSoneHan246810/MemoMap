@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  StartingView.swift
 //  MemoMap
 //
 //  Created by Dylan on 20/9/25.

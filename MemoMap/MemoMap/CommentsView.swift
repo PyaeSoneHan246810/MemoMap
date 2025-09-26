@@ -1,5 +1,5 @@
 //
-//  CommentScreenView.swift
+//  CommentsView.swift
 //  MemoMap
 //
 //  Created by Dylan on 26/9/25.
@@ -16,21 +16,19 @@ struct CommentsView: View {
         colorScheme == .dark ? Color.black : Color.white
     }
     var body: some View {
-        NavigationStack {
-            commentsScrollView
-            .safeAreaInset(edge: .bottom) {
-                bottomBarView
-            }
-            .navigationTitle("Comments")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackgroundVisibility(.visible, for: .navigationBar)
-            .toolbarBackground(toolbarbackground, for: .navigationBar)
-            .toolbar {
-                toolbarContentView
-            }
-            .navigationDestination(item: $userProfileScreenModel) {
-                UserProfileScreenView(userProfileScreenModel: $0)
-            }
+        commentsScrollView
+        .safeAreaInset(edge: .bottom) {
+            bottomBarView
+        }
+        .navigationTitle("Comments")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackgroundVisibility(.visible, for: .navigationBar)
+        .toolbarBackground(toolbarbackground, for: .navigationBar)
+        .toolbar {
+            toolbarContentView
+        }
+        .navigationDestination(item: $userProfileScreenModel) {
+            UserProfileScreenView(userProfileScreenModel: $0)
         }
     }
 }
@@ -104,5 +102,7 @@ private extension CommentsView {
 }
 
 #Preview {
-    CommentsView()
+    NavigationStack {
+        CommentsView()
+    }
 }
