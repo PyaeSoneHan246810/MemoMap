@@ -8,7 +8,7 @@
 import SwiftUI
 import MapboxMaps
 
-struct ViewOnMapScreenView: View {
+struct ViewOnMapView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme: ColorScheme
     private var toolbarbackground: Color {
@@ -31,7 +31,7 @@ struct ViewOnMapScreenView: View {
     }
 }
 
-private extension ViewOnMapScreenView {
+private extension ViewOnMapView {
     @ToolbarContentBuilder
     var toolbarContentView: some ToolbarContent {
         ToolbarItem(placement: .navigation) {
@@ -47,5 +47,5 @@ private extension ViewOnMapScreenView {
 }
 
 #Preview {
-    ViewOnMapScreenView()
+    ViewOnMapView()
 }

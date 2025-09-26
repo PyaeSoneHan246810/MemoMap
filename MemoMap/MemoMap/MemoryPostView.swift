@@ -11,7 +11,7 @@ import AVKit
 struct MemoryPostView: View {
     let memoryPostInfo: MemoryPostInfo
     @Binding var userProfileScreenModel: UserProfileScreenModel?
-    @State private var isViewOnMapSheetPresented: Bool = false
+    @State private var currentSheetType: SheetType? = nil
     var body: some View {
         VStack(spacing: 12.0) {
             Spacer().frame(height: 16.0)
@@ -35,8 +35,15 @@ struct MemoryPostView: View {
         }
         .background(Color(uiColor: .systemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 12.0))
-        .sheet(isPresented: $isViewOnMapSheetPresented) {
-            ViewOnMapScreenView()
+        .sheet(item: $currentSheetType) { sheetType in
+            switch sheetType {
+            case .viewOnMap:
+                ViewOnMapView()
+            case .hearts:
+                Text("Hearts")
+            case .comments:
+                CommentsView()
+            }
         }
     }
 }
@@ -77,6 +84,14 @@ extension MemoryPostView {
         heartCount: 12,
         commentCount: 4
     )
+    enum SheetType: String, Identifiable {
+        case viewOnMap = "View on map"
+        case hearts = "Hearts"
+        case comments = "Comments"
+        var id: String {
+            self.rawValue
+        }
+    }
 }
 
 private extension MemoryPostView {
@@ -173,7 +188,7 @@ private extension MemoryPostView {
                 .fontWeight(.medium)
             Spacer()
             Button("View on map", systemImage: "map") {
-                isViewOnMapSheetPresented = true
+                currentSheetType = .viewOnMap
             }
             .buttonStyle(.bordered)
             .foregroundStyle(.primary)
@@ -182,30 +197,37 @@ private extension MemoryPostView {
     }
     var userReactionsView: some View {
         HStack(spacing: 12.0) {
-            HStack(spacing: 4.0) {
-                Button {
-                    
-                } label: {
-                    Image(systemName: "heart")
-                }
-                .controlSize(.large)
-                .tint(.primary)
-                Text(memoryPostInfo.heartCount.description)
-                    .font(.callout)
-            }
-            HStack(spacing: 4.0) {
-                Button {
-                    
-                } label: {
-                    Image(systemName: "message")
-                }
-                .controlSize(.large)
-                .tint(.primary)
-                Text(memoryPostInfo.commentCount.description)
-                    .font(.callout)
-            }
+            heartButtonView
+            commentButtonView
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    var heartButtonView: some View {
+        HStack(spacing: 4.0) {
+            Button {
+                
+            } label: {
+                Label(memoryPostInfo.heartCount.description, systemImage: "heart")
+                    .labelStyle(.iconOnly)
+            }
+            .controlSize(.large)
+            .tint(.primary)
+            Label(memoryPostInfo.heartCount.description, systemImage: "heart")
+                .labelStyle(.titleOnly)
+                .onTapGesture {
+                    currentSheetType = .hearts
+                }
+        }
+    }
+    var commentButtonView: some View {
+        Button {
+            currentSheetType = .comments
+        } label: {
+            Label(memoryPostInfo.commentCount.description, systemImage: "message")
+                .labelIconToTitleSpacing(4.0)
+        }
+        .controlSize(.large)
+        .tint(.primary)
     }
 }
 
