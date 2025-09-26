@@ -20,10 +20,7 @@ struct WelcomeScreenView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .padding(.horizontal, 16.0)
         .sheet(isPresented: $isOnboardingSheetPresented) {
-            OnboardingScreenView(
-                isOnboardingCompleted: $isOnboardingCompleted
-            )
-            .interactiveDismissDisabled()
+            onboardingSheetView
         }
         .onAppear {
             isOnboardingSheetPresented = !isOnboardingCompleted
@@ -71,6 +68,12 @@ private extension WelcomeScreenView {
             .buttonBorderShape(.roundedRectangle(radius: 8.0))
             .controlSize(.large)
         }
+    }
+    var onboardingSheetView: some View {
+        OnboardingView(
+            isOnboardingCompleted: $isOnboardingCompleted
+        )
+        .interactiveDismissDisabled()
     }
 }
 

@@ -1,5 +1,5 @@
 //
-//  ViewOnMapScreenView.swift
+//  ViewOnMapView.swift
 //  MemoMap
 //
 //  Created by Dylan on 25/9/25.
@@ -15,18 +15,16 @@ struct ViewOnMapView: View {
         colorScheme == .dark ? Color.black : Color.white
     }
     var body: some View {
-        NavigationStack {
-            Map {
-                
-            }
-            .ignoresSafeArea()
-            .navigationTitle("Location name")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackgroundVisibility(.visible, for: .navigationBar)
-            .toolbarBackground(toolbarbackground, for: .navigationBar)
-            .toolbar {
-                toolbarContentView
-            }
+        Map {
+            
+        }
+        .ignoresSafeArea()
+        .navigationTitle("Location name")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackgroundVisibility(.visible, for: .navigationBar)
+        .toolbarBackground(toolbarbackground, for: .navigationBar)
+        .toolbar {
+            toolbarContentView
         }
     }
 }
@@ -47,5 +45,7 @@ private extension ViewOnMapView {
 }
 
 #Preview {
-    ViewOnMapView()
+    NavigationStack {
+        ViewOnMapView()
+    }
 }

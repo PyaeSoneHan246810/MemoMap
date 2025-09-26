@@ -1,5 +1,5 @@
 //
-//  AppSessionManager.swift
+//  AppSessionViewModel.swift
 //  MemoMap
 //
 //  Created by Dylan on 21/9/25.

@@ -12,26 +12,41 @@ struct TabBarView: View {
     var body: some View {
         TabView {
             Tab("Memories", systemImage: "map") {
-                NavigationStack {
-                    MemoriesScreenView()
-                }
+                memoriesNavigationStackView
             }
             Tab("Feed", systemImage: "photo.stack") {
-                NavigationStack {
-                    FeedScreenView()
-                }
+                feedNavigationStackView
             }
             Tab("Profile", systemImage: "person") {
-                NavigationStack {
-                    ProfileScreenView()
-                }
+                profileNavigationStackView
             }
         }
         .sheet(isPresented: $isVerifyAccountSheetPresented) {
-            VerifyAccountScreenView(
-                isPresented: $isVerifyAccountSheetPresented
-            )
+            verifyAccountSheetView
         }
+    }
+}
+
+private extension TabBarView {
+    var memoriesNavigationStackView: some View {
+        NavigationStack {
+            MemoriesScreenView()
+        }
+    }
+    var feedNavigationStackView: some View {
+        NavigationStack {
+            FeedScreenView()
+        }
+    }
+    var profileNavigationStackView: some View {
+        NavigationStack {
+            ProfileScreenView()
+        }
+    }
+    var verifyAccountSheetView: some View {
+        VerifyAccountView(
+            isPresented: $isVerifyAccountSheetPresented
+        )
     }
 }
 

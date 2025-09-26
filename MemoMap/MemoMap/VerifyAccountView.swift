@@ -1,5 +1,5 @@
 //
-//  VerifyAccountScreenView.swift
+//  VerifyAccountView.swift
 //  MemoMap
 //
 //  Created by Dylan on 21/9/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct VerifyAccountScreenView: View {
+struct VerifyAccountView: View {
     @Binding var isPresented: Bool
     var body: some View {
         VStack(spacing: 0.0) {
@@ -24,7 +24,7 @@ struct VerifyAccountScreenView: View {
     }
 }
 
-extension VerifyAccountScreenView {
+extension VerifyAccountView {
     var logoView: some View {
         Image(.appLogo)
             .resizable()
@@ -75,7 +75,7 @@ extension VerifyAccountScreenView {
 }
 
 #Preview {
-    VerifyAccountScreenView(
+    VerifyAccountView(
         isPresented: .constant(false)
     )
 }

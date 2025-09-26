@@ -1,5 +1,5 @@
 //
-//  OnboardingScreenView.swift
+//  OnboardingView.swift
 //  MemoMap
 //
 //  Created by Dylan on 21/9/25.
@@ -15,7 +15,7 @@ struct OnboardingPage: Identifiable {
     let animationName: String
 }
 
-struct OnboardingScreenView: View {
+struct OnboardingView: View {
     let onboardingPages: [OnboardingPage] = [
         OnboardingPage(
             title: "Capture Memories on the Map",
@@ -54,7 +54,7 @@ struct OnboardingScreenView: View {
     }
 }
 
-private extension OnboardingScreenView {
+private extension OnboardingView {
     var logoView: some View {
         Image(.appLogo)
             .resizable()
@@ -149,7 +149,7 @@ private extension OnboardingScreenView {
     }
 }
 
-private extension OnboardingScreenView {
+private extension OnboardingView {
     func goToNextTab() {
         withAnimation {
             selectedTabIndex = selectedTabIndex + 1
@@ -168,7 +168,7 @@ private extension OnboardingScreenView {
 }
 
 #Preview {
-    OnboardingScreenView(
+    OnboardingView(
         isOnboardingCompleted: .constant(false)
     )
 }
