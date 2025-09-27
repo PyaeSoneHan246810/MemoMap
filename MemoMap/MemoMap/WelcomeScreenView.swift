@@ -9,7 +9,13 @@ import SwiftUI
 
 struct WelcomeScreenView: View {
     @AppStorage("isOnboardingCompleted") private var isOnboardingCompleted: Bool = false
-    @State private var isOnboardingSheetPresented: Bool = false
+    private var isOnboardingSheetPresented: Binding<Bool> {
+        Binding {
+            !isOnboardingCompleted
+        } set: { newValue in
+            isOnboardingCompleted = !newValue
+        }
+    }
     var body: some View {
         VStack(spacing: 0.0) {
             Spacer().frame(height: 136.0)
@@ -19,14 +25,8 @@ struct WelcomeScreenView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .padding(.horizontal, 16.0)
-        .sheet(isPresented: $isOnboardingSheetPresented) {
+        .sheet(isPresented: isOnboardingSheetPresented) {
             onboardingSheetView
-        }
-        .onAppear {
-            isOnboardingSheetPresented = !isOnboardingCompleted
-        }
-        .onChange(of: isOnboardingCompleted) {
-            isOnboardingSheetPresented = !isOnboardingCompleted
         }
     }
 }
