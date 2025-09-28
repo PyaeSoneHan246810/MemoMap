@@ -18,27 +18,34 @@ struct AddMemoryView: View {
     @Binding var memoryTags: [String]
     @Binding var memoryDateTime: Date
     @Binding var isMemoryPublic: Bool
+    var option: Option = .selectPublicOrPrivate
     var body: some View {
         VStack(alignment: .leading, spacing: 20.0) {
-            headerView
-                .padding(.horizontal, 16.0)
             addMediaView
             Group {
                 textFieldsView
                 addTagsView
                 dateTimePickerView
-                publicToggleView
+                switch option {
+                case .selectPublicOrPrivate:
+                    publicToggleView
+                case .selectLocation:
+                    selectLocationView
+                }
             }
             .padding(.horizontal, 16.0)
         }
     }
 }
 
-private extension AddMemoryView {
-    var headerView: some View {
-        Text("Add a memory")
-            .font(.headline)
+extension AddMemoryView {
+    enum Option {
+        case selectPublicOrPrivate
+        case selectLocation
     }
+}
+
+private extension AddMemoryView {
     var addMediaView: some View {
         VStack(alignment: .leading, spacing: 12.0) {
             if !memoryMedia.isEmpty {
@@ -155,16 +162,33 @@ private extension AddMemoryView {
     var selectedTagsView: some View {
         WrappingHStack(alignment: .leading, horizontalSpacing: 4.0, verticalSpacing: 4.0) {
             ForEach(memoryTags, id: \.self) { tag in
-                MemoryTagView(tag: tag, isSelected: true)
-                    .onTapGesture {
+                selectedTagView(
+                    tag,
+                    onRemove: {
                         withAnimation {
                             memoryTags.removeAll {
                                 $0 == tag
                             }
                         }
                     }
+                )
             }
         }
+    }
+    func selectedTagView(_ tag: String, onRemove: @escaping () -> Void) -> some View {
+        HStack(spacing: 4.0) {
+            Text(tag)
+                .font(.callout)
+            Image(systemName: "xmark")
+                .imageScale(.small)
+                .onTapGesture {
+                    onRemove()
+                }
+        }
+        .foregroundStyle(.primary)
+        .padding(.horizontal, 12.0)
+        .padding(.vertical, 4.0)
+        .background(Color(uiColor: .secondarySystemFill), in: .capsule)
     }
     func labelView(title: String, systemImage: String) -> some View {
         Label(title, systemImage: systemImage)
@@ -186,6 +210,18 @@ private extension AddMemoryView {
             Text("Share with followers")
         }
         .tint(.accent)
+    }
+    var selectLocationView: some View {
+        NavigationLink {
+            
+        } label: {
+            HStack {
+                Label("Choose location", systemImage: "mappin.square")
+                Spacer()
+                Image(systemName: "chevron.right")
+            }
+        }
+        .buttonStyle(.plain)
     }
 }
 

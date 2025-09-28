@@ -36,14 +36,17 @@ struct MemoryPostView: View {
         .background(Color(uiColor: .systemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 12.0))
         .sheet(item: $currentSheetType) { sheetType in
-            switch sheetType {
-            case .viewOnMap:
-                viewOnMapSheetView
-            case .hearts:
-                heartsSheetView
-            case .comments:
-                commentsSheetView
+            Group {
+                switch sheetType {
+                case .viewOnMap:
+                    viewOnMapSheetView
+                case .hearts:
+                    heartsSheetView
+                case .comments:
+                    commentsSheetView
+                }
             }
+            .interactiveDismissDisabled()
         }
     }
 }

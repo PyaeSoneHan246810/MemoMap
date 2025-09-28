@@ -28,15 +28,20 @@ struct AddNewPinView: View {
                 VStack(spacing: 20.0) {
                     locationInfoTextFieldsView
                         .padding(.horizontal, 16.0)
-                    AddMemoryView(
-                        memoryPhotoPickerItem: $memoryPhotoPickerItem,
-                        memoryMedia: $memoryMedia,
-                        memoryTitle: $memoryTitle,
-                        memoryDescription: $memoryDescription,
-                        memoryTags: $memoryTags,
-                        memoryDateTime: $memoryDateTime,
-                        isMemoryPublic: $isMemoryPublic
-                    )
+                    VStack(alignment: .leading, spacing: 20.0) {
+                        Text("Add a memory")
+                            .font(.headline)
+                            .padding(.horizontal, 16.0)
+                        AddMemoryView(
+                            memoryPhotoPickerItem: $memoryPhotoPickerItem,
+                            memoryMedia: $memoryMedia,
+                            memoryTitle: $memoryTitle,
+                            memoryDescription: $memoryDescription,
+                            memoryTags: $memoryTags,
+                            memoryDateTime: $memoryDateTime,
+                            isMemoryPublic: $isMemoryPublic
+                        )
+                    }
                     saveButtonView
                         .padding(.horizontal, 16.0)
                 }

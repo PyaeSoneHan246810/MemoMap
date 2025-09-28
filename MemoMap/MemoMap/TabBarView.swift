@@ -23,6 +23,7 @@ struct TabBarView: View {
         }
         .sheet(isPresented: $isVerifyAccountSheetPresented) {
             verifyAccountSheetView
+                .interactiveDismissDisabled()
         }
     }
 }
