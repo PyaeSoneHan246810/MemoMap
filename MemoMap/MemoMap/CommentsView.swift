@@ -9,12 +9,8 @@ import SwiftUI
 
 struct CommentsView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme: ColorScheme
     @State private var userProfileScreenModel: UserProfileScreenModel? = nil
     @State private var comment: String = ""
-    private var toolbarbackground: Color {
-        colorScheme == .dark ? Color.black : Color.white
-    }
     var body: some View {
         commentsScrollView
         .safeAreaInset(edge: .bottom) {
@@ -22,8 +18,6 @@ struct CommentsView: View {
         }
         .navigationTitle("Comments")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackgroundVisibility(.visible, for: .navigationBar)
-        .toolbarBackground(toolbarbackground, for: .navigationBar)
         .toolbar {
             toolbarContentView
         }

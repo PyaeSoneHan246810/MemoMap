@@ -61,7 +61,9 @@ private extension CreateAccountScreenView {
             InputTextFieldView(
                 title: "Email address",
                 placeholder: "Enter your email address",
-                text: $createAccountInfo.emailAddress
+                text: $createAccountInfo.emailAddress,
+                axis: .horizontal,
+                lineLimit: 1
             )
             InputTextFieldView(
                 title: "Password",
@@ -83,18 +85,23 @@ private extension CreateAccountScreenView {
             InputTextFieldView(
                 title: "Display name",
                 placeholder: "Enter your display name",
-                text: $createAccountInfo.displayName
+                text: $createAccountInfo.displayName,
+                axis: .horizontal,
+                lineLimit: 1
             )
             InputTextFieldView(
                 title: "Username",
                 placeholder: "Enter your user name",
-                text: $createAccountInfo.username
+                text: $createAccountInfo.username,
+                axis: .horizontal,
+                lineLimit: 1
             )
             birthdayPickerView
             InputTextFieldView(
                 title: "Bio",
                 placeholder: "Tell us a bit about yourself",
                 text: $createAccountInfo.bio,
+                axis: .vertical,
                 lineLimit: 5,
                 height: 120.0
             )

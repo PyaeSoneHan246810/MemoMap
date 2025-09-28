@@ -33,7 +33,9 @@ private extension LogInScreenView {
             InputTextFieldView(
                 title: "Email address",
                 placeholder: "Enter your email address",
-                text: $emailAddress
+                text: $emailAddress,
+                axis: .horizontal,
+                lineLimit: 1
             )
             InputTextFieldView(
                 title: "Password",

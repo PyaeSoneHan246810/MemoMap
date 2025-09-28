@@ -9,6 +9,7 @@ import SwiftUI
 import MapboxMaps
 
 struct MemoriesScreenView: View {
+    @State private var isAddNewPinSheetPresented: Bool = false
     var body: some View {
         Map {
             
@@ -17,6 +18,9 @@ struct MemoriesScreenView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             toolbarContentView
+        }
+        .sheet(isPresented: $isAddNewPinSheetPresented) {
+            addNewPinSheetView
         }
     }
 }
@@ -36,6 +40,11 @@ private extension MemoriesScreenView {
             } label: {
                 Label("Settings", systemImage: "gear")
             }
+        }
+    }
+    var addNewPinSheetView: some View {
+        NavigationStack {
+            AddNewPinView()
         }
     }
 }
