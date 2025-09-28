@@ -238,7 +238,9 @@ private extension MemoryPostView {
         }
     }
     var heartsSheetView: some View {
-        Text("Hearts")
+        NavigationStack {
+            HeartsView()
+        }
     }
     var commentsSheetView: some View {
         NavigationStack {
