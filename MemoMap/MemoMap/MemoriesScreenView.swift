@@ -9,28 +9,66 @@ import SwiftUI
 import MapboxMaps
 
 struct MemoriesScreenView: View {
-    @State private var isAddNewPinSheetPresented: Bool = false
+    @Environment(\.colorScheme) private var colorScheme
+    @State private var viewport: Viewport = .followPuck(zoom: 12.0)
+    @State private var placeTapped: Place? = nil
     var body: some View {
-        Map {
-            
-        }
+        mapView
         .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             toolbarContentView
         }
-        .sheet(isPresented: $isAddNewPinSheetPresented) {
-            addNewPinSheetView
+        .sheet(item: $placeTapped) {
+            addNewPinSheetView(placeTapped: $0)
+        }
+    }
+}
+
+extension MemoriesScreenView {
+    struct Place: Identifiable {
+        let coordinate: CLLocationCoordinate2D
+        var latitude: Double {
+            coordinate.latitude
+        }
+        var longitude: Double {
+            coordinate.longitude
+        }
+        var id: String {
+            "\(latitude)&\(longitude)"
         }
     }
 }
 
 private extension MemoriesScreenView {
+    var mapStyle: MapStyle {
+        switch colorScheme {
+        case .dark:
+            MapStyle.standard(lightPreset: .night)
+        case .light:
+            MapStyle.standard(lightPreset: .day)
+        @unknown default:
+            MapStyle.standard
+        }
+    }
+    var mapView: some View {
+        Map(
+            viewport: $viewport
+        ) {
+            Puck2D(bearing: .heading)
+                .showsAccuracyRing(true)
+            TapInteraction { context in
+                placeTapped = .init(coordinate: context.coordinate)
+                return true
+            }
+        }
+        .mapStyle(mapStyle)
+    }
     @ToolbarContentBuilder
     var toolbarContentView: some ToolbarContent {
         ToolbarItem(placement: .title) {
             Text("Memories")
-                .foregroundStyle(.white)
+                .foregroundStyle(Color(uiColor: .label))
                 .font(.title2)
                 .fontWeight(.semibold)
         }
@@ -42,10 +80,11 @@ private extension MemoriesScreenView {
             }
         }
     }
-    var addNewPinSheetView: some View {
+    func addNewPinSheetView(placeTapped: Place) -> some View {
         NavigationStack {
             AddNewPinView()
         }
+        .interactiveDismissDisabled()
     }
 }
 
