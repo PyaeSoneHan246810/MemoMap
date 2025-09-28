@@ -309,6 +309,7 @@
 				INFOPLIST_FILE = MemoMap/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MemoMap;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "MemoMap needs your location to display your current position on the map.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
@@ -344,6 +345,7 @@
 				INFOPLIST_FILE = MemoMap/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MemoMap;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "MemoMap needs your location to display your current position on the map.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
