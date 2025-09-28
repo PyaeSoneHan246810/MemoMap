@@ -10,19 +10,24 @@ import SwiftUI
 struct FeedScreenView: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var userProfileScreenModel: UserProfileScreenModel? = nil
+    @State private var isPostMemorySheetPresented: Bool = false
     private var toolbarBackgroundColor: Color {
         colorScheme == .light ? .white : .black
     }
     var body: some View {
         memoriesFeedView
+        .safeAreaInset(edge: .top) {
+            postAndSearchBarView
+        }
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackgroundVisibility(.visible, for: .navigationBar)
         .toolbarBackground(toolbarBackgroundColor, for: .navigationBar)
         .toolbar {
             toolbarContentView
         }
-        .safeAreaInset(edge: .top) {
-            postAndSearchBarView
+        .sheet(isPresented: $isPostMemorySheetPresented) {
+            postMemorySheetView
+                .interactiveDismissDisabled()
         }
         .navigationDestination(item: $userProfileScreenModel) {
             UserProfileScreenView(
@@ -76,9 +81,12 @@ private extension FeedScreenView {
         .frame(maxWidth: .infinity, alignment: .leading)
         .frame(height: 52.0)
         .background(Color(uiColor: .secondarySystemBackground), in: .capsule)
+        .onTapGesture {
+            isPostMemorySheetPresented = true
+        }
     }
     var searchButtonView: some View {
-        Button {
+        NavigationLink {
             
         } label: {
             Circle()
@@ -100,6 +108,11 @@ private extension FeedScreenView {
         .contentMargins(.top, 10.0)
         .contentMargins(.bottom, 16.0)
         .background(Color(uiColor: .secondarySystemBackground))
+    }
+    var postMemorySheetView: some View {
+        NavigationStack {
+            PostMemoryView()
+        }
     }
 }
 

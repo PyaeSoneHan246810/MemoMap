@@ -21,6 +21,7 @@ struct MemoriesScreenView: View {
         }
         .sheet(item: $placeTapped) {
             addNewPinSheetView(placeTapped: $0)
+                .interactiveDismissDisabled()
         }
     }
 }
@@ -84,7 +85,6 @@ private extension MemoriesScreenView {
         NavigationStack {
             AddNewPinView()
         }
-        .interactiveDismissDisabled()
     }
 }
 
