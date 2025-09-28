@@ -10,18 +10,21 @@ import SwiftUI
 struct StartingView: View {
     @State private var appSessionViewModel: AppSessionViewModel = .init()
     var body: some View {
-        ZStack {
-            switch appSessionViewModel.appSession {
-            case .authenticated:
-                TabBarView()
-                    .transition(.opacity)
-            case .unauthenticated:
-                AuthNavigationStackView()
-                    .transition(.opacity)
-            }
+//        ZStack {
+//            switch appSessionViewModel.appSession {
+//            case .authenticated:
+//                TabBarView()
+//                    .transition(.opacity)
+//            case .unauthenticated:
+//                AuthNavigationStackView()
+//                    .transition(.opacity)
+//            }
+//        }
+//        .animation(.spring, value: appSessionViewModel.appSession)
+//        .environment(appSessionViewModel)
+        NavigationStack {
+            AddNewPinView()
         }
-        .animation(.spring, value: appSessionViewModel.appSession)
-        .environment(appSessionViewModel)
     }
 }
 

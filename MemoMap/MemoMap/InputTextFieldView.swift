@@ -12,6 +12,7 @@ struct InputTextFieldView: View {
     let placeholder: String
     @Binding var text: String
     var isSecured: Bool = false
+    var axis: Axis = .horizontal
     var lineLimit: Int? = nil
     var height: CGFloat? = nil
     var body: some View {
@@ -22,11 +23,11 @@ struct InputTextFieldView: View {
                 if isSecured {
                     SecureField(placeholder, text: $text)
                 } else {
-                    TextField(placeholder, text: $text, axis: .vertical)
+                    TextField(placeholder, text: $text, axis: axis)
+                        .lineLimit(lineLimit)
                         .frame(height: height, alignment: .top)
                 }
             }
-            .lineLimit(lineLimit)
             .padding(.horizontal, 16.0)
             .padding(.vertical, 12.0)
             .overlay {
