@@ -9,8 +9,7 @@ import SwiftUI
 
 struct LogInScreenView: View {
     @Environment(AppSessionViewModel.self) private var appSessionViewModel
-    @State private var emailAddress: String = ""
-    @State private var password: String = ""
+    @State private var loginViewModel: LoginViewModel = .init()
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 0.0) {
@@ -33,14 +32,14 @@ private extension LogInScreenView {
             InputTextFieldView(
                 title: "Email address",
                 placeholder: "Enter your email address",
-                text: $emailAddress,
+                text: $loginViewModel.emailAddress,
                 axis: .horizontal,
                 lineLimit: 1
             )
             InputTextFieldView(
                 title: "Password",
                 placeholder: "Enter your password",
-                text: $password,
+                text: $loginViewModel.password,
                 isSecured: true
             )
             forgotPasswordLinkView
@@ -61,7 +60,7 @@ private extension LogInScreenView {
     }
     var signInButtonView: some View {
         Button {
-            appSessionViewModel.changeAppSession(.authenticated)
+            Task { await signInUser() }
         } label: {
             Text("Sign in")
                 .frame(maxWidth: .infinity)
@@ -69,6 +68,15 @@ private extension LogInScreenView {
         .buttonStyle(.borderedProminent)
         .buttonBorderShape(.roundedRectangle(radius: 8.0))
         .controlSize(.large)
+    }
+}
+
+private extension LogInScreenView {
+    func signInUser() async {
+        let result = await loginViewModel.signInUser()
+        if case .success = result {
+            appSessionViewModel.changeAppSession(.authenticated)
+        }
     }
 }
 

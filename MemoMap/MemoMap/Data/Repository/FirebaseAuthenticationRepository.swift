@@ -46,10 +46,33 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
         UserModel(uid: user.uid, email: user.email)
     }
     
-    func deleteUser() async throws {
-        if let currentUser = Auth.auth().currentUser {
-            try await currentUser.delete()
+    func signInUser(email: String, password: String) async throws {
+        do {
+            try await Auth.auth().signIn(withEmail: email, password: password)
+        } catch {
+            if let nsError = error as NSError? {
+                let errorCode = AuthErrorCode(rawValue: nsError.code)
+                switch errorCode {
+                case .invalidEmail:
+                    throw SignInUserError.invalidEmail
+                case .invalidCredential:
+                    throw SignInUserError.invalidCredential
+                case .wrongPassword:
+                    throw SignInUserError.wrongPassword
+                case .userDisabled:
+                    throw SignInUserError.userDisabled
+                case .networkError:
+                    throw SignInUserError.networkError
+                default:
+                    throw SignInUserError.unknownError
+                }
+            }
         }
+    }
+    
+    func deleteUser() async throws {
+        guard let currentUser = Auth.auth().currentUser else { return }
+        try await currentUser.delete()
     }
     
     func signOutUser() throws {
