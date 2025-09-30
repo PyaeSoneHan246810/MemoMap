@@ -14,6 +14,8 @@
 		045DBC622E80298F006A2CFE /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 045DBC612E80298F006A2CFE /* FirebaseStorage */; };
 		045DBD782E807A90006A2CFE /* MapboxMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 045DBD772E807A90006A2CFE /* MapboxMaps */; };
 		046899D92E8437BE007C62AC /* SearchBar in Frameworks */ = {isa = PBXBuildFile; productRef = 046899D82E8437BE007C62AC /* SearchBar */; };
+		0482036B2E8BB734002EDCA5 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = 0482036A2E8BB734002EDCA5 /* Factory */; };
+		0482036D2E8BB734002EDCA5 /* FactoryKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0482036C2E8BB734002EDCA5 /* FactoryKit */; };
 		0494C74A2E7F1F5C00EBCB60 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 0494C7492E7F1F5C00EBCB60 /* Lottie */; };
 /* End PBXBuildFile section */
 
@@ -49,10 +51,12 @@
 			files = (
 				045DBD782E807A90006A2CFE /* MapboxMaps in Frameworks */,
 				045DBC5C2E80298F006A2CFE /* FirebaseAnalytics in Frameworks */,
+				0482036D2E8BB734002EDCA5 /* FactoryKit in Frameworks */,
 				045DBC602E80298F006A2CFE /* FirebaseFirestore in Frameworks */,
 				046899D92E8437BE007C62AC /* SearchBar in Frameworks */,
 				043DB25B2E891B0400859A34 /* WrappingHStack in Frameworks */,
 				045DBC5E2E80298F006A2CFE /* FirebaseAuth in Frameworks */,
+				0482036B2E8BB734002EDCA5 /* Factory in Frameworks */,
 				045DBC622E80298F006A2CFE /* FirebaseStorage in Frameworks */,
 				0494C74A2E7F1F5C00EBCB60 /* Lottie in Frameworks */,
 			);
@@ -105,6 +109,8 @@
 				045DBD772E807A90006A2CFE /* MapboxMaps */,
 				046899D82E8437BE007C62AC /* SearchBar */,
 				043DB25A2E891B0400859A34 /* WrappingHStack */,
+				0482036A2E8BB734002EDCA5 /* Factory */,
+				0482036C2E8BB734002EDCA5 /* FactoryKit */,
 			);
 			productName = MemoMap;
 			productReference = 0494C5662E7EFE2000EBCB60 /* MemoMap.app */;
@@ -140,6 +146,7 @@
 				045DBD762E807A90006A2CFE /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */,
 				046899D72E8437BE007C62AC /* XCRemoteSwiftPackageReference "SearchBar" */,
 				043DB2592E891B0400859A34 /* XCRemoteSwiftPackageReference "WrappingHStack" */,
+				048203692E8BB734002EDCA5 /* XCRemoteSwiftPackageReference "Factory" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0494C5672E7EFE2000EBCB60 /* Products */;
@@ -423,6 +430,14 @@
 				minimumVersion = 2.1.4;
 			};
 		};
+		048203692E8BB734002EDCA5 /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Factory";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.3;
+			};
+		};
 		0494C7482E7F1F5C00EBCB60 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios";
@@ -468,6 +483,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 046899D72E8437BE007C62AC /* XCRemoteSwiftPackageReference "SearchBar" */;
 			productName = SearchBar;
+		};
+		0482036A2E8BB734002EDCA5 /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 048203692E8BB734002EDCA5 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
+		};
+		0482036C2E8BB734002EDCA5 /* FactoryKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 048203692E8BB734002EDCA5 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = FactoryKit;
 		};
 		0494C7492E7F1F5C00EBCB60 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;
