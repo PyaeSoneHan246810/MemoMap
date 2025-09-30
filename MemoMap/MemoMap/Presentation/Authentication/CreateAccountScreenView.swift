@@ -8,39 +8,21 @@
 import SwiftUI
 import PhotosUI
 
-enum CreateAccountSection {
-    case accountInfo
-    case profileInfo
-}
-
-struct CreateAccountInfo {
-    var emailAddress: String = ""
-    var password: String = ""
-    var confirmPassword: String = ""
-    var profilePhotoPickerItem: PhotosPickerItem? = nil
-    var profilePhotoImage: Image? = nil
-    var displayName: String = ""
-    var username: String = ""
-    var birthday: Date = .now
-    var bio: String = ""
-}
-
 struct CreateAccountScreenView: View {
     @Environment(AppSessionViewModel.self) private var appSessionViewModel
-    @State private var currentCreateAccountSection: CreateAccountSection = .accountInfo
-    @State private var createAccountInfo: CreateAccountInfo = .init()
+    @State private var createAccountViewModel: CreateAccountViewModel = .init()
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 0.0) {
                 Spacer().frame(height: 32.0)
-                switch currentCreateAccountSection {
+                switch createAccountViewModel.currentCreateAccountSection {
                 case .accountInfo:
                     accountInfoFormView
                 case .profileInfo:
                     profileInfoFormView
                 }
                 Spacer().frame(height: 32.0)
-                switch currentCreateAccountSection {
+                switch createAccountViewModel.currentCreateAccountSection {
                 case .accountInfo:
                     nextButtonView
                 case .profileInfo:
@@ -61,20 +43,20 @@ private extension CreateAccountScreenView {
             InputTextFieldView(
                 title: "Email address",
                 placeholder: "Enter your email address",
-                text: $createAccountInfo.emailAddress,
+                text: $createAccountViewModel.createAccountInfo.emailAddress,
                 axis: .horizontal,
                 lineLimit: 1
             )
             InputTextFieldView(
                 title: "Password",
                 placeholder: "Enter your password",
-                text: $createAccountInfo.password,
+                text: $createAccountViewModel.createAccountInfo.password,
                 isSecured: true
             )
             InputTextFieldView(
                 title: "Confirm Password",
                 placeholder: "Confirm password",
-                text: $createAccountInfo.confirmPassword,
+                text: $createAccountViewModel.createAccountInfo.confirmPassword,
                 isSecured: true
             )
         }
@@ -85,14 +67,14 @@ private extension CreateAccountScreenView {
             InputTextFieldView(
                 title: "Display name",
                 placeholder: "Enter your display name",
-                text: $createAccountInfo.displayName,
+                text: $createAccountViewModel.createAccountInfo.displayName,
                 axis: .horizontal,
                 lineLimit: 1
             )
             InputTextFieldView(
                 title: "Username",
                 placeholder: "Enter your user name",
-                text: $createAccountInfo.username,
+                text: $createAccountViewModel.createAccountInfo.username,
                 axis: .horizontal,
                 lineLimit: 1
             )
@@ -100,7 +82,7 @@ private extension CreateAccountScreenView {
             InputTextFieldView(
                 title: "Bio",
                 placeholder: "Tell us a bit about yourself",
-                text: $createAccountInfo.bio,
+                text: $createAccountViewModel.createAccountInfo.bio,
                 axis: .vertical,
                 lineLimit: 5,
                 height: 120.0
@@ -109,12 +91,12 @@ private extension CreateAccountScreenView {
     }
     var profilePhotoPickerView: some View {
         PhotosPicker(
-            selection: $createAccountInfo.profilePhotoPickerItem,
+            selection: $createAccountViewModel.createAccountInfo.profilePhotoPickerItem,
             matching: .images
         ) {
             ZStack(alignment: .bottomTrailing) {
-                if let profilePhoto = createAccountInfo.profilePhotoImage {
-                    profilePhoto
+                if let profilePhotoImage = createAccountViewModel.createAccountInfo.profilePhotoImage {
+                    Image(uiImage: profilePhotoImage)
                         .resizable()
                         .scaledToFill()
                         .frame(width: 140.0, height: 140.0)
@@ -134,10 +116,12 @@ private extension CreateAccountScreenView {
                     .offset(x: 12.0, y: 12.0)
             }
         }
-        .onChange(of: createAccountInfo.profilePhotoPickerItem) {
+        .onChange(of: createAccountViewModel.createAccountInfo.profilePhotoPickerItem) {
             Task {
-                if let profilePhotoImage = try? await createAccountInfo.profilePhotoPickerItem?.loadTransferable(type: Image.self) {
-                    createAccountInfo.profilePhotoImage = profilePhotoImage
+                let photoPickerItem = createAccountViewModel.createAccountInfo.profilePhotoPickerItem
+                if let profilePhotoData = try? await photoPickerItem?.loadTransferable(type: Data.self) {
+                    let profilePhotoImage = UIImage(data: profilePhotoData)
+                    createAccountViewModel.createAccountInfo.profilePhotoImage = profilePhotoImage
                 }
             }
         }
@@ -148,7 +132,7 @@ private extension CreateAccountScreenView {
                 .font(.headline)
             DatePicker(
                 "Pick your birthday",
-                selection: $createAccountInfo.birthday,
+                selection: $createAccountViewModel.createAccountInfo.birthday,
                 displayedComponents: .date
             )
             .labelsHidden()
@@ -158,7 +142,7 @@ private extension CreateAccountScreenView {
     var nextButtonView: some View {
         Button {
             withAnimation {
-                currentCreateAccountSection = .profileInfo
+                createAccountViewModel.currentCreateAccountSection = .profileInfo
             }
         } label: {
             Text("Next")
@@ -172,7 +156,7 @@ private extension CreateAccountScreenView {
         HStack(spacing: 12.0) {
             Button {
                 withAnimation {
-                    currentCreateAccountSection = .accountInfo
+                    createAccountViewModel.currentCreateAccountSection = .accountInfo
                 }
             } label: {
                 Text("Back")
@@ -182,7 +166,7 @@ private extension CreateAccountScreenView {
             .buttonBorderShape(.roundedRectangle(radius: 8.0))
             .controlSize(.large)
             Button {
-                appSessionViewModel.changeAppSession(.authenticated)
+                Task { await signUpUser() }
             } label: {
                 Text("Sign up")
                     .frame(maxWidth: .infinity)
@@ -190,6 +174,15 @@ private extension CreateAccountScreenView {
             .buttonStyle(.borderedProminent)
             .buttonBorderShape(.roundedRectangle(radius: 8.0))
             .controlSize(.large)
+        }
+    }
+}
+
+private extension CreateAccountScreenView {
+    func signUpUser() async {
+        let result = await createAccountViewModel.signUpUser()
+        if case .success = result {
+            appSessionViewModel.changeAppSession(.authenticated)
         }
     }
 }

@@ -28,6 +28,7 @@ struct InputTextFieldView: View {
                         .frame(height: height, alignment: .top)
                 }
             }
+            .textInputAutocapitalization(.never)
             .padding(.horizontal, 16.0)
             .padding(.vertical, 12.0)
             .overlay {
