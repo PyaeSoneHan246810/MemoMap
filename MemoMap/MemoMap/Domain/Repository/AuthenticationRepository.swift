@@ -12,6 +12,8 @@ protocol AuthenticationRepository {
     
     func createUser(email: String, password: String) async throws -> UserModel
     
+    func signInUser(email: String, password: String) async throws
+    
     func deleteUser() async throws
     
     func signOutUser() throws
