@@ -26,7 +26,7 @@ final class FirebaseUserProfileRepository: UserProfileRepository {
             try await getUserCollectionDocumentReference(userId: userId)
                 .setData(firestoreDocumentData, merge: false)
         } catch {
-            throw SaveUserProfileError.databaseError
+            throw SaveUserProfileError.savedFailed
         }
     }
 }
