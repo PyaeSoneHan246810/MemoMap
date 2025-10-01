@@ -9,10 +9,22 @@ import Foundation
 import FirebaseAuth
 
 final class FirebaseAuthenticationRepository: AuthenticationRepository {
+    
     func getAuthenticatedUser() -> UserModel? {
         guard let currentUser = Auth.auth().currentUser else { return nil }
         let authenticatedUser = getUserModel(from: currentUser)
         return authenticatedUser
+    }
+    
+    func reloadAuthenticatedUser() async throws {
+        guard let currentUser = Auth.auth().currentUser else {
+            throw ReloadUserError.userNotFound
+        }
+        do {
+            try await currentUser.reload()
+        } catch {
+            throw ReloadUserError.reloadFailed
+        }
     }
     
     func createUser(email: String, password: String) async throws -> UserModel {
@@ -42,10 +54,6 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
                 throw CreateUserError.unknownError
             }
         }
-    }
-    
-    private func getUserModel(from user: User) -> UserModel {
-        UserModel(uid: user.uid, email: user.email)
     }
     
     func signInUser(email: String, password: String) async throws {
@@ -93,4 +101,21 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
         }
     }
     
+    func sendEmailVerification() async throws {
+        guard let currentUser = Auth.auth().currentUser else {
+            throw SendEmailVerificationError.userNotFound
+        }
+        do {
+            try await currentUser.sendEmailVerification()
+        } catch {
+            throw SendEmailVerificationError.failedToSend
+        }
+    }
+    
+}
+
+private extension FirebaseAuthenticationRepository {
+    private func getUserModel(from user: User) -> UserModel {
+        UserModel(uid: user.uid, email: user.email, isEmailVerified: user.isEmailVerified)
+    }
 }

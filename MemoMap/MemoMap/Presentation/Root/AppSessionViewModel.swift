@@ -8,7 +8,6 @@
 import Observation
 import Factory
 
-@MainActor
 @Observable
 final class AppSessionViewModel {
     

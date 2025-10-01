@@ -5,8 +5,8 @@
 //  Created by Dylan on 30/9/25.
 //
 
-import Observation
 import SwiftUI
+import Observation
 import PhotosUI
 import Factory
 
@@ -17,23 +17,6 @@ final class CreateAccountViewModel {
     @ObservationIgnored @Injected(\.userProfileRepository) private var userProfileRepository: UserProfileRepository
     
     @ObservationIgnored @Injected(\.storageRepository) private var storageRepository: StorageRepository
-    
-    enum CreateAccountSection {
-        case accountInfo
-        case profileInfo
-    }
-    
-    struct CreateAccountInfo {
-        var emailAddress: String = ""
-        var password: String = ""
-        var confirmPassword: String = ""
-        var profilePhotoPickerItem: PhotosPickerItem? = nil
-        var profilePhotoImage: UIImage? = nil
-        var displayName: String = ""
-        var username: String = ""
-        var birthday: Date = .now
-        var bio: String = ""
-    }
     
     var createAccountInfo: CreateAccountInfo = .init()
     
@@ -79,17 +62,12 @@ final class CreateAccountViewModel {
         do {
             let user = try await createUser()
             var profilePhotoUrl: String? = nil
-            do {
-                profilePhotoUrl = try await uploadProfilePhoto(userId: user.uid)
-            } catch {
-                if let uploadProfilePhotoError = error as? UploadProfilePhotoError {
-                    print(uploadProfilePhotoError.localizedDescription)
-                }
-            }
+            profilePhotoUrl = await uploadProfilePhoto(userId: user.uid)
             try await saveUserProfile(
                 user: user,
                 profilePhotoUrl: profilePhotoUrl
             )
+            await sendEmailVerification()
             return .success(())
         } catch {
             if let createUserError = error as? CreateUserError {
@@ -119,12 +97,21 @@ final class CreateAccountViewModel {
         return user
     }
     
-    private func uploadProfilePhoto(userId: String) async throws -> String? {
+    private func uploadProfilePhoto(userId: String) async -> String? {
         guard let profilePhotoImage, let data = profilePhotoImage.jpegData(compressionQuality: 1.0) else {
             return nil
         }
-        let profilePhotoUrl = try await storageRepository.uploadProfilePhoto(data: data, userId: userId)
-        return profilePhotoUrl
+        do {
+            let profilePhotoUrl = try await storageRepository.uploadProfilePhoto(data: data, userId: userId)
+            return profilePhotoUrl
+        } catch {
+            if let uploadProfilePhotoError = error as? UploadProfilePhotoError {
+                print(uploadProfilePhotoError.localizedDescription)
+            } else {
+                print(error.localizedDescription)
+            }
+            return nil
+        }
     }
     
     private func saveUserProfile(user: UserModel, profilePhotoUrl: String?) async throws {
@@ -148,6 +135,8 @@ final class CreateAccountViewModel {
         } catch {
             if let deleteUserError = error as? DeleteUserError {
                 print(deleteUserError.localizedDescription)
+            } else {
+                print(error.localizedDescription)
             }
         }
     }
@@ -158,7 +147,40 @@ final class CreateAccountViewModel {
         } catch {
             if let signOutUserError = error as? SignOutUserError {
                 print(signOutUserError.localizedDescription)
+            } else {
+                print(error.localizedDescription)
             }
         }
+    }
+    
+    private func sendEmailVerification() async {
+        do {
+            try await authenticationRepository.sendEmailVerification()
+        } catch {
+            if let sendEmailVerificationError = error as? SendEmailVerificationError {
+                print(sendEmailVerificationError.localizedDescription)
+            } else {
+                print(error.localizedDescription)
+            }
+        }
+    }
+}
+
+extension CreateAccountViewModel {
+    enum CreateAccountSection {
+        case accountInfo
+        case profileInfo
+    }
+    
+    struct CreateAccountInfo {
+        var emailAddress: String = ""
+        var password: String = ""
+        var confirmPassword: String = ""
+        var profilePhotoPickerItem: PhotosPickerItem? = nil
+        var profilePhotoImage: UIImage? = nil
+        var displayName: String = ""
+        var username: String = ""
+        var birthday: Date = .now
+        var bio: String = ""
     }
 }

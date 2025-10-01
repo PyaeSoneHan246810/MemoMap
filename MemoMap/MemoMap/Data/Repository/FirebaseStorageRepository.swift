@@ -9,19 +9,6 @@ import Foundation
 import FirebaseStorage
 
 final class FirebaseStorageRepository: StorageRepository {
-    private let storage: Storage = Storage.storage()
-    
-    private var storageRefernce: StorageReference {
-        storage.reference()
-    }
-    
-    private var profilesStorageRefernce: StorageReference {
-        storageRefernce.child("profiles")
-    }
-    
-    private func getUserProfilePhotoStorageRefernce(userId: String) -> StorageReference {
-        profilesStorageRefernce.child(userId)
-    }
     
     func uploadProfilePhoto(data: Data, userId: String) async throws -> String {
         do {
@@ -36,5 +23,24 @@ final class FirebaseStorageRepository: StorageRepository {
         } catch {
             throw UploadProfilePhotoError.uploadFailed
         }
+    }
+    
+}
+
+private extension FirebaseStorageRepository {
+    var storage: Storage {
+        Storage.storage()
+    }
+    
+    var storageRefernce: StorageReference {
+        storage.reference()
+    }
+    
+    var profilesStorageRefernce: StorageReference {
+        storageRefernce.child("profiles")
+    }
+    
+    func getUserProfilePhotoStorageRefernce(userId: String) -> StorageReference {
+        profilesStorageRefernce.child(userId)
     }
 }

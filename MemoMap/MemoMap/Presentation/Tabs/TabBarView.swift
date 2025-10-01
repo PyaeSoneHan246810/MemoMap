@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TabBarView: View {
-    @State private var isVerifyAccountSheetPresented: Bool = true
+    @State private var viewModel: TabBarViewModel = .init()
     var body: some View {
         TabView {
             Tab("Memories", systemImage: "map") {
@@ -21,7 +21,10 @@ struct TabBarView: View {
                 profileNavigationStackView
             }
         }
-        .sheet(isPresented: $isVerifyAccountSheetPresented) {
+        .task {
+            await viewModel.checkEmailVerificationStatus()
+        }
+        .sheet(isPresented: $viewModel.isVerifyAccountSheetPresented) {
             verifyAccountSheetView
                 .interactiveDismissDisabled()
         }
@@ -46,7 +49,7 @@ private extension TabBarView {
     }
     var verifyAccountSheetView: some View {
         VerifyAccountView(
-            isPresented: $isVerifyAccountSheetPresented
+            isPresented: $viewModel.isVerifyAccountSheetPresented
         )
     }
 }
