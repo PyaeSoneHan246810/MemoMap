@@ -38,6 +38,8 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
                 default:
                     throw CreateUserError.unknownError
                 }
+            } else {
+                throw CreateUserError.unknownError
             }
         }
     }
@@ -66,17 +68,29 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
                 default:
                     throw SignInUserError.unknownError
                 }
+            } else {
+                throw SignInUserError.unknownError
             }
         }
     }
     
     func deleteUser() async throws {
-        guard let currentUser = Auth.auth().currentUser else { return }
-        try await currentUser.delete()
+        guard let currentUser = Auth.auth().currentUser else {
+            throw DeleteUserError.userNotFound
+        }
+        do {
+            try await currentUser.delete()
+        } catch {
+            throw DeleteUserError.deleteFailed
+        }
     }
     
     func signOutUser() throws {
-        try Auth.auth().signOut()
+        do {
+            try Auth.auth().signOut()
+        } catch {
+            throw SignOutUserError.signOutFailed
+        }
     }
     
 }

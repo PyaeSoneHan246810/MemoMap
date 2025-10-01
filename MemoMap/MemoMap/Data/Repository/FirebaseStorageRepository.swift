@@ -34,7 +34,7 @@ final class FirebaseStorageRepository: StorageRepository {
             let downloadUrlString = downloadUrl.absoluteString
             return downloadUrlString
         } catch {
-            throw UploadProfilePhotoError.storageError
+            throw UploadProfilePhotoError.uploadFailed
         }
     }
 }

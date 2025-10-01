@@ -8,5 +8,6 @@
 import Foundation
 
 enum SaveUserProfileError: Error {
-    case databaseError
+    case savedFailed
+    case unknownError
 }

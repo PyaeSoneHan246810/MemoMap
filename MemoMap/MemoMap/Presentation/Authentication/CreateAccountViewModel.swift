@@ -93,16 +93,19 @@ final class CreateAccountViewModel {
             return .success(())
         } catch {
             if let createUserError = error as? CreateUserError {
+                print(createUserError.localizedDescription)
                 self.createUserError = createUserError
                 return .failure(createUserError)
             } else if let saveUserProfileError = error as? SaveUserProfileError {
+                print(saveUserProfileError.localizedDescription)
                 self.saveUserProfileError = saveUserProfileError
-                if case .databaseError = saveUserProfileError {
+                if case .savedFailed = saveUserProfileError {
                     await deleteUser()
                     signOutUser()
                 }
                 return .failure(saveUserProfileError)
             } else {
+                print(error.localizedDescription)
                 return .failure(error)
             }
         }
@@ -143,7 +146,9 @@ final class CreateAccountViewModel {
         do {
             try await authenticationRepository.deleteUser()
         } catch {
-            print(error.localizedDescription)
+            if let deleteUserError = error as? DeleteUserError {
+                print(deleteUserError.localizedDescription)
+            }
         }
     }
     
@@ -151,7 +156,9 @@ final class CreateAccountViewModel {
         do {
             try authenticationRepository.signOutUser()
         } catch {
-            print(error.localizedDescription)
+            if let signOutUserError = error as? SignOutUserError {
+                print(signOutUserError.localizedDescription)
+            }
         }
     }
 }

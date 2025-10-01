@@ -35,6 +35,7 @@ final class LoginViewModel {
             return .success(())
         } catch {
             if let signInUserError = error as? SignInUserError {
+                print(signInUserError.localizedDescription)
                 self.signInUserError = signInUserError
                 return .failure(signInUserError)
             } else {
