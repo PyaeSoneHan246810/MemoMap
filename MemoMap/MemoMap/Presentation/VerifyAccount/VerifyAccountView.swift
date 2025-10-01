@@ -9,6 +9,7 @@ import SwiftUI
 
 struct VerifyAccountView: View {
     @Binding var isPresented: Bool
+    @State private var viewModel: VerifyAccountViewModel = .init()
     var body: some View {
         VStack(spacing: 0.0) {
             Spacer().frame(height: 20.0)
@@ -24,7 +25,7 @@ struct VerifyAccountView: View {
     }
 }
 
-extension VerifyAccountView {
+private extension VerifyAccountView {
     var logoView: some View {
         Image(.appLogo)
             .resizable()
@@ -53,7 +54,7 @@ extension VerifyAccountView {
     var buttonsView: some View {
         VStack(spacing: 12.0) {
             Button {
-                isPresented = false
+                Task { await checkEmailVerificationStatus() }
             } label: {
                 Text("I've verified")
                     .frame(maxWidth: .infinity)
@@ -62,7 +63,7 @@ extension VerifyAccountView {
             .buttonBorderShape(.roundedRectangle(radius: 8.0))
             .controlSize(.large)
             Button {
-
+                Task { await viewModel.sendEmailVerification() }
             } label: {
                 Text("Resend verification link")
                     .frame(maxWidth: .infinity)
@@ -74,8 +75,17 @@ extension VerifyAccountView {
     }
 }
 
+private extension VerifyAccountView {
+    func checkEmailVerificationStatus() async {
+        let emailVerificationStatus = await viewModel.checkEmailVerificationStatus()
+        if case .verified = emailVerificationStatus {
+            isPresented = false
+        }
+    }
+}
+
 #Preview {
     VerifyAccountView(
-        isPresented: .constant(false)
+        isPresented: .constant(true)
     )
 }

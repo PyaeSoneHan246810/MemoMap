@@ -9,6 +9,7 @@ import Foundation
 import Observation
 import Factory
 
+@Observable
 final class LoginViewModel {
     @ObservationIgnored @Injected(\.authenticationRepository) private var authenticationRepository: AuthenticationRepository
     
@@ -39,6 +40,7 @@ final class LoginViewModel {
                 self.signInUserError = signInUserError
                 return .failure(signInUserError)
             } else {
+                print(error.localizedDescription)
                 return .failure(error)
             }
         }

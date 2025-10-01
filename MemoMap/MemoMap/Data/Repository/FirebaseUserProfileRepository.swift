@@ -9,15 +9,6 @@ import Foundation
 import FirebaseFirestore
 
 final class FirebaseUserProfileRepository: UserProfileRepository {
-    private let firestoreDatabase: Firestore = Firestore.firestore()
-    
-    private var userCollectionReference: CollectionReference {
-        firestoreDatabase.collection("users")
-    }
-    
-    private func getUserCollectionDocumentReference(userId: String) -> DocumentReference {
-        userCollectionReference.document(userId)
-    }
     
     func saveUserProfile(userProfile: UserProfileModel) async throws {
         let userId = userProfile.id
@@ -28,5 +19,20 @@ final class FirebaseUserProfileRepository: UserProfileRepository {
         } catch {
             throw SaveUserProfileError.savedFailed
         }
+    }
+    
+}
+
+private extension FirebaseUserProfileRepository {
+    var firestoreDatabase: Firestore {
+        Firestore.firestore()
+    }
+    
+    var userCollectionReference: CollectionReference {
+        firestoreDatabase.collection("users")
+    }
+    
+    func getUserCollectionDocumentReference(userId: String) -> DocumentReference {
+        userCollectionReference.document(userId)
     }
 }
