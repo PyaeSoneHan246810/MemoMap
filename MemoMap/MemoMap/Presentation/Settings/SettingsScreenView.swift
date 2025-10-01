@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SettingsScreenView: View {
+    @Environment(AppSessionViewModel.self) private var appSessionViewModel: AppSessionViewModel
+    @State private var settingsViewModel: SettingsViewModel = .init()
     var body: some View {
         List {
             itemLinkView(
@@ -70,7 +72,7 @@ private extension SettingsScreenView {
     }
     var logOutButtonView: some View {
         Button("Log out", systemImage: "rectangle.portrait.and.arrow.right") {
-            
+            logOutUser()
         }
         .buttonStyle(.bordered)
         .tint(.red)
@@ -78,8 +80,19 @@ private extension SettingsScreenView {
     }
 }
 
+private extension SettingsScreenView {
+    func logOutUser() {
+        let result = settingsViewModel.logoutUser()
+        if case .success = result {
+            appSessionViewModel.changeAppSession(.unauthenticated)
+        }
+    }
+}
+
 #Preview {
+    @Previewable @State var appSessionViewModel: AppSessionViewModel = .init()
     NavigationStack {
         SettingsScreenView()
     }
+    .environment(appSessionViewModel)
 }
