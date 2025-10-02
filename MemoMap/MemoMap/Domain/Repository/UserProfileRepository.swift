@@ -8,5 +8,6 @@
 import Foundation
 
 protocol UserProfileRepository {
+    func isUsernameAvaliable(username: String) async throws -> Bool
     func saveUserProfile(userProfile: UserProfileModel) async throws
 }
