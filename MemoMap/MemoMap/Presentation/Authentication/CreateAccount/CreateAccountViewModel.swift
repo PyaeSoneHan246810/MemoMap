@@ -22,6 +22,8 @@ final class CreateAccountViewModel {
     
     var currentCreateAccountSection: CreateAccountSection = .accountInfo
     
+    private(set) var usernameError: UsernameError? = nil
+    
     private(set) var createUserError: CreateUserError? = nil
 
     private(set) var saveUserProfileError: SaveUserProfileError? = nil
@@ -60,9 +62,14 @@ final class CreateAccountViewModel {
     
     func signUpUser() async -> Result<Void, Error> {
         do {
+            let isUsernameAvaliable = try await userProfileRepository.isUsernameAvaliable(
+                username: "@\(trimmedUsername)"
+            )
+            guard isUsernameAvaliable else {
+                throw UsernameError.taken
+            }
             let user = try await createUser()
-            var profilePhotoUrl: String? = nil
-            profilePhotoUrl = await uploadProfilePhoto(userId: user.uid)
+            let profilePhotoUrl = await uploadProfilePhoto(userId: user.uid)
             try await saveUserProfile(
                 user: user,
                 profilePhotoUrl: profilePhotoUrl
@@ -70,7 +77,11 @@ final class CreateAccountViewModel {
             await sendEmailVerification()
             return .success(())
         } catch {
-            if let createUserError = error as? CreateUserError {
+            if let usernameError = error as? UsernameError {
+                print(usernameError.localizedDescription)
+                self.usernameError = usernameError
+                return .failure(usernameError)
+            } else if let createUserError = error as? CreateUserError {
                 print(createUserError.localizedDescription)
                 self.createUserError = createUserError
                 return .failure(createUserError)
@@ -183,4 +194,5 @@ extension CreateAccountViewModel {
         var birthday: Date = .now
         var bio: String = ""
     }
+
 }

@@ -21,6 +21,18 @@ final class FirebaseUserProfileRepository: UserProfileRepository {
         }
     }
     
+    func isUsernameAvaliable(username: String) async throws -> Bool {
+        do {
+            let querySnapshot = try await userCollectionReference
+                .whereField(UserProfileModel.CodingKeys.username.rawValue, isEqualTo: username)
+                .getDocuments()
+            let isUsernameAvaliable = querySnapshot.documents.isEmpty
+            return isUsernameAvaliable
+        } catch {
+            throw UsernameError.failedToCheck
+        }
+    }
+    
 }
 
 private extension FirebaseUserProfileRepository {
