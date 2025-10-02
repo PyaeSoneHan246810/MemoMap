@@ -12,6 +12,7 @@ enum CreateUserError: Error {
     case weakPassword
     case emailAlreadyInUse
     case networkError
+    case createFailed
     case unknownError
 }
 

@@ -9,8 +9,7 @@ import SwiftUI
 
 struct ForgotPasswordScreenView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var emailAddress: String = ""
-    @State private var isSuccessSheetPresented: Bool = false
+    @State private var viewModel: ForgotPasswordViewModel = .init()
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 0.0) {
@@ -25,7 +24,7 @@ struct ForgotPasswordScreenView: View {
         .scrollIndicators(.hidden)
         .navigationTitle("Forgot password?")
         .navigationBarTitleDisplayMode(.large)
-        .sheet(isPresented: $isSuccessSheetPresented) {
+        .sheet(isPresented: $viewModel.isSuccessSheetPresented) {
             successSheetView
                 .interactiveDismissDisabled()
         }
@@ -43,12 +42,12 @@ private extension ForgotPasswordScreenView {
         InputTextFieldView(
             title: "Email address",
             placeholder: "Enter your email address",
-            text: $emailAddress
+            text: $viewModel.emailAddress
         )
     }
     var sendEmailButtonView: some View {
         Button {
-            isSuccessSheetPresented = true
+            Task { await viewModel.sendPasswordReset() }
         } label: {
             Text("Send email")
                 .frame(maxWidth: .infinity)
@@ -98,7 +97,7 @@ private extension ForgotPasswordScreenView {
             .buttonBorderShape(.roundedRectangle(radius: 8.0))
             .controlSize(.large)
             Button {
-                isSuccessSheetPresented = false
+                viewModel.isSuccessSheetPresented = false
             } label: {
                 Text("Retry")
                     .frame(maxWidth: .infinity)

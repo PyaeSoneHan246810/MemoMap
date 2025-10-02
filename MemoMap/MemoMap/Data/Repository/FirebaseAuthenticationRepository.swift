@@ -23,7 +23,19 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
         do {
             try await currentUser.reload()
         } catch {
-            throw ReloadUserError.reloadFailed
+            if let nsError = error as NSError? {
+                let errorCode = AuthErrorCode(rawValue: nsError.code)
+                switch errorCode {
+                case .userNotFound:
+                    throw ReloadUserError.userNotFound
+                case .networkError:
+                    throw ReloadUserError.networkError
+                default:
+                    throw ReloadUserError.reloadFailed
+                }
+            } else {
+                throw ReloadUserError.unknownError
+            }
         }
     }
     
@@ -48,7 +60,7 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
                 case .networkError:
                     throw CreateUserError.networkError
                 default:
-                    throw CreateUserError.unknownError
+                    throw CreateUserError.createFailed
                 }
             } else {
                 throw CreateUserError.unknownError
@@ -74,7 +86,7 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
                 case .networkError:
                     throw SignInUserError.networkError
                 default:
-                    throw SignInUserError.unknownError
+                    throw SignInUserError.signInFailed
                 }
             } else {
                 throw SignInUserError.unknownError
@@ -89,7 +101,17 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
         do {
             try await currentUser.delete()
         } catch {
-            throw DeleteUserError.deleteFailed
+            if let nsError = error as NSError? {
+                let errorCode = AuthErrorCode(rawValue: nsError.code)
+                switch errorCode {
+                case .requiresRecentLogin:
+                    throw DeleteUserError.requiresRecentLogin
+                default:
+                    throw DeleteUserError.deleteFailed
+                }
+            } else {
+                throw DeleteUserError.unknownError
+            }
         }
     }
     
@@ -97,7 +119,17 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
         do {
             try Auth.auth().signOut()
         } catch {
-            throw SignOutUserError.signOutFailed
+            if let nsError = error as NSError? {
+                let errorCode = AuthErrorCode(rawValue: nsError.code)
+                switch errorCode {
+                case .keychainError:
+                    throw SignOutUserError.keychainError
+                default:
+                    throw SignOutUserError.signOutFailed
+                }
+            } else {
+                throw SignOutUserError.unknownError
+            }
         }
     }
     
@@ -108,7 +140,39 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
         do {
             try await currentUser.sendEmailVerification()
         } catch {
-            throw SendEmailVerificationError.failedToSend
+            if let nsError = error as NSError? {
+                let errorCode = AuthErrorCode(rawValue: nsError.code)
+                switch errorCode {
+                case .userNotFound:
+                    throw SendEmailVerificationError.userNotFound
+                case .networkError:
+                    throw SendEmailVerificationError.networkError
+                default:
+                    throw SendEmailVerificationError.sendFailed
+                }
+            } else {
+                throw SendEmailVerificationError.unknownError
+            }
+        }
+    }
+    
+    func sendPasswordReset(email: String) async throws {
+        do {
+            try await Auth.auth().sendPasswordReset(withEmail: email)
+        } catch {
+            if let nsError = error as NSError? {
+                let errorCode = AuthErrorCode(rawValue: nsError.code)
+                switch errorCode {
+                case .invalidEmail:
+                    throw SendPasswordResetError.invalidEmail
+                case .networkError:
+                    throw SendPasswordResetError.networkError
+                default:
+                    throw SendPasswordResetError.sendFailed
+                }
+            } else {
+                throw SendPasswordResetError.unknownError
+            }
         }
     }
     
