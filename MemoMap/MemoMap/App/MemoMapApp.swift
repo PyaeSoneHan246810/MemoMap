@@ -19,9 +19,23 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct MemoMapApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @AppStorage("color_mode") private var selectedColorMode: ColorMode = .system
+    @AppStorage("font_size") private var selectedFontSize: FontSize = .defaultFontSize
+    var selectedColorScheme: ColorScheme? {
+        switch selectedColorMode {
+        case .system:
+            nil
+        case .light:
+            ColorScheme.light
+        case .dark:
+            ColorScheme.dark
+        }
+    }
     var body: some Scene {
         WindowGroup {
             StartingView()
+                .preferredColorScheme(selectedColorScheme)
+                .environment(\.dynamicTypeSize, selectedFontSize.dynamicTypeSize)
         }
     }
 }
