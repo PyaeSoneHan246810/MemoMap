@@ -9,6 +9,7 @@ import Foundation
 
 enum SendEmailVerificationError: Error {
     case userNotFound
-    case failedToSend
+    case networkError
+    case sendFailed
     case unknownError
 }

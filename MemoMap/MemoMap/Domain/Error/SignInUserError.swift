@@ -13,5 +13,6 @@ enum SignInUserError: Error {
     case wrongPassword
     case userDisabled
     case networkError
+    case signInFailed
     case unknownError
 }

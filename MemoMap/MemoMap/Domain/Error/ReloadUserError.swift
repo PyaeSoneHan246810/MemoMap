@@ -9,6 +9,7 @@ import Foundation
 
 enum ReloadUserError: Error {
     case userNotFound
+    case networkError
     case reloadFailed
     case unknownError
 }

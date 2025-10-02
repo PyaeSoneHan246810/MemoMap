@@ -77,7 +77,7 @@ final class CreateAccountViewModel {
             } else if let saveUserProfileError = error as? SaveUserProfileError {
                 print(saveUserProfileError.localizedDescription)
                 self.saveUserProfileError = saveUserProfileError
-                if case .savedFailed = saveUserProfileError {
+                if case .saveFailed = saveUserProfileError {
                     await deleteUser()
                     signOutUser()
                 }

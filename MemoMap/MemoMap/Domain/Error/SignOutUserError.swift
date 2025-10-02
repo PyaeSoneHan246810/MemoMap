@@ -7,8 +7,8 @@
 
 import Foundation
 
-
 enum SignOutUserError: Error {
+    case keychainError
     case signOutFailed
     case unknownError
 }

@@ -21,4 +21,6 @@ protocol AuthenticationRepository {
     func signOutUser() throws
     
     func sendEmailVerification() async throws
+    
+    func sendPasswordReset(email: String) async throws
 }

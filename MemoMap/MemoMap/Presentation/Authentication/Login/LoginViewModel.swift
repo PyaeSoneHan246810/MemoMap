@@ -19,11 +19,11 @@ final class LoginViewModel {
     
     private(set) var signInUserError: SignInUserError? = nil
     
-    var trimmedEmailAddress: String {
+    private var trimmedEmailAddress: String {
         emailAddress.trimmed()
     }
     
-    var trimmedPassword: String {
+    private var trimmedPassword: String {
         password.trimmed()
     }
     

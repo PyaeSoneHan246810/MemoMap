@@ -9,6 +9,7 @@ import Foundation
 
 enum DeleteUserError: Error {
     case userNotFound
+    case requiresRecentLogin
     case deleteFailed
     case unknownError
 }
