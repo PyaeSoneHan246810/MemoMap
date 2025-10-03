@@ -67,16 +67,13 @@ private extension UserProfileScreenView {
         Button("Following") {
             
         }
-        .buttonStyle(.bordered)
-        .foregroundStyle(.primary)
-        .controlSize(.small)
+        .secondaryFilledSmallButtonStyle()
     }
     var followButtonView: some View {
         Button("Follow", systemImage: "person.badge.plus") {
             
         }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.small)
+        .primaryFilledSmallButtonStyle()
     }
     var profileInfoView: some View {
         ProfileInfoView()

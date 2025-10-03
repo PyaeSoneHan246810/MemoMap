@@ -63,11 +63,8 @@ private extension LogInScreenView {
             Task { await signInUser() }
         } label: {
             Text("Sign in")
-                .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.roundedRectangle(radius: 8.0))
-        .controlSize(.large)
+        .primaryFilledLargeButtonStyle()
     }
 }
 

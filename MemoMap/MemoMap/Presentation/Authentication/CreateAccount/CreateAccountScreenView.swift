@@ -146,11 +146,8 @@ private extension CreateAccountScreenView {
             }
         } label: {
             Text("Next")
-                .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.roundedRectangle(radius: 8.0))
-        .controlSize(.large)
+        .primaryFilledLargeButtonStyle()
     }
     var buttonsRowView: some View {
         HStack(spacing: 12.0) {
@@ -160,20 +157,14 @@ private extension CreateAccountScreenView {
                 }
             } label: {
                 Text("Back")
-                    .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.bordered)
-            .buttonBorderShape(.roundedRectangle(radius: 8.0))
-            .controlSize(.large)
+            .secondaryFilledLargeButtonStyle()
             Button {
                 Task { await signUpUser() }
             } label: {
                 Text("Sign up")
-                    .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.roundedRectangle(radius: 8.0))
-            .controlSize(.large)
+            .primaryFilledLargeButtonStyle()
         }
     }
 }

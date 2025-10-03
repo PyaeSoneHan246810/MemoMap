@@ -16,5 +16,7 @@ struct AuthNavigationStackView: View {
 }
 
 #Preview {
+    @Previewable @State var appSessionViewModel: AppSessionViewModel = .init()
     AuthNavigationStackView()
+        .environment(appSessionViewModel)
 }

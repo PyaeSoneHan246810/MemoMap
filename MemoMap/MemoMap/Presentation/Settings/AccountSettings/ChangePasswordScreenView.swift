@@ -49,11 +49,8 @@ private extension ChangePasswordScreenView {
             Task { await updatePassword() }
         } label: {
             Text("Update")
-                .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.roundedRectangle(radius: 8.0))
-        .controlSize(.large)
+        .primaryFilledLargeButtonStyle()
     }
 }
 

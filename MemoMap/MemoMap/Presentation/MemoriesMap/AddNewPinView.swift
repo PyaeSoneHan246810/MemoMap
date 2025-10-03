@@ -138,11 +138,8 @@ private extension AddNewPinView {
             
         } label: {
             Text("Save")
-                .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.roundedRectangle(radius: 8.0))
-        .controlSize(.large)
+        .primaryFilledLargeButtonStyle()
     }
 }
 

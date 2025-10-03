@@ -146,11 +146,18 @@ private extension MemoryPostView {
                 .font(.subheadline)
             HStack(spacing: 4.0) {
                 ForEach(memoryPostInfo.tags, id: \.self) { tag in
-                    TagView(text: tag)
+                    tagView(text: tag)
                 }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    func tagView(text: String) -> some View {
+        Text(text)
+            .font(.footnote)
+            .padding(.horizontal, 10.0)
+            .padding(.vertical, 4.0)
+            .background(Color(uiColor: .secondarySystemBackground), in: .capsule)
     }
     var mediaView: some View {
         ScrollView(.horizontal) {
@@ -193,9 +200,7 @@ private extension MemoryPostView {
             Button("View on map", systemImage: "map") {
                 currentSheetType = .viewOnMap
             }
-            .buttonStyle(.bordered)
-            .foregroundStyle(.primary)
-            .controlSize(.small)
+            .secondaryFilledSmallButtonStyle()
         }
     }
     var userReactionsView: some View {

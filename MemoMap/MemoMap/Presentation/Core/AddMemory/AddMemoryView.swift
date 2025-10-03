@@ -104,7 +104,7 @@ private extension AddMemoryView {
                 if memoryMedia.isEmpty {
                     memoryMediaPlaceholderView
                 }
-                addMediaPickerLabelView
+                labelView(title: "Add media", systemImage: "plus")
             }
         }
         .onChange(of: memoryPhotoPickerItem) {
@@ -126,9 +126,6 @@ private extension AddMemoryView {
             .scaledToFit()
             .frame(width: 120.0, height: 120.0)
             .foregroundStyle(Color(uiColor: .secondarySystemBackground))
-    }
-    var addMediaPickerLabelView: some View {
-        labelView(title: "Add media", systemImage: "plus")
     }
     var textFieldsView: some View {
         VStack(alignment: .leading, spacing: 12.0) {
@@ -222,41 +219,6 @@ private extension AddMemoryView {
             }
         }
         .buttonStyle(.plain)
-    }
-}
-
-struct MemoryTagsSelectionView: View {
-    var tags: [String]
-    @Binding var selectedTags: [String]
-    var body: some View {
-        ScrollView(.vertical) {
-            WrappingHStack(alignment: .leading, horizontalSpacing: 8.0, verticalSpacing: 12.0) {
-                ForEach(tags, id: \.self) { tag in
-                    let isTagSelected = selectedTags.contains(tag)
-                    MemoryTagView(tag: tag, isSelected: isTagSelected)
-                        .onTapGesture {
-                            toggleSelection(tag: tag, isSelected: isTagSelected)
-                        }
-                }
-            }
-        }
-        .scrollIndicators(.hidden)
-        .contentMargins(16.0)
-        .navigationTitle("Add tags")
-    }
-}
-
-private extension MemoryTagsSelectionView {
-    func toggleSelection(tag: String, isSelected: Bool) {
-        withAnimation {
-            if isSelected {
-                selectedTags.removeAll {
-                    $0 == tag
-                }
-            } else {
-                selectedTags.append(tag)
-            }
-        }
     }
 }
 

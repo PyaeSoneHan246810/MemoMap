@@ -50,11 +50,8 @@ private extension ForgotPasswordScreenView {
             Task { await viewModel.sendPasswordReset() }
         } label: {
             Text("Send email")
-                .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.roundedRectangle(radius: 8.0))
-        .controlSize(.large)
+        .primaryFilledLargeButtonStyle()
     }
     var successSheetView: some View {
         VStack {
@@ -93,18 +90,14 @@ private extension ForgotPasswordScreenView {
                 Text("Back to login")
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.roundedRectangle(radius: 8.0))
-            .controlSize(.large)
+            .primaryFilledLargeButtonStyle()
             Button {
                 viewModel.isSuccessSheetPresented = false
             } label: {
                 Text("Retry")
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.borderless)
-            .buttonBorderShape(.roundedRectangle(radius: 8.0))
-            .controlSize(.large)
+            .textLargeButtonStyle()
         }
     }
 }

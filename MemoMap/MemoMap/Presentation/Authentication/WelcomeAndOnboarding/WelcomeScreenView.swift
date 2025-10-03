@@ -53,20 +53,14 @@ private extension WelcomeScreenView {
                 LogInScreenView()
             } label: {
                 Text("Log in")
-                    .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.roundedRectangle(radius: 8.0))
-            .controlSize(.large)
+            .primaryFilledLargeButtonStyle()
             NavigationLink {
                 CreateAccountScreenView()
             } label: {
                 Text("Create account")
-                    .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.bordered)
-            .buttonBorderShape(.roundedRectangle(radius: 8.0))
-            .controlSize(.large)
+            .secondaryFilledLargeButtonStyle()
         }
     }
     var onboardingSheetView: some View {
@@ -78,7 +72,9 @@ private extension WelcomeScreenView {
 }
 
 #Preview {
+    @Previewable @State var appSessionViewModel: AppSessionViewModel = .init()
     NavigationStack {
         WelcomeScreenView()
     }
+    .environment(appSessionViewModel)
 }
