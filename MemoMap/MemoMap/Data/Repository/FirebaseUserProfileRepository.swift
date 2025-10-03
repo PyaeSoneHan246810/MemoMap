@@ -21,15 +21,28 @@ final class FirebaseUserProfileRepository: UserProfileRepository {
         }
     }
     
-    func isUsernameAvaliable(username: String) async throws -> Bool {
+    func checkUsernameAvailability(username: String) async throws {
         do {
             let querySnapshot = try await userCollectionReference
                 .whereField(UserProfileModel.CodingKeys.username.rawValue, isEqualTo: username)
                 .getDocuments()
             let isUsernameAvaliable = querySnapshot.documents.isEmpty
-            return isUsernameAvaliable
+            guard isUsernameAvaliable else {
+                throw UsernameAvailabilityError.taken
+            }
         } catch {
-            throw UsernameError.failedToCheck
+            throw UsernameAvailabilityError.failedToCheck
+        }
+    }
+    
+    func deleteUserProfile(user: UserModel?) async throws {
+        guard let userId = user?.uid else {
+            throw DeleteUserProfileError.userNotFound
+        }
+        do {
+            try await getUserCollectionDocumentReference(userId: userId).delete()
+        } catch {
+            throw DeleteUserProfileError.deleteFailed
         }
     }
     

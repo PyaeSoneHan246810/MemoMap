@@ -7,8 +7,8 @@
 
 import Foundation
 
-enum UsernameError: Error {
+enum UsernameAvailabilityError: Error {
     case taken
     case failedToCheck
-    case unknown
+    case unknownError
 }

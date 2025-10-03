@@ -9,10 +9,23 @@ import SwiftUI
 
 struct AccountSettingsScreenView: View {
     var body: some View {
-        Text("Account Settings")
+        List {
+            ListItemNavigationLinkView(systemName: "lock", text: "Change password") {
+                ChangePasswordScreenView()
+            }
+            ListItemNavigationLinkView(systemName: "trash", text: "Delete account") {
+                DeleteAccountScreenView()
+            }
+        }
+        .navigationTitle("Account")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
 #Preview {
-    AccountSettingsScreenView()
+    @Previewable @State var appSessionViewModel: AppSessionViewModel = .init()
+    NavigationStack {
+        AccountSettingsScreenView()
+    }
+    .environment(appSessionViewModel)
 }

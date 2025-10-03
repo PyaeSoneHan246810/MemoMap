@@ -176,6 +176,66 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
         }
     }
     
+    func reauthenticateUser(currentPassword: String) async throws {
+        guard let currentUser = Auth.auth().currentUser else {
+            throw ReauthenticateUserError.userNotFound
+        }
+        guard let currentUserEmail = currentUser.email else {
+            throw ReauthenticateUserError.userEmailNotFound
+        }
+        let authCredential = EmailAuthProvider.credential(withEmail: currentUserEmail, password: currentPassword)
+        do {
+            try await currentUser.reauthenticate(with: authCredential)
+        } catch {
+            if let nsError = error as NSError? {
+                let errorCode = AuthErrorCode(rawValue: nsError.code)
+                switch errorCode {
+                case .invalidCredential:
+                    throw ReauthenticateUserError.invalidCredential
+                case .invalidEmail:
+                    throw ReauthenticateUserError.invalidEmail
+                case .wrongPassword:
+                    throw ReauthenticateUserError.wrongPassword
+                case .userMismatch:
+                    throw ReauthenticateUserError.userMismatch
+                case .userDisabled:
+                    throw ReauthenticateUserError.userDisabled
+                case .networkError:
+                    throw ReauthenticateUserError.networkError
+                default:
+                    throw ReauthenticateUserError.reauthenticationFailed
+                }
+            } else {
+                throw ReauthenticateUserError.unknownError
+            }
+        }
+    }
+    
+    func updatePassword(newPassword: String) async throws {
+        guard let currentUser = Auth.auth().currentUser else {
+            throw UpdatePasswordError.userNotFound
+        }
+        do {
+            try await currentUser.updatePassword(to: newPassword)
+        } catch {
+            if let nsError = error as NSError? {
+                let errorCode = AuthErrorCode(rawValue: nsError.code)
+                switch errorCode {
+                case .operationNotAllowed:
+                    throw UpdatePasswordError.operationNotAllowed
+                case .requiresRecentLogin:
+                    throw UpdatePasswordError.requiresRecentLogin
+                case .weakPassword:
+                    throw UpdatePasswordError.weakPassword
+                case .networkError:
+                    throw UpdatePasswordError.networkError
+                default:
+                    throw UpdatePasswordError.updateFailed
+                }
+            }
+        }
+    }
+    
 }
 
 private extension FirebaseAuthenticationRepository {
