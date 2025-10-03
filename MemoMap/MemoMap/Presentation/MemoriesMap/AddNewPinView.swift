@@ -119,15 +119,15 @@ private extension AddNewPinView {
     @ViewBuilder
     var locationInfoTextFieldsView: some View {
         InputTextFieldView(
-            title: "Location name",
-            placeholder: "Enter name of a location",
+            localizedTitle: "Location name",
+            localizedPlaceholder: "Enter name of a location",
             text: $locationName,
             axis: .horizontal,
             lineLimit: 1
         )
         InputTextFieldView(
-            title: "Location description",
-            placeholder: "Enter description for a location",
+            localizedTitle: "Location description",
+            localizedPlaceholder: "Enter description for a location",
             text: $locationDescription,
             axis: .vertical,
             lineLimit: 4

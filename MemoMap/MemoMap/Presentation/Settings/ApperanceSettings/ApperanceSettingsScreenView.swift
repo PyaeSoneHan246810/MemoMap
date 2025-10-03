@@ -7,37 +7,9 @@
 
 import SwiftUI
 
-enum ColorMode: String, Identifiable, CaseIterable {
-    case system = "System"
-    case light = "Light"
-    case dark = "Dark"
-    var id: String {
-        rawValue
-    }
-}
-
-enum FontSize: String, Identifiable, CaseIterable {
-    case smallerFontSize = "Smaller"
-    case defaultFontSize = "Default"
-    case largerFontSize = "Larger"
-    var id: String {
-        rawValue
-    }
-    var dynamicTypeSize: DynamicTypeSize {
-        switch self {
-        case .smallerFontSize:
-            .medium
-        case .defaultFontSize:
-            .large
-        case .largerFontSize:
-            .xLarge
-        }
-    }
-}
-
 struct ApperanceSettingsScreenView: View {
-    @AppStorage("color_mode") private var selectedColorMode: ColorMode = .system
-    @AppStorage("font_size") private var selectedFontSize: FontSize = .defaultFontSize
+    @AppStorage(AppStorageKeys.colorMode) private var selectedColorMode: ColorMode = .system
+    @AppStorage(AppStorageKeys.fontSize) private var selectedFontSize: FontSize = .defaultFontSize
     var body: some View {
         List {
             colorModePickerView

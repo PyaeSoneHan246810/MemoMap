@@ -25,7 +25,7 @@ struct DeleteAccountScreenView: View {
             }
         }
         .padding(16.0)
-        .navigationTitle("Delete Account")
+        .navigationTitle("Delete account")
         .navigationBarTitleDisplayMode(.inline)
     }
 }

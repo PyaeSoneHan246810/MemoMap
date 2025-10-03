@@ -26,20 +26,20 @@ private extension ChangePasswordScreenView {
     @ViewBuilder
     var passwordTextFieldsView: some View {
         InputTextFieldView(
-            title: "Current password",
-            placeholder: "Enter your current password",
+            localizedTitle: "Current password",
+            localizedPlaceholder: "Enter your current password",
             text: $changePasswordViewModel.currentPassword,
             isSecured: true
         )
         InputTextFieldView(
-            title: "New password",
-            placeholder: "Enter your new password",
+            localizedTitle: "New password",
+            localizedPlaceholder: "Enter your new password",
             text: $changePasswordViewModel.newPassword,
             isSecured: true
         )
         InputTextFieldView(
-            title: "Confirm new password",
-            placeholder: "Confirm your new password",
+            localizedTitle: "Confirm new password",
+            localizedPlaceholder: "Confirm your new password",
             text: $changePasswordViewModel.confirmNewPassword,
             isSecured: true
         )

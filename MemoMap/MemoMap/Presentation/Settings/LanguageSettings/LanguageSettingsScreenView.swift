@@ -8,11 +8,24 @@
 import SwiftUI
 
 struct LanguageSettingsScreenView: View {
+    @AppStorage(AppStorageKeys.language) private var selectedLanguage: Language = .english
     var body: some View {
-        Text("Language Settings")
+        List {
+            languagePickerView
+        }
+        .navigationTitle("Languages")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+private extension LanguageSettingsScreenView {
+    var languagePickerView: some View {
+        LanguagePickerView(selectedLanguage: $selectedLanguage)
     }
 }
 
 #Preview {
-    LanguageSettingsScreenView()
+    NavigationStack {
+        LanguageSettingsScreenView()
+    }
 }

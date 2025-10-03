@@ -44,7 +44,7 @@ private extension CommunityScreenView {
             NavigationLink {
                 SearchUsersScreenView()
             } label: {
-                Label("Follow user", systemImage: "person.badge.plus")
+                Label("Search", systemImage: "person.badge.plus")
             }
         }
     }

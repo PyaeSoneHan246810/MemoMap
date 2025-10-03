@@ -41,21 +41,21 @@ private extension CreateAccountScreenView {
     var accountInfoFormView: some View {
         VStack(spacing: 16.0) {
             InputTextFieldView(
-                title: "Email address",
-                placeholder: "Enter your email address",
+                localizedTitle: "Email address",
+                localizedPlaceholder: "Enter your email address",
                 text: $createAccountViewModel.createAccountInfo.emailAddress,
                 axis: .horizontal,
                 lineLimit: 1
             )
             InputTextFieldView(
-                title: "Password",
-                placeholder: "Enter your password",
+                localizedTitle: "Password",
+                localizedPlaceholder: "Enter your password",
                 text: $createAccountViewModel.createAccountInfo.password,
                 isSecured: true
             )
             InputTextFieldView(
-                title: "Confirm Password",
-                placeholder: "Confirm password",
+                localizedTitle: "Confirm Password",
+                localizedPlaceholder: "Confirm password",
                 text: $createAccountViewModel.createAccountInfo.confirmPassword,
                 isSecured: true
             )
@@ -65,23 +65,23 @@ private extension CreateAccountScreenView {
         VStack(spacing: 16.0) {
             profilePhotoPickerView
             InputTextFieldView(
-                title: "Display name",
-                placeholder: "Enter your display name",
+                localizedTitle: "Display name",
+                localizedPlaceholder: "Enter your display name",
                 text: $createAccountViewModel.createAccountInfo.displayName,
                 axis: .horizontal,
                 lineLimit: 1
             )
             InputTextFieldView(
-                title: "Username",
-                placeholder: "Enter your user name",
+                localizedTitle: "Username",
+                localizedPlaceholder: "Enter your user name",
                 text: $createAccountViewModel.createAccountInfo.username,
                 axis: .horizontal,
                 lineLimit: 1
             )
             birthdayPickerView
             InputTextFieldView(
-                title: "Bio",
-                placeholder: "Tell us a bit about yourself",
+                localizedTitle: "Bio",
+                localizedPlaceholder: "Tell us a bit about yourself",
                 text: $createAccountViewModel.createAccountInfo.bio,
                 axis: .vertical,
                 lineLimit: 5,
