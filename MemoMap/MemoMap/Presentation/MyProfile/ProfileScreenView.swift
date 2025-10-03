@@ -60,8 +60,7 @@ private extension ProfileScreenView {
         Button("Edit profile", systemImage: "pencil") {
             
         }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.small)
+        .primaryFilledSmallButtonStyle()
     }
     var profileInfoView: some View {
         ProfileInfoView()

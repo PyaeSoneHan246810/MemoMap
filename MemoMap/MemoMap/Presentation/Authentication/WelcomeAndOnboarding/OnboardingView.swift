@@ -110,40 +110,32 @@ private extension OnboardingView {
                         isOnboardingCompleted = true
                     } label: {
                         Text("Get started")
-                            .frame(maxWidth: .infinity)
                     }
                 } else {
                     Button{
                         goToNextTab()
                     } label: {
                         Text("Next")
-                            .frame(maxWidth: .infinity)
                     }
                 }
             }
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.roundedRectangle(radius: 8.0))
-            .controlSize(.large)
+            .primaryFilledLargeButtonStyle()
             Group {
                 if isFirstTab {
                     Button{
                         skipToLastTab()
                     } label: {
                         Text("Skip")
-                            .frame(maxWidth: .infinity)
                     }
                 } else {
                     Button{
                         goBackToPreviousTab()
                     } label: {
                         Text("Back")
-                            .frame(maxWidth: .infinity)
                     }
                 }
             }
-            .buttonStyle(.borderless)
-            .buttonBorderShape(.roundedRectangle(radius: 8.0))
-            .controlSize(.large)
+            .textLargeButtonStyle()
         }
         .padding(.horizontal, 16.0)
     }

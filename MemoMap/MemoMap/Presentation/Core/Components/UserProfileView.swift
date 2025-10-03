@@ -85,17 +85,14 @@ private extension UserProfileView {
         Button("Following") {
             
         }
-        .buttonStyle(.bordered)
-        .foregroundStyle(.primary)
-        .controlSize(.small)
+        .secondaryFilledSmallButtonStyle()
         .font(.footnote)
     }
     var followButtonView: some View {
         Button("Follow", systemImage: "person.badge.plus") {
             
         }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.small)
+        .primaryFilledSmallButtonStyle()
         .font(.footnote)
     }
 }

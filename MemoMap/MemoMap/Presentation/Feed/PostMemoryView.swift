@@ -59,11 +59,8 @@ private extension PostMemoryView {
             
         } label: {
             Text("Post")
-                .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.roundedRectangle(radius: 8.0))
-        .controlSize(.large)
+        .primaryFilledLargeButtonStyle()
     }
 }
 

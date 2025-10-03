@@ -44,11 +44,8 @@ private extension DeleteAccountScreenView {
             Task { await deleteAccount() }
         } label: {
             Text("Delete account")
-                .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.roundedRectangle(radius: 8.0))
-        .controlSize(.large)
+        .primaryFilledLargeButtonStyle()
         .tint(.red)
     }
     var goBackButtonView: some View {
@@ -58,9 +55,7 @@ private extension DeleteAccountScreenView {
             Text("Go back")
                 .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.bordered)
-        .buttonBorderShape(.roundedRectangle(radius: 8.0))
-        .controlSize(.large)
+        .secondaryFilledLargeButtonStyle()
         .foregroundStyle(.primary)
     }
 }

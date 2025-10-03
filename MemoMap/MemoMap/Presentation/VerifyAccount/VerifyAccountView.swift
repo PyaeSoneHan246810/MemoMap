@@ -57,20 +57,15 @@ private extension VerifyAccountView {
                 Task { await checkEmailVerificationStatus() }
             } label: {
                 Text("I've verified")
-                    .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.roundedRectangle(radius: 8.0))
-            .controlSize(.large)
+            .primaryFilledLargeButtonStyle()
             Button {
                 Task { await viewModel.sendEmailVerification() }
             } label: {
                 Text("Resend verification link")
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.borderless)
-            .buttonBorderShape(.roundedRectangle(radius: 8.0))
-            .controlSize(.large)
+            .textLargeButtonStyle()
         }
     }
 }
