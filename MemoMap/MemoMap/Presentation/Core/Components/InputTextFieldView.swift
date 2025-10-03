@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct InputTextFieldView: View {
-    let title: String
-    let placeholder: String
+    let localizedTitle: String
+    let localizedPlaceholder: String
     @Binding var text: String
     var isSecured: Bool = false
     var axis: Axis = .horizontal
@@ -17,13 +17,13 @@ struct InputTextFieldView: View {
     var height: CGFloat? = nil
     var body: some View {
         VStack(alignment: .leading, spacing: 12.0) {
-            Text(title)
+            Text(LocalizedStringKey(localizedTitle))
                 .font(.headline)
             Group {
                 if isSecured {
-                    SecureField(placeholder, text: $text)
+                    SecureField(LocalizedStringKey(localizedPlaceholder), text: $text)
                 } else {
-                    TextField(placeholder, text: $text, axis: axis)
+                    TextField(LocalizedStringKey(localizedPlaceholder), text: $text, axis: axis)
                         .lineLimit(lineLimit)
                         .frame(height: height, alignment: .top)
                 }
@@ -42,8 +42,8 @@ struct InputTextFieldView: View {
 #Preview {
     @Previewable @State var text: String = ""
     InputTextFieldView(
-        title: "Email address",
-        placeholder: "Enter your email address",
+        localizedTitle: "Email address",
+        localizedPlaceholder: "Enter your email address",
         text: $text,
     )
 }

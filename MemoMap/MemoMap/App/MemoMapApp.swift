@@ -19,8 +19,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct MemoMapApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    @AppStorage("color_mode") private var selectedColorMode: ColorMode = .system
-    @AppStorage("font_size") private var selectedFontSize: FontSize = .defaultFontSize
+    @AppStorage(AppStorageKeys.colorMode) private var selectedColorMode: ColorMode = .system
+    @AppStorage(AppStorageKeys.fontSize) private var selectedFontSize: FontSize = .defaultFontSize
+    @AppStorage(AppStorageKeys.language) private var selectedLanguage: Language = .english
     var selectedColorScheme: ColorScheme? {
         switch selectedColorMode {
         case .system:
@@ -36,6 +37,7 @@ struct MemoMapApp: App {
             StartingView()
                 .preferredColorScheme(selectedColorScheme)
                 .environment(\.dynamicTypeSize, selectedFontSize.dynamicTypeSize)
+                .environment(\.locale, Locale(identifier: selectedLanguage.identifier))
         }
     }
 }

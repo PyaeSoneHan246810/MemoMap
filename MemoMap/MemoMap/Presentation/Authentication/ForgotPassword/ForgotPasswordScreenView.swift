@@ -40,8 +40,8 @@ private extension ForgotPasswordScreenView {
     }
     var emailAddressTextFieldView: some View {
         InputTextFieldView(
-            title: "Email address",
-            placeholder: "Enter your email address",
+            localizedTitle: "Email address",
+            localizedPlaceholder: "Enter your email address",
             text: $viewModel.emailAddress
         )
     }

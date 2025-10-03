@@ -10,10 +10,10 @@ import SwiftUI
 struct AccountSettingsScreenView: View {
     var body: some View {
         List {
-            ListItemNavigationLinkView(systemName: "lock", text: "Change password") {
+            ListItemNavigationLinkView(systemName: "lock", localizedText: "Change password") {
                 ChangePasswordScreenView()
             }
-            ListItemNavigationLinkView(systemName: "trash", text: "Delete account") {
+            ListItemNavigationLinkView(systemName: "trash", localizedText: "Delete account") {
                 DeleteAccountScreenView()
             }
         }
