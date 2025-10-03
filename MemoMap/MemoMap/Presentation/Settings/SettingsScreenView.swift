@@ -12,34 +12,19 @@ struct SettingsScreenView: View {
     @State private var settingsViewModel: SettingsViewModel = .init()
     var body: some View {
         List {
-            itemLinkView(
-                systemName: "person",
-                text: "Account"
-            ) {
+            ListItemNavigationLinkView(systemName: "person", text: "Account") {
                 AccountSettingsScreenView()
             }
-            itemLinkView(
-                systemName: "sun.min",
-                text: "Apperance"
-            ) {
+            ListItemNavigationLinkView(systemName: "sun.min", text: "Apperance") {
                 ApperanceSettingsScreenView()
             }
-            itemLinkView(
-                systemName: "globe",
-                text: "Language"
-            ) {
+            ListItemNavigationLinkView(systemName: "globe", text: "Language") {
                 LanguageSettingsScreenView()
             }
-            itemLinkView(
-                systemName: "info.circle",
-                text: "About"
-            ) {
+            ListItemNavigationLinkView(systemName: "info.circle", text: "About") {
                 AboutScreenView()
             }
-            itemLinkView(
-                systemName: "questionmark.circle",
-                text: "Help"
-            ) {
+            ListItemNavigationLinkView(systemName: "questionmark.circle", text: "Help") {
                 HelpScreenView()
             }
             logOutButtonView
@@ -54,22 +39,6 @@ struct SettingsScreenView: View {
 }
 
 private extension SettingsScreenView {
-    func itemLinkView(systemName: String, text: String, @ViewBuilder destinationView: () -> some View) -> some View {
-        NavigationLink {
-            destinationView()
-        } label: {
-            HStack {
-                HStack(spacing: 12.0) {
-                    Image(systemName: systemName)
-                        .imageScale(.large)
-                    Text(text)
-                }
-                Spacer()
-                Image(systemName: "chevron.forward")
-            }
-        }
-        .navigationLinkIndicatorVisibility(.hidden)
-    }
     var logOutButtonView: some View {
         Button("Log out", systemImage: "rectangle.portrait.and.arrow.right") {
             logOutUser()

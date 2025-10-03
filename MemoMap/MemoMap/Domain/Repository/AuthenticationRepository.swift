@@ -23,4 +23,8 @@ protocol AuthenticationRepository {
     func sendEmailVerification() async throws
     
     func sendPasswordReset(email: String) async throws
+    
+    func reauthenticateUser(currentPassword: String) async throws
+    
+    func updatePassword(newPassword: String) async throws
 }
