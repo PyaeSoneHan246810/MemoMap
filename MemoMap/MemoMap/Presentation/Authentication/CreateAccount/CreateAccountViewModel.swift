@@ -86,6 +86,7 @@ final class CreateAccountViewModel {
                 print(saveUserProfileError.localizedDescription)
                 self.saveUserProfileError = saveUserProfileError
                 if case .saveFailed = saveUserProfileError {
+                    await deleteProfilePhoto()
                     await deleteUser()
                     signOutUser()
                 }
@@ -155,6 +156,19 @@ final class CreateAccountViewModel {
         } catch {
             if let signOutUserError = error as? SignOutUserError {
                 print(signOutUserError.localizedDescription)
+            } else {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    private func deleteProfilePhoto() async {
+        let user = authenticationRepository.getAuthenticatedUser()
+        do {
+            try await storageRepository.deleteProfilePhoto(user: user)
+        } catch {
+            if let deleteProfilePhotoError = error as? DeleteProfilePhotoError {
+                print(deleteProfilePhotoError.localizedDescription)
             } else {
                 print(error.localizedDescription)
             }
