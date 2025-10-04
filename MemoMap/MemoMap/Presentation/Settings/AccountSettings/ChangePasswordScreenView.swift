@@ -11,12 +11,14 @@ struct ChangePasswordScreenView: View {
     @Environment(AppSessionViewModel.self) private var appSessionViewModel: AppSessionViewModel
     @State private var changePasswordViewModel: ChangePasswordViewModel = .init()
     var body: some View {
-        VStack(spacing: 20.0) {
-            passwordTextFieldsView
-            updateButtonView
-            Spacer()
+        ScrollView(.vertical) {
+            VStack(spacing: 20.0) {
+                passwordTextFieldsView
+                updateButtonView
+            }
         }
-        .padding(16.0)
+        .scrollIndicators(.hidden)
+        .contentMargins(16.0)
         .navigationTitle("Change password")
         .navigationBarTitleDisplayMode(.inline)
     }
