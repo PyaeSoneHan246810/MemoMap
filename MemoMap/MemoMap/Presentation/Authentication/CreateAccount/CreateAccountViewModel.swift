@@ -65,11 +65,11 @@ final class CreateAccountViewModel {
             try await userProfileRepository.checkUsernameAvailability(
                 username: "@\(trimmedUsername)"
             )
-            let user = try await createUser()
-            let profilePhotoUrl = await uploadProfilePhoto(userId: user.uid)
+            let userData = try await createUser()
+            let profilePhotoUrlString = await uploadProfilePhoto(userId: userData.uid)
             try await saveUserProfile(
-                user: user,
-                profilePhotoUrl: profilePhotoUrl
+                userData: userData,
+                profilePhotoUrl: profilePhotoUrlString
             )
             await sendEmailVerification()
             return .success(())
@@ -98,12 +98,12 @@ final class CreateAccountViewModel {
         }
     }
     
-    private func createUser() async throws -> UserModel {
-        let user = try await authenticationRepository.createUser(
+    private func createUser() async throws -> UserData {
+        let userData = try await authenticationRepository.createUser(
             email: trimmedEmailAddress,
             password: trimmedConfirmPassword
         )
-        return user
+        return userData
     }
     
     private func uploadProfilePhoto(userId: String) async -> String? {
@@ -111,8 +111,8 @@ final class CreateAccountViewModel {
             return nil
         }
         do {
-            let profilePhotoUrl = try await storageRepository.uploadProfilePhoto(data: data, userId: userId)
-            return profilePhotoUrl
+            let profilePhotoUrlString = try await storageRepository.uploadProfilePhoto(data: data, userId: userId)
+            return profilePhotoUrlString
         } catch {
             if let uploadProfilePhotoError = error as? UploadProfilePhotoError {
                 print(uploadProfilePhotoError.localizedDescription)
@@ -123,19 +123,21 @@ final class CreateAccountViewModel {
         }
     }
     
-    private func saveUserProfile(user: UserModel, profilePhotoUrl: String?) async throws {
-        let userProfile = UserProfileModel(
-            id: user.uid,
-            emailAddress: user.email,
+    private func saveUserProfile(userData: UserData, profilePhotoUrl: String?) async throws {
+        let userProfileData = UserProfileData(
+            emailAddress: userData.email ?? "",
             username: "@\(trimmedUsername)",
             displayname: trimmedDisplayname,
             profilePhotoUrl: profilePhotoUrl,
             coverPhotoUrl: nil,
             birthday: birthday,
             bio: trimmedBio,
-            createdAt: Date.now
+            createdAt: .now
         )
-        try await userProfileRepository.saveUserProfile(userProfile: userProfile)
+        try await userProfileRepository.saveUserProfile(
+            userProfileData: userProfileData,
+            userData: userData
+        )
     }
     
     private func deleteUser() async {
@@ -163,9 +165,9 @@ final class CreateAccountViewModel {
     }
     
     private func deleteProfilePhoto() async {
-        let user = authenticationRepository.getAuthenticatedUser()
+        let user = authenticationRepository.getUserData()
         do {
-            try await storageRepository.deleteProfilePhoto(user: user)
+            try await storageRepository.deleteProfilePhoto(userData: user)
         } catch {
             if let deleteProfilePhotoError = error as? DeleteProfilePhotoError {
                 print(deleteProfilePhotoError.localizedDescription)

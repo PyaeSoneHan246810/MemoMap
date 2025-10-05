@@ -30,4 +30,18 @@ extension Container {
             }
         }.singleton
     }
+    var pinRepository: Factory<PinRepository> {
+        self {
+            MainActor.assumeIsolated {
+                FirebasePinRepository()
+            }
+        }.singleton
+    }
+    var memoryRepository: Factory<MemoryRepository> {
+        self {
+            MainActor.assumeIsolated {
+                FirebaseMemoryRepository()
+            }
+        }.singleton
+    }
 }

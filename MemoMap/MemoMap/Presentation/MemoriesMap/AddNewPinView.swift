@@ -10,17 +10,8 @@ import PhotosUI
 
 struct AddNewPinView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var locationPhotoPickerItem: PhotosPickerItem? = nil
-    @State private var locationPhotoImage: Image? = nil
-    @State private var locationName: String = ""
-    @State private var locationDescription: String = ""
-    @State private var memoryPhotoPickerItem: PhotosPickerItem? = nil
-    @State private var memoryMedia: [MemoryMedia] = []
-    @State private var memoryTitle: String = ""
-    @State private var memoryDescription: String = ""
-    @State private var memoryTags: [String] = []
-    @State private var memoryDateTime: Date = .now
-    @State private var isMemoryPublic: Bool = true
+    @State private var viewModel: AddNewPinViewModel = .init()
+    let place: Place
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 0.0) {
@@ -33,13 +24,13 @@ struct AddNewPinView: View {
                             .font(.headline)
                             .padding(.horizontal, 16.0)
                         AddMemoryView(
-                            memoryPhotoPickerItem: $memoryPhotoPickerItem,
-                            memoryMedia: $memoryMedia,
-                            memoryTitle: $memoryTitle,
-                            memoryDescription: $memoryDescription,
-                            memoryTags: $memoryTags,
-                            memoryDateTime: $memoryDateTime,
-                            isMemoryPublic: $isMemoryPublic
+                            memoryPhotoPickerItem: $viewModel.memoryPhotoPickerItem,
+                            memoryMedia: $viewModel.memoryMedia,
+                            memoryTitle: $viewModel.memoryTitle,
+                            memoryDescription: $viewModel.memoryDescription,
+                            memoryTags: $viewModel.memoryTags,
+                            memoryDateTime: $viewModel.memoryDateTime,
+                            isMemoryPublic: $viewModel.isMemoryPublic
                         )
                     }
                     saveButtonView
@@ -71,8 +62,8 @@ private extension AddNewPinView {
     }
     var locationImageView: some View {
         ZStack(alignment: .bottomTrailing) {
-            if let locationPhotoImage {
-                locationPhotoImage
+            if let locationPhotoImage = viewModel.locationPhotoImage {
+                Image(uiImage: locationPhotoImage)
                     .resizable()
                     .scaledToFill()
                     .frame(maxWidth: .infinity)
@@ -99,7 +90,7 @@ private extension AddNewPinView {
             }
     }
     var locationImagePickerView: some View {
-        PhotosPicker(selection: $locationPhotoPickerItem) {
+        PhotosPicker(selection: $viewModel.locationPhotoPickerItem) {
             Label("Edit Photo", systemImage: "pencil")
                 .labelStyle(.iconOnly)
                 .imageScale(.large)
@@ -108,10 +99,11 @@ private extension AddNewPinView {
                 .glassEffect(.regular.interactive(), in: .circle)
                 .tint(.primary)
         }
-        .onChange(of: locationPhotoPickerItem) {
+        .onChange(of: viewModel.locationPhotoPickerItem) {
             Task {
-                if let locationPhotoImage = try? await locationPhotoPickerItem?.loadTransferable(type: Image.self) {
-                    self.locationPhotoImage = locationPhotoImage
+                if let locationPhotoData = try? await viewModel.locationPhotoPickerItem?.loadTransferable(type: Data.self) {
+                    let locationPhotoImage = UIImage(data: locationPhotoData)
+                    self.viewModel.locationPhotoImage = locationPhotoImage
                 }
             }
         }
@@ -121,21 +113,21 @@ private extension AddNewPinView {
         InputTextFieldView(
             localizedTitle: "Location name",
             localizedPlaceholder: "Enter name of a location",
-            text: $locationName,
+            text: $viewModel.locationName,
             axis: .horizontal,
             lineLimit: 1
         )
         InputTextFieldView(
             localizedTitle: "Location description",
             localizedPlaceholder: "Enter description for a location",
-            text: $locationDescription,
+            text: $viewModel.locationDescription,
             axis: .vertical,
             lineLimit: 4
         )
     }
     var saveButtonView: some View {
         Button {
-            
+            Task { await saveNewPin() }
         } label: {
             Text("Save")
         }
@@ -143,8 +135,22 @@ private extension AddNewPinView {
     }
 }
 
+private extension AddNewPinView {
+    func saveNewPin() async {
+        let result = await viewModel.saveNewPin(
+            latitude: place.latitude,
+            longitude: place.longitude
+        )
+        if case .success = result {
+            dismiss()
+        }
+    }
+}
+
 #Preview {
     NavigationStack {
-        AddNewPinView()
+        AddNewPinView(
+            place: .init(coordinate: .init(latitude: 0.0, longitude: 0.0))
+        )
     }
 }

@@ -8,11 +8,11 @@
 import Foundation
 
 protocol AuthenticationRepository {
-    func getAuthenticatedUser() -> UserModel?
+    func getUserData() -> UserData?
     
-    func reloadAuthenticatedUser() async throws
+    func reloadUser() async throws
     
-    func createUser(email: String, password: String) async throws -> UserModel
+    func createUser(email: String, password: String) async throws -> UserData
     
     func signInUser(email: String, password: String) async throws
     

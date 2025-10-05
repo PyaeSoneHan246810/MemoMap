@@ -8,9 +8,11 @@
 import Foundation
 
 protocol UserProfileRepository {
+    
+    func saveUserProfile(userProfileData: UserProfileData, userData: UserData) async throws
+    
     func checkUsernameAvailability(username: String) async throws
     
-    func saveUserProfile(userProfile: UserProfileModel) async throws
+    func deleteUserProfile(userData: UserData?) async throws
     
-    func deleteUserProfile(user: UserModel?) async throws
 }

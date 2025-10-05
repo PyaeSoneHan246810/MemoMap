@@ -10,13 +10,13 @@ import FirebaseAuth
 
 final class FirebaseAuthenticationRepository: AuthenticationRepository {
     
-    func getAuthenticatedUser() -> UserModel? {
+    func getUserData() -> UserData? {
         guard let currentUser = Auth.auth().currentUser else { return nil }
-        let authenticatedUser = getUserModel(from: currentUser)
-        return authenticatedUser
+        let userData = getUserData(from: currentUser)
+        return userData
     }
     
-    func reloadAuthenticatedUser() async throws {
+    func reloadUser() async throws {
         guard let currentUser = Auth.auth().currentUser else {
             throw ReloadUserError.userNotFound
         }
@@ -39,14 +39,14 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
         }
     }
     
-    func createUser(email: String, password: String) async throws -> UserModel {
+    func createUser(email: String, password: String) async throws -> UserData {
         do {
             let authDataResult = try await Auth.auth().createUser(
                 withEmail: email,
                 password: password
             )
-            let user = getUserModel(from: authDataResult.user)
-            return user
+            let userData = getUserData(from: authDataResult.user)
+            return userData
         } catch {
             if let nsError = error as NSError? {
                 let errorCode = AuthErrorCode(rawValue: nsError.code)
@@ -239,7 +239,7 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
 }
 
 private extension FirebaseAuthenticationRepository {
-    private func getUserModel(from user: User) -> UserModel {
-        UserModel(uid: user.uid, email: user.email, isEmailVerified: user.isEmailVerified)
+    private func getUserData(from user: User) -> UserData {
+        UserData(uid: user.uid, email: user.email, isEmailVerified: user.isEmailVerified)
     }
 }

@@ -26,21 +26,6 @@ struct MemoriesScreenView: View {
     }
 }
 
-extension MemoriesScreenView {
-    struct Place: Identifiable {
-        let coordinate: CLLocationCoordinate2D
-        var latitude: Double {
-            coordinate.latitude
-        }
-        var longitude: Double {
-            coordinate.longitude
-        }
-        var id: String {
-            "\(latitude)&\(longitude)"
-        }
-    }
-}
-
 private extension MemoriesScreenView {
     var mapStyle: MapStyle {
         switch colorScheme {
@@ -87,7 +72,7 @@ private extension MemoriesScreenView {
     }
     func addNewPinSheetView(placeTapped: Place) -> some View {
         NavigationStack {
-            AddNewPinView()
+            AddNewPinView(place: placeTapped)
         }
     }
 }

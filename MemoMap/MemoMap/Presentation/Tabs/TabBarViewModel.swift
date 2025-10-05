@@ -21,9 +21,9 @@ final class TabBarViewModel {
     
     func checkEmailVerificationStatus() async {
         do {
-            try await authenticationRepository.reloadAuthenticatedUser()
-            if let authenticatedUser = authenticationRepository.getAuthenticatedUser() {
-                isUserEmailVerified = authenticatedUser.isEmailVerified
+            try await authenticationRepository.reloadUser()
+            if let userData = authenticationRepository.getUserData() {
+                isUserEmailVerified = userData.isEmailVerified
             }
         } catch {
             if let reloadUserError = error as? ReloadUserError {

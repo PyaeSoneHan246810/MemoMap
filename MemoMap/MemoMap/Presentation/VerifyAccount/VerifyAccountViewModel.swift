@@ -19,11 +19,11 @@ final class VerifyAccountViewModel {
     
     func checkEmailVerificationStatus() async -> EmailVerificationStatus {
         do {
-            try await authenticationRepository.reloadAuthenticatedUser()
-            guard let authenticatedUser = authenticationRepository.getAuthenticatedUser() else {
+            try await authenticationRepository.reloadUser()
+            guard let userData = authenticationRepository.getUserData() else {
                 return .unknown
             }
-            return authenticatedUser.isEmailVerified ? .verified : .notVerified
+            return userData.isEmailVerified ? .verified : .notVerified
         } catch {
             if let reloadUserError = error as? ReloadUserError {
                 print(reloadUserError.localizedDescription)
