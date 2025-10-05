@@ -25,10 +25,10 @@ final class DeleteAccountViewModel {
     
     func deleteUser() async -> Result<Void, Error> {
         do {
-            let user = authenticationRepository.getAuthenticatedUser()
+            let userData = authenticationRepository.getUserData()
             try await authenticationRepository.deleteUser()
             try authenticationRepository.signOutUser()
-            await deleteUserInfo(user: user)
+            await deleteUserInfo(userData: userData)
             return .success(())
         } catch {
             if let deleteUserError = error as? DeleteUserError {
@@ -46,9 +46,9 @@ final class DeleteAccountViewModel {
         }
     }
     
-    private func deleteUserInfo(user: UserModel?) async {
+    private func deleteUserInfo(userData: UserData?) async {
         do {
-            try await userProfileRepository.deleteUserProfile(user: user)
+            try await userProfileRepository.deleteUserProfile(userData: userData)
         } catch {
             if let deleteUserProfileError = error as? DeleteUserProfileError {
                 print(deleteUserProfileError.localizedDescription)
@@ -57,7 +57,7 @@ final class DeleteAccountViewModel {
             }
         }
         do {
-            try await storageRepository.deleteProfilePhoto(user: user)
+            try await storageRepository.deleteProfilePhoto(userData: userData)
         } catch {
             if let deleteProfilePhotoError = error as? DeleteProfilePhotoError {
                 print(deleteProfilePhotoError.localizedDescription)
