@@ -57,6 +57,39 @@ final class FirebaseUserProfileRepository: UserProfileRepository {
         }
     }
     
+    func listenUserProfile(userData: UserData?, completion: @escaping (Result<UserProfileData, Error>) -> Void) {
+        guard let userId = userData?.uid else {
+            completion(.failure(ListenUserProfileError.userNotFound))
+            return
+        }
+        getUserCollectionDocumentReference(userId: userId).addSnapshotListener { documentSnapshot, error in
+            if error != nil {
+                completion(.failure(ListenUserProfileError.listenFailed))
+                return
+            }
+            guard let documentSnapshot else {
+                completion(.failure(ListenUserProfileError.documentNotFound))
+                return
+            }
+            guard let userProfile = try? documentSnapshot.data(as: UserProfileModel.self) else {
+                completion(.failure(ListenUserProfileError.getDataFailed))
+                return
+            }
+            let userProfileData = UserProfileData(
+                emailAddress: userProfile.emailAddress,
+                username: userProfile.username,
+                displayname: userProfile.displayname,
+                profilePhotoUrl: userProfile.profilePhotoUrl,
+                coverPhotoUrl: userProfile.coverPhotoUrl,
+                birthday: userProfile.birthday,
+                bio: userProfile.bio,
+                createdAt: userProfile.createdAt
+            )
+            completion(.success(userProfileData))
+            return
+        }
+    }
+    
 }
 
 private extension FirebaseUserProfileRepository {

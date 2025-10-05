@@ -15,4 +15,6 @@ protocol UserProfileRepository {
     
     func deleteUserProfile(userData: UserData?) async throws
     
+    func listenUserProfile(userData: UserData?, completion: @escaping (Result<UserProfileData, Error>) -> Void)
+    
 }

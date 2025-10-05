@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import SwiftUIIntrospect
 
 struct ProfileScreenView: View {
+    @State private var viewModel: ProfileViewModel = .init()
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 0.0) {
@@ -20,11 +22,17 @@ struct ProfileScreenView: View {
                 memoriesView
             }
         }
+        .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { scrollView in
+            scrollView.bouncesVertically = false
+        }
         .scrollIndicators(.hidden)
         .ignoresSafeArea(.all, edges: .top)
         .background(Color(uiColor: .secondarySystemBackground))
         .toolbar {
             toolbarContentView
+        }
+        .onAppear {
+            viewModel.listenUserProfile()
         }
     }
 }
@@ -41,12 +49,16 @@ private extension ProfileScreenView {
         }
     }
     var profilePhotosView: some View {
-        ProfileCoverPhotoView()
-            .overlay(alignment: .bottomLeading) {
-                ProfilePhotoView()
-                    .padding(.leading, 16.0)
-                    .offset(y: 60.0)
-            }
+        ProfileCoverPhotoView(
+            coverPhoto: viewModel.userProfileData?.coverPhotoUrl
+        )
+        .overlay(alignment: .bottomLeading) {
+            ProfilePhotoView(
+                profilePhoto: viewModel.userProfileData?.profilePhotoUrl
+            )
+            .padding(.leading, 16.0)
+            .offset(y: 60.0)
+        }
     }
     var buttonSectionView: some View {
         HStack {
@@ -63,8 +75,17 @@ private extension ProfileScreenView {
         .primaryFilledSmallButtonStyle()
     }
     var profileInfoView: some View {
-        ProfileInfoView()
-            .padding(16.0)
+        let userProfileData = viewModel.userProfileData
+        return ProfileInfoView(
+            displayName: userProfileData?.displayname ?? "Placeholder",
+            username: userProfileData?.username ?? "@placeholder",
+            email: userProfileData?.emailAddress ?? "placeholder@example.com",
+            bio: userProfileData?.bio ?? "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            birthday: userProfileData?.birthday.formatted(date: .abbreviated, time: .omitted) ?? "placeholder",
+            joined: userProfileData?.createdAt.formatted(date: .abbreviated, time: .omitted) ?? "placeholder"
+        )
+        .padding(16)
+        .redacted(reason: userProfileData == nil ? .placeholder : [])
     }
     var memoriesView: some View {
         MemoriesView(

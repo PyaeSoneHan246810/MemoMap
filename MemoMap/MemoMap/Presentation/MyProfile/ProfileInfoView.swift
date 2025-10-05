@@ -8,32 +8,38 @@
 import SwiftUI
 
 struct ProfileInfoView: View {
+    let displayName: String
+    let username: String
+    let email: String
+    let bio: String
+    let birthday: String
+    let joined: String
     var body: some View {
         VStack(alignment: .leading, spacing: 12.0) {
             VStack(alignment: .leading, spacing: 4.0) {
-                Text("Dylan")
+                Text(displayName)
                     .font(.title3)
                     .fontWeight(.semibold)
-                Text("@dylan2004")
+                Text(username)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
-                Text("dylan2004@gmail.com")
+                Text(email)
                     .font(.footnote)
                     .tint(.primary)
             }
-            Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
+            Text(bio)
                 .font(.subheadline)
             HStack(spacing: 8.0) {
                 HStack(spacing: 4.0) {
                     Image(systemName: "birthday.cake.fill")
                         .foregroundStyle(.secondary)
-                    Text("June 28, 2001")
+                    Text(birthday)
                 }
                 HStack(spacing: 4.0) {
                     Text("Joined")
                         .fontWeight(.medium)
                         .foregroundStyle(.secondary)
-                    Text("May 1, 2025")
+                    Text(joined)
                 }
             }
             .font(.footnote)
@@ -60,5 +66,12 @@ private extension ProfileInfoView {
 }
 
 #Preview {
-    ProfileInfoView()
+    ProfileInfoView(
+        displayName: "Dylan",
+        username: "@dylan2004",
+        email: "dylan2004@gmail.com",
+        bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        birthday: "June 28, 2001",
+        joined: "May 1, 2025"
+    )
 }

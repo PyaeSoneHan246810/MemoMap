@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		043DB25B2E891B0400859A34 /* WrappingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = 043DB25A2E891B0400859A34 /* WrappingHStack */; };
+		0441C1272E92BDB500187BE0 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 0441C1262E92BDB500187BE0 /* Kingfisher */; };
+		0441C12A2E92C30800187BE0 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 0441C1292E92C30800187BE0 /* SwiftUIIntrospect */; };
 		045DBC5C2E80298F006A2CFE /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 045DBC5B2E80298F006A2CFE /* FirebaseAnalytics */; };
 		045DBC5E2E80298F006A2CFE /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 045DBC5D2E80298F006A2CFE /* FirebaseAuth */; };
 		045DBC602E80298F006A2CFE /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 045DBC5F2E80298F006A2CFE /* FirebaseFirestore */; };
@@ -52,11 +54,13 @@
 				045DBD782E807A90006A2CFE /* MapboxMaps in Frameworks */,
 				045DBC5C2E80298F006A2CFE /* FirebaseAnalytics in Frameworks */,
 				0482036D2E8BB734002EDCA5 /* FactoryKit in Frameworks */,
+				0441C12A2E92C30800187BE0 /* SwiftUIIntrospect in Frameworks */,
 				045DBC602E80298F006A2CFE /* FirebaseFirestore in Frameworks */,
 				046899D92E8437BE007C62AC /* SearchBar in Frameworks */,
 				043DB25B2E891B0400859A34 /* WrappingHStack in Frameworks */,
 				045DBC5E2E80298F006A2CFE /* FirebaseAuth in Frameworks */,
 				0482036B2E8BB734002EDCA5 /* Factory in Frameworks */,
+				0441C1272E92BDB500187BE0 /* Kingfisher in Frameworks */,
 				045DBC622E80298F006A2CFE /* FirebaseStorage in Frameworks */,
 				0494C74A2E7F1F5C00EBCB60 /* Lottie in Frameworks */,
 			);
@@ -111,6 +115,8 @@
 				043DB25A2E891B0400859A34 /* WrappingHStack */,
 				0482036A2E8BB734002EDCA5 /* Factory */,
 				0482036C2E8BB734002EDCA5 /* FactoryKit */,
+				0441C1262E92BDB500187BE0 /* Kingfisher */,
+				0441C1292E92C30800187BE0 /* SwiftUIIntrospect */,
 			);
 			productName = MemoMap;
 			productReference = 0494C5662E7EFE2000EBCB60 /* MemoMap.app */;
@@ -149,6 +155,8 @@
 				046899D72E8437BE007C62AC /* XCRemoteSwiftPackageReference "SearchBar" */,
 				043DB2592E891B0400859A34 /* XCRemoteSwiftPackageReference "WrappingHStack" */,
 				048203692E8BB734002EDCA5 /* XCRemoteSwiftPackageReference "Factory" */,
+				0441C1252E92BDB500187BE0 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				0441C1282E92C30800187BE0 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0494C5672E7EFE2000EBCB60 /* Products */;
@@ -412,6 +420,22 @@
 				minimumVersion = 0.2.0;
 			};
 		};
+		0441C1252E92BDB500187BE0 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.6.0;
+			};
+		};
+		0441C1282E92C30800187BE0 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 26.0.0;
+			};
+		};
 		045DBC5A2E80298F006A2CFE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -459,6 +483,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 043DB2592E891B0400859A34 /* XCRemoteSwiftPackageReference "WrappingHStack" */;
 			productName = WrappingHStack;
+		};
+		0441C1262E92BDB500187BE0 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0441C1252E92BDB500187BE0 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		0441C1292E92C30800187BE0 /* SwiftUIIntrospect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0441C1282E92C30800187BE0 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = SwiftUIIntrospect;
 		};
 		045DBC5B2E80298F006A2CFE /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
