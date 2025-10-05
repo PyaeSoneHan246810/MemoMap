@@ -44,12 +44,16 @@ private extension UserProfileScreenView {
         isFollowingUser ? Color(uiColor: .secondarySystemBackground) : Color(uiColor: .systemBackground)
     }
     var profilePhotosView: some View {
-        ProfileCoverPhotoView()
-            .overlay(alignment: .bottomLeading) {
-                ProfilePhotoView()
-                    .padding(.leading, 16.0)
-                    .offset(y: 60.0)
-            }
+        ProfileCoverPhotoView(
+            coverPhoto: nil
+        )
+        .overlay(alignment: .bottomLeading) {
+            ProfilePhotoView(
+                profilePhoto: nil
+            )
+            .padding(.leading, 16.0)
+            .offset(y: 60.0)
+        }
     }
     var buttonSectionView: some View {
         HStack {
@@ -76,8 +80,15 @@ private extension UserProfileScreenView {
         .primaryFilledSmallButtonStyle()
     }
     var profileInfoView: some View {
-        ProfileInfoView()
-            .padding(16.0)
+        ProfileInfoView(
+            displayName: "",
+            username: "",
+            email: "",
+            bio: "",
+            birthday: "",
+            joined: ""
+        )
+        .padding(16.0)
     }
     var followUserView: some View {
         VStack(spacing: 16.0) {

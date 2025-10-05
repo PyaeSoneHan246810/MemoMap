@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "@dylan2004" : {
-
-    },
     "@username" : {
 
     },
@@ -285,12 +282,6 @@
         }
       }
     },
-    "Dylan" : {
-
-    },
-    "dylan2004@gmail.com" : {
-
-    },
     "Edit Photo" : {
       "localizations" : {
         "my" : {
@@ -446,9 +437,6 @@
     "Joined" : {
       "shouldTranslate" : false
     },
-    "June 28, 2001" : {
-
-    },
     "Languages" : {
       "localizations" : {
         "my" : {
@@ -483,9 +471,6 @@
       }
     },
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." : {
-
-    },
-    "May 1, 2025" : {
 
     },
     "MemoMap" : {
