@@ -13,4 +13,6 @@ protocol PinRepository {
     func updatePinPhotoUrl(pinId: String, pinPhotoUrlString: String) async throws
     
     func deletePin(pinId: String) async throws
+    
+    func listenPins(userData: UserData?, completion: @escaping (Result<[PinData], Error>) -> Void)
 }

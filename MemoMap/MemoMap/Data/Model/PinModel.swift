@@ -15,17 +15,15 @@ struct PinModel: Codable {
         case name
         case description
         case photoUrl
+        case location
         case createdAt
-        case latitude
-        case longitude
     }
     let id: String
     let ownerId: String
     let name: String
     let description: String?
     let photoUrl: String?
-    let latitude: Double
-    let longitude: Double
+    let location: GeoPoint
     let createdAt: Date
 }
 
@@ -37,7 +35,7 @@ extension PinModel {
             Self.CodingKeys.name.rawValue: name,
             Self.CodingKeys.description.rawValue: description as Any,
             Self.CodingKeys.photoUrl.rawValue: photoUrl as Any,
-            "location": GeoPoint(latitude: latitude, longitude: longitude),
+            Self.CodingKeys.location.rawValue: location,
             Self.CodingKeys.createdAt.rawValue: Timestamp(date: createdAt)
         ]
     }

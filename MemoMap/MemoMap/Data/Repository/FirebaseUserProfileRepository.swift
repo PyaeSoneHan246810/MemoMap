@@ -10,10 +10,10 @@ import FirebaseFirestore
 
 final class FirebaseUserProfileRepository: UserProfileRepository {
     
-    func saveUserProfile(userProfileData: UserProfileData, userData: UserData) async throws {
-        let userId = userData.uid
+    func saveUserProfile(userProfileData: UserProfileData) async throws {
+        let id = userProfileData.id
         let userProfile = UserProfileModel(
-            id: userId,
+            id: id,
             emailAddress: userProfileData.emailAddress,
             username: userProfileData.username,
             displayname: userProfileData.displayname,
@@ -25,7 +25,7 @@ final class FirebaseUserProfileRepository: UserProfileRepository {
         )
         let firestoreDocumentData = userProfile.firestoreDocumentData
         do {
-            try await getUserCollectionDocumentReference(userId: userId)
+            try await getUserCollectionDocumentReference(userId: id)
                 .setData(firestoreDocumentData, merge: false)
         } catch {
             throw SaveUserProfileError.saveFailed
@@ -76,6 +76,7 @@ final class FirebaseUserProfileRepository: UserProfileRepository {
                 return
             }
             let userProfileData = UserProfileData(
+                id: userProfile.id,
                 emailAddress: userProfile.emailAddress,
                 username: userProfile.username,
                 displayname: userProfile.displayname,

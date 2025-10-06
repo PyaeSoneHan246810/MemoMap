@@ -10,8 +10,7 @@ import MapboxMaps
 
 struct MemoriesScreenView: View {
     @Environment(\.colorScheme) private var colorScheme
-    @State private var viewport: Viewport = .followPuck(zoom: 12.0, bearing: .constant(0.0), pitch: 0.0)
-    @State private var placeTapped: Place? = nil
+    @State private var viewModel: MemoriesViewModel = .init()
     var body: some View {
         mapView
         .ignoresSafeArea()
@@ -19,9 +18,12 @@ struct MemoriesScreenView: View {
         .toolbar {
             toolbarContentView
         }
-        .sheet(item: $placeTapped) {
+        .sheet(item: $viewModel.placeTapped) {
             addNewPinSheetView(placeTapped: $0)
                 .interactiveDismissDisabled()
+        }
+        .onAppear {
+            viewModel.listenPins()
         }
     }
 }
@@ -39,19 +41,50 @@ private extension MemoriesScreenView {
     }
     var mapView: some View {
         Map(
-            viewport: $viewport
+            viewport: $viewModel.viewport
         ) {
-            Puck2D(bearing: .heading)
-                .showsAccuracyRing(true)
-            TapInteraction { context in
-                placeTapped = .init(coordinate: context.coordinate)
-                return true
-            }
+            pinsPointAnnotationGroup
+            userLocationPuck
+            userTapInteraction
         }
         .mapStyle(mapStyle)
         .overlay(alignment: .trailing) {
-            LocateMeButton(viewport: $viewport)
+            LocateMeButton(viewport: $viewModel.viewport)
                 .padding(8.0)
+        }
+    }
+    var pinsPointAnnotationGroup: some MapContent {
+        PointAnnotationGroup(viewModel.pins, id: \.id) { pin in
+            pinPointAnnotation(pin)
+        }
+        .clusterOptions(viewModel.clusterOptions)
+        .onClusterTapGesture { context in
+            withViewportAnimation(.default(maxDuration: 1.0)) {
+                viewModel.viewport = .camera(
+                    center: context.coordinate,
+                    zoom: context.expansionZoom
+                )
+            }
+        }
+    }
+    func pinPointAnnotation(_ pin: PinData) -> PointAnnotation {
+        let coordinates = LocationCoordinate2D(latitude: pin.latitude, longitude: pin.longitude)
+        return PointAnnotation(
+            point: Point(coordinates)
+        )
+        .image(.init(image: UIImage(resource: .pin), name: "pin"))
+        .onTapGesture {
+            print("Pin tapped")
+        }
+    }
+    var userLocationPuck: some MapContent {
+        Puck2D(bearing: .heading)
+            .showsAccuracyRing(true)
+    }
+    var userTapInteraction: some MapContent {
+        TapInteraction { context in
+            viewModel.placeTapped = .init(coordinate: context.coordinate)
+            return true
         }
     }
     @ToolbarContentBuilder
