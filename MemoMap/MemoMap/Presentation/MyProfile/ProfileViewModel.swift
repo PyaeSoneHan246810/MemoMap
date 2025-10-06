@@ -34,18 +34,13 @@ final class ProfileViewModel {
                 self?.userProfileDataState = .success(userProfileData)
             case .failure(let error):
                 if let listenUserProfileError = error as? ListenUserProfileError {
+                    print(listenUserProfileError.localizedDescription)
                     self?.userProfileDataState = .failure(listenUserProfileError.localizedDescription)
                 } else {
+                    print(error.localizedDescription)
                     self?.userProfileDataState = .failure(error.localizedDescription)
                 }
             }
         }
     }
-}
-
-enum DataState<T> {
-    case initial
-    case loading
-    case success(T)
-    case failure(String)
 }

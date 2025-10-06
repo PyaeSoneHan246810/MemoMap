@@ -125,6 +125,7 @@ final class CreateAccountViewModel {
     
     private func saveUserProfile(userData: UserData, profilePhotoUrl: String?) async throws {
         let userProfileData = UserProfileData(
+            id: userData.uid,
             emailAddress: userData.email ?? "",
             username: "@\(trimmedUsername)",
             displayname: trimmedDisplayname,
@@ -134,10 +135,7 @@ final class CreateAccountViewModel {
             bio: trimmedBio,
             createdAt: .now
         )
-        try await userProfileRepository.saveUserProfile(
-            userProfileData: userProfileData,
-            userData: userData
-        )
+        try await userProfileRepository.saveUserProfile(userProfileData: userProfileData)
     }
     
     private func deleteUser() async {

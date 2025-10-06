@@ -64,9 +64,10 @@ final class AddNewPinViewModel {
     
     func saveNewPin(latitude: Double, longitude: Double) async -> Result<Void, Error> {
         let pinData = PinData(
+            id: "",
             name: locationName,
             description: trimmedLocationDescription.isEmpty ? nil : trimmedLocationDescription,
-            photoUrl: "",
+            photoUrl: nil,
             latitude: latitude,
             longitude: longitude,
             createdAt: .now
@@ -139,6 +140,7 @@ final class AddNewPinViewModel {
     
     private func saveMemory(pinId: String, userData: UserData?) async throws -> String {
         let memoryData = MemoryData(
+            id: "",
             title: trimmedMemoryTitle,
             description: trimmedMemoryDescription,
             media: [],

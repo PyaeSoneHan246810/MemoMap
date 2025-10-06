@@ -9,7 +9,7 @@ import Foundation
 
 protocol UserProfileRepository {
     
-    func saveUserProfile(userProfileData: UserProfileData, userData: UserData) async throws
+    func saveUserProfile(userProfileData: UserProfileData) async throws
     
     func checkUsernameAvailability(username: String) async throws
     

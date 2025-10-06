@@ -8,6 +8,7 @@
 import Foundation
 
 struct MemoryData {
+    let id: String
     let title: String
     let description: String?
     let media: [String]

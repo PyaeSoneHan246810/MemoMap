@@ -8,6 +8,7 @@
 import Foundation
 
 struct PinData {
+    let id: String
     let name: String
     let description: String?
     let photoUrl: String?
