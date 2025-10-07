@@ -28,9 +28,7 @@ final class AddNewPinViewModel {
     
     var locationDescription: String = ""
     
-    var memoryPhotoPickerItem: PhotosPickerItem? = nil
-    
-    var memoryMedia: [MemoryMedia] = []
+    var memoryMediaItems: [MemoryMediaItem] = []
     
     var memoryTitle: String = ""
     
@@ -156,15 +154,15 @@ final class AddNewPinViewModel {
     private func uploadMemoryMedia(memoryId: String) async -> [String] {
         var uploadedMemoryMedia: [String] = []
         do {
-            for (id, memoryMedia) in memoryMedia.enumerated() {
+            for (id, memoryMediaItem) in memoryMediaItems.enumerated() {
                 let fileName = "media_\(id + 1)"
-                switch memoryMedia {
-                case .image(_, let uiImage):
+                switch memoryMediaItem.media {
+                case .image(let uiImage):
                     if let data = uiImage.jpegData(compressionQuality: 1.0) {
                         let memoryPhotoUrlString = try await storageRepository.uploadMemoryPhoto(data: data, fileName: fileName, memoryId: memoryId)
                         uploadedMemoryMedia.append(memoryPhotoUrlString)
                     }
-                case .video(_, let movie):
+                case .video(let movie):
                     let url = movie.url
                     let memoryVideoUrlString = try await storageRepository.uploadMemoryVideo(url: url, fileName: fileName, memoryId: memoryId)
                     uploadedMemoryMedia.append(memoryVideoUrlString)

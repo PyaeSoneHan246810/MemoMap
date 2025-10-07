@@ -1,5 +1,5 @@
 //
-//  MemoryTagView.swift
+//  AddMemoryTagView.swift
 //  MemoMap
 //
 //  Created by Dylan on 28/9/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct MemoryTagView: View {
+struct AddMemoryTagView: View {
     let tag: String
     let isSelected: Bool
     var backgroundColor: Color {
@@ -27,6 +27,6 @@ struct MemoryTagView: View {
 }
 
 #Preview {
-    MemoryTagView(tag: "Tag 1", isSelected: true)
-    MemoryTagView(tag: "Tag 2", isSelected: false)
+    AddMemoryTagView(tag: "Tag 1", isSelected: true)
+    AddMemoryTagView(tag: "Tag 2", isSelected: false)
 }

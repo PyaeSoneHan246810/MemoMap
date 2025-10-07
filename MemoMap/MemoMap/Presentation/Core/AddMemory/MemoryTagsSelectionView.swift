@@ -16,7 +16,7 @@ struct MemoryTagsSelectionView: View {
             WrappingHStack(alignment: .leading, horizontalSpacing: 8.0, verticalSpacing: 12.0) {
                 ForEach(tags, id: \.self) { tag in
                     let isTagSelected = selectedTags.contains(tag)
-                    MemoryTagView(tag: tag, isSelected: isTagSelected)
+                    AddMemoryTagView(tag: tag, isSelected: isTagSelected)
                         .onTapGesture {
                             toggleSelection(tag: tag, isSelected: isTagSelected)
                         }

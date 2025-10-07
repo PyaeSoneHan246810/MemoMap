@@ -14,27 +14,25 @@ struct MemoryPostView: View {
     @State private var currentSheetType: SheetType? = nil
     var body: some View {
         VStack(spacing: 12.0) {
-            Spacer().frame(height: 16.0)
             Group {
-                Group {
-                    HStack(spacing: 12.0) {
-                        profileInfoView
-                        moreButtonView
+                HStack(spacing: 12.0) {
+                    profileInfoView
+                    MoreButtonView {
+                        
                     }
-                    memoryInfoView
                 }
-                .padding(.horizontal, 16.0)
-                mediaView
-                Group {
-                    locationInfoView
-                    userReactionsView
-                }
-                .padding(.horizontal, 16.0)
+                memoryInfoView
             }
-            Spacer().frame(height: 16.0)
+            .padding(.horizontal, 16.0)
+            memoryMediasView
+            Group {
+                locationInfoView
+                userReactionsView
+            }
+            .padding(.horizontal, 16.0)
         }
-        .background(Color(uiColor: .systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 12.0))
+        .padding(.vertical, 16.0)
+        .background(Color(uiColor: .systemBackground), in: RoundedRectangle(cornerRadius: 12.0))
         .sheet(item: $currentSheetType) { sheetType in
             Group {
                 switch sheetType {
@@ -53,36 +51,25 @@ struct MemoryPostView: View {
 
 extension MemoryPostView {
     struct MemoryPostInfo {
-        let profilePhotoUrl: String
+        let profilePhotoUrlString: String
         let userDisplayName: String
         let ago: String
         let title: String
         let caption: String
         let tags: [String]
-        let medias: [Media]
+        let mediaUrlStrings: [String]
         let locationName: String
         let heartCount: Int
         let commentCount: Int
     }
-    enum MediaType {
-        case video
-        case image
-    }
-    struct Media {
-        var mediaType: MediaType
-        var mediaUrl: String
-    }
     static let previewMemoryPostInfo: MemoryPostInfo = .init(
-        profilePhotoUrl: "",
+        profilePhotoUrlString: "",
         userDisplayName: "Display Name",
         ago: "2 hours ago",
         title: "Memory title",
         caption: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
         tags: ["Tag 1", "Tag 2"],
-        medias: [
-            .init(mediaType: .image, mediaUrl: ""),
-            .init(mediaType: .video, mediaUrl: "https://assets.mixkit.co/9v5r5knro4wjxtve7oo4hjizb6fw")
-        ],
+        mediaUrlStrings: [],
         locationName: "Location name",
         heartCount: 12,
         commentCount: 4
@@ -127,69 +114,22 @@ private extension MemoryPostView {
                 navigateToUserProfile()
             }
     }
-    var moreButtonView: some View {
-        Button {
-            
-        } label: {
-            Image(systemName: "ellipsis")
-        }
-        .buttonStyle(.bordered)
-        .buttonBorderShape(.circle)
-        .foregroundStyle(.primary)
-        .controlSize(.large)
-    }
     var memoryInfoView: some View {
         VStack(alignment: .leading, spacing: 8.0) {
             Text(memoryPostInfo.title)
                 .font(.headline)
             Text(memoryPostInfo.caption)
                 .font(.subheadline)
-            HStack(spacing: 4.0) {
-                ForEach(memoryPostInfo.tags, id: \.self) { tag in
-                    tagView(text: tag)
-                }
-            }
+            MemoryTagsView(
+                tags: memoryPostInfo.tags
+            )
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-    func tagView(text: String) -> some View {
-        Text(text)
-            .font(.footnote)
-            .padding(.horizontal, 10.0)
-            .padding(.vertical, 4.0)
-            .background(Color(uiColor: .secondarySystemBackground), in: .capsule)
-    }
-    var mediaView: some View {
-        ScrollView(.horizontal) {
-            HStack {
-                ForEach(memoryPostInfo.medias, id: \.mediaUrl) { media in
-                    let url = media.mediaUrl
-                    switch media.mediaType {
-                    case .image:
-                        photoView(url: url)
-                    case .video:
-                        videoView(url: url)
-                    }
-                }
-            }
-        }
-        .scrollIndicators(.hidden)
-        .contentMargins(.horizontal, 16.0)
-    }
-    func photoView(url: String) -> some View {
-        RoundedRectangle(cornerRadius: 12.0)
-            .foregroundStyle(Color(uiColor: .secondarySystemBackground))
-            .frame(width: 320.0, height: 320.0)
-            .overlay {
-                
-            }
-    }
-    func videoView(url: String) -> some View {
-        VideoPlayer(
-            player: AVPlayer(url: URL(string: url)!)
+    var memoryMediasView: some View {
+        MemoryMediasView(
+            mediaUrlStrings: memoryPostInfo.mediaUrlStrings
         )
-        .frame(width: 320.0, height: 320.0)
-        .clipShape(RoundedRectangle(cornerRadius: 12.0))
     }
     var locationInfoView: some View {
         HStack {

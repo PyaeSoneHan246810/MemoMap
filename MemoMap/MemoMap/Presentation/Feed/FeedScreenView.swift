@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftUIIntrospect
 
 struct FeedScreenView: View {
     @Environment(\.colorScheme) private var colorScheme
@@ -103,6 +104,9 @@ private extension FeedScreenView {
             MemoriesView(
                 userProfileScreenModel: $userProfileScreenModel
             )
+        }
+        .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { scrollView in
+            scrollView.bouncesVertically = false
         }
         .scrollIndicators(.hidden)
         .contentMargins(.top, 10.0)

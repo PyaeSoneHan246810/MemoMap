@@ -109,6 +109,9 @@ private extension UserProfileView {
         userProfileInfo: UserProfileView.previewUserProfileInfo1,
         userProfileScreenModel: .constant(nil)
     )
+}
+
+#Preview {
     UserProfileView(
         userProfileInfo: UserProfileView.previewUserProfileInfo2,
         userProfileScreenModel: .constant(nil)
