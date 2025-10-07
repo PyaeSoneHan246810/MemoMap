@@ -11,8 +11,8 @@ import AVKit
 import WrappingHStack
 
 struct AddMemoryView: View {
-    @Binding var memoryPhotoPickerItem: PhotosPickerItem?
-    @Binding var memoryMedia: [MemoryMedia]
+    @State var memoryPhotoPickerItems: [PhotosPickerItem] = []
+    @Binding var memoryMediaItems: [MemoryMediaItem]
     @Binding var memoryTitle: String
     @Binding var memoryDescription: String
     @Binding var memoryTags: [String]
@@ -48,41 +48,39 @@ extension AddMemoryView {
 private extension AddMemoryView {
     var addMediaView: some View {
         VStack(alignment: .leading, spacing: 12.0) {
-            if !memoryMedia.isEmpty {
-                mediaListView
+            if !memoryMediaItems.isEmpty {
+                mediaItemsView
             }
             addMediaPickerView
                 .padding(.horizontal, 16.0)
         }
     }
-    var mediaListView: some View {
+    var mediaItemsView: some View {
         ScrollView(.horizontal) {
             HStack {
-                ForEach(memoryMedia) { media in
-                    mediaItemView(media)
+                ForEach(memoryMediaItems) { memoryMediaItem in
+                    mediaItemView(memoryMediaItem)
                 }
             }
         }
         .scrollIndicators(.hidden)
         .contentMargins(.horizontal, 16.0)
     }
-    func mediaItemView(_ media: MemoryMedia) -> some View {
+    func mediaItemView(_ mediaItem: MemoryMediaItem) -> some View {
         Group {
-            switch media {
-            case .image(_, let uiImage):
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFill()
-            case .video(_, let movie):
-                VideoPlayer(player: AVPlayer(url: movie.url))
+            switch mediaItem.media {
+            case .image(let uiImage):
+                MemoryImageView(uiImage: uiImage)
+            case .video(let movie):
+                MemoryVideoView(url: movie.url)
             }
         }
         .frame(width: 200.0, height: 200.0)
         .clipShape(RoundedRectangle(cornerRadius: 12.0))
         .overlay(alignment: .bottomTrailing) {
             Button {
-                memoryMedia.removeAll {
-                    $0.id == media.id
+                memoryMediaItems.removeAll {
+                    $0.id == mediaItem.id
                 }
             } label: {
                 Image(systemName: "trash.fill")
@@ -96,27 +94,30 @@ private extension AddMemoryView {
     }
     var addMediaPickerView: some View {
         PhotosPicker(
-            selection: $memoryPhotoPickerItem,
+            selection: $memoryPhotoPickerItems,
             matching: .any(of: [.images, .videos]),
             photoLibrary: .shared()
         ) {
             VStack(alignment: .leading, spacing: 12.0) {
-                if memoryMedia.isEmpty {
+                if memoryMediaItems.isEmpty {
                     memoryMediaPlaceholderView
                 }
                 labelView(title: "Add media", systemImage: "plus")
             }
         }
-        .onChange(of: memoryPhotoPickerItem) {
+        .onChange(of: memoryPhotoPickerItems) {
             Task {
-                guard let item = memoryPhotoPickerItem else { return }
-                if let data = try? await item.loadTransferable(type: Data.self),
-                   let image = UIImage(data: data) {
-                    memoryMedia.append(.image(id: UUID(), image))
-                } else if let video = try? await item.loadTransferable(type: Movie.self) {
-                    memoryMedia.append(.video(id: UUID(), video))
+                for item in memoryPhotoPickerItems {
+                    if let data = try? await item.loadTransferable(type: Data.self),
+                       let image = UIImage(data: data) {
+                        let memoryMediaItem = MemoryMediaItem(media: .image(image))
+                        memoryMediaItems.append(memoryMediaItem)
+                    } else if let video = try? await item.loadTransferable(type: Movie.self) {
+                        let memoryMediaItem = MemoryMediaItem(media: .video(video))
+                        memoryMediaItems.append(memoryMediaItem)
+                    }
                 }
-                memoryPhotoPickerItem = nil
+                memoryPhotoPickerItems.removeAll()
             }
         }
     }
@@ -222,11 +223,30 @@ private extension AddMemoryView {
     }
 }
 
+struct MemoryImageView: View {
+    let uiImage: UIImage
+    var body: some View {
+        Image(uiImage: uiImage)
+            .resizable()
+            .scaledToFill()
+    }
+}
+
+struct MemoryVideoView: View {
+    let url: URL
+    @State private var player: AVPlayer? = nil
+    var body: some View {
+        VideoPlayer(player: player)
+            .onAppear {
+                player = AVPlayer(url: url)
+            }
+    }
+}
+
 #Preview {
     NavigationStack {
         AddMemoryView(
-            memoryPhotoPickerItem: .constant(nil),
-            memoryMedia: .constant([]),
+            memoryMediaItems: .constant([]),
             memoryTitle: .constant(""),
             memoryDescription: .constant(""),
             memoryTags: .constant([]),

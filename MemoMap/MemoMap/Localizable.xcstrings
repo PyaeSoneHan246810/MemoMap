@@ -36,6 +36,9 @@
         }
       }
     },
+    "Add" : {
+
+    },
     "Add a memory" : {
       "localizations" : {
         "my" : {
@@ -281,6 +284,9 @@
           }
         }
       }
+    },
+    "Edit" : {
+
     },
     "Edit Photo" : {
       "localizations" : {

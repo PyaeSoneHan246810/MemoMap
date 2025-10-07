@@ -24,6 +24,8 @@ final class MemoriesViewModel {
     
     var placeTapped: Place? = nil
     
+    var pinTapped: PinData? = nil
+    
     var pins: [PinData] {
         if case .success(let data) = pinsDataState {
             return data

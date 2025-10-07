@@ -10,8 +10,7 @@ import PhotosUI
 
 struct PostMemoryView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var memoryPhotoPickerItem: PhotosPickerItem? = nil
-    @State private var memoryMedia: [MemoryMedia] = []
+    @State private var memoryMediaItems: [MemoryMediaItem] = []
     @State private var memoryTitle: String = ""
     @State private var memoryDescription: String = ""
     @State private var memoryTags: [String] = []
@@ -20,8 +19,7 @@ struct PostMemoryView: View {
         ScrollView(.vertical) {
             VStack(spacing: 20.0) {
                 AddMemoryView(
-                    memoryPhotoPickerItem: $memoryPhotoPickerItem,
-                    memoryMedia: $memoryMedia,
+                    memoryMediaItems: $memoryMediaItems,
                     memoryTitle: $memoryTitle,
                     memoryDescription: $memoryDescription,
                     memoryTags: $memoryTags,

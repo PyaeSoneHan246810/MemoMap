@@ -46,6 +46,36 @@ final class FirebaseMemoryRepository: MemoryRepository {
             throw UpdateMemoryMediaError.updateFailed
         }
     }
+    
+    func listenPinMemories(pinId: String, completion: @escaping (Result<[MemoryData], any Error>) -> Void) {
+        memoryCollectionReference.whereField(MemoryModel.CodingKeys.pinId.rawValue, isEqualTo: pinId).addSnapshotListener { querySnapshot, error in
+            if error != nil {
+                completion(.failure(ListenPinMemoriesError.listenFailed))
+                return
+            }
+            guard let documents = querySnapshot?.documents else {
+                completion(.success([]))
+                return
+            }
+            let memoryModels: [MemoryModel] = documents.compactMap { documentSnapshot in
+                try? documentSnapshot.data(as: MemoryModel.self)
+            }
+            let memories: [MemoryData] = memoryModels.map { memoryModel in
+                return MemoryData(
+                    id: memoryModel.id,
+                    title: memoryModel.title,
+                    description: memoryModel.description,
+                    media: memoryModel.media,
+                    tags: memoryModel.tags,
+                    dateTime: memoryModel.dateTime,
+                    publicStatus: memoryModel.publicStatus,
+                    createdAt: memoryModel.createdAt
+                )
+            }
+            completion(.success(memories))
+            return
+        }
+    }
 }
 
 private extension FirebaseMemoryRepository {

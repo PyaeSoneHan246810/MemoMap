@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PhotosUI
+import SwiftUIIntrospect
 
 struct AddNewPinView: View {
     @Environment(\.dismiss) private var dismiss
@@ -14,7 +15,7 @@ struct AddNewPinView: View {
     let place: Place
     var body: some View {
         ScrollView(.vertical) {
-            VStack(spacing: 0.0) {
+            LazyVStack(spacing: 0.0) {
                 locationImageView
                 VStack(spacing: 20.0) {
                     locationInfoTextFieldsView
@@ -24,8 +25,7 @@ struct AddNewPinView: View {
                             .font(.headline)
                             .padding(.horizontal, 16.0)
                         AddMemoryView(
-                            memoryPhotoPickerItem: $viewModel.memoryPhotoPickerItem,
-                            memoryMedia: $viewModel.memoryMedia,
+                            memoryMediaItems: $viewModel.memoryMediaItems,
                             memoryTitle: $viewModel.memoryTitle,
                             memoryDescription: $viewModel.memoryDescription,
                             memoryTags: $viewModel.memoryTags,
@@ -38,6 +38,9 @@ struct AddNewPinView: View {
                 }
                 .padding(.vertical, 16.0)
             }
+        }
+        .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { scrollView in
+            scrollView.bouncesVertically = false
         }
         .scrollIndicators(.hidden)
         .ignoresSafeArea(edges: .top)
@@ -70,26 +73,18 @@ private extension AddNewPinView {
                     .frame(height: 240.0)
                     .clipped()
             } else {
-                locationImagePlaceholderView
+                LocationImagePlaceholderView()
             }
-            locationImagePickerView
-                .padding(.bottom, 16.0)
-                .padding(.trailing, 16.0)
+            LocationImagePickerView(
+                selection: $viewModel.locationPhotoPickerItem,
+                uiImage: $viewModel.locationPhotoImage
+            )
+            .padding(.bottom, 16.0)
+            .padding(.trailing, 16.0)
         }
     }
-    var locationImagePlaceholderView: some View {
-        Rectangle()
-            .frame(height: 240.0)
-            .foregroundStyle(Color(uiColor: .secondarySystemBackground))
-            .overlay(alignment: .center) {
-                Image(.imagePlaceholder)
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundStyle(Color(uiColor: .systemBackground))
-                    .frame(width: 100.0, height: 100.0)
-            }
-    }
     var locationImagePickerView: some View {
+        
         PhotosPicker(selection: $viewModel.locationPhotoPickerItem) {
             Label("Edit Photo", systemImage: "pencil")
                 .labelStyle(.iconOnly)
@@ -103,7 +98,7 @@ private extension AddNewPinView {
             Task {
                 if let locationPhotoData = try? await viewModel.locationPhotoPickerItem?.loadTransferable(type: Data.self) {
                     let locationPhotoImage = UIImage(data: locationPhotoData)
-                    self.viewModel.locationPhotoImage = locationPhotoImage
+                    viewModel.locationPhotoImage = locationPhotoImage
                 }
             }
         }
