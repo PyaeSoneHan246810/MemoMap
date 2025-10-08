@@ -44,9 +44,9 @@ struct ProfileInfoView: View {
             }
             .font(.footnote)
             HStack(spacing: 8.0) {
-                countInfoView(count: 10, label: "Followers")
-                countInfoView(count: 12, label: "Followings")
-                countInfoView(count: 20, label: "Hearts")
+                countInfoView(count: 0, label: "Followers")
+                countInfoView(count: 0, label: "Followings")
+                countInfoView(count: 0, label: "Hearts")
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -67,11 +67,11 @@ private extension ProfileInfoView {
 
 #Preview {
     ProfileInfoView(
-        displayName: "Dylan",
-        username: "@dylan2004",
-        email: "dylan2004@gmail.com",
-        bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        birthday: "June 28, 2001",
-        joined: "May 1, 2025"
+        displayName: UserProfileData.preview1.displayname,
+        username: UserProfileData.preview1.username,
+        email: UserProfileData.preview1.emailAddress,
+        bio: UserProfileData.preview1.bio,
+        birthday: UserProfileData.preview1.birthday.formatted(date: .abbreviated, time: .omitted),
+        joined: UserProfileData.preview1.createdAt.formatted(date: .abbreviated, time: .omitted)
     )
 }

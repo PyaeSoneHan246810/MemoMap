@@ -15,7 +15,7 @@ struct AddNewPinView: View {
     let place: Place
     var body: some View {
         ScrollView(.vertical) {
-            LazyVStack(spacing: 0.0) {
+            VStack(spacing: 0.0) {
                 locationImageView
                 VStack(spacing: 20.0) {
                     locationInfoTextFieldsView
@@ -66,11 +66,14 @@ private extension AddNewPinView {
     var locationImageView: some View {
         ZStack(alignment: .bottomTrailing) {
             if let locationPhotoImage = viewModel.locationPhotoImage {
-                Image(uiImage: locationPhotoImage)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(maxWidth: .infinity)
+                Rectangle()
+                    .foregroundStyle(Color(uiColor: .secondarySystemBackground))
                     .frame(height: 240.0)
+                    .overlay {
+                        Image(uiImage: locationPhotoImage)
+                            .resizable()
+                            .scaledToFill()
+                    }
                     .clipped()
             } else {
                 LocationImagePlaceholderView()

@@ -80,7 +80,7 @@ private extension SavedPinDetailsView {
             Text(pin.name)
                 .font(.title)
                 .fontWeight(.semibold)
-            Text(pin.description ?? "No description...")
+            Text(pin.description ?? "No description")
             Button("Edit", systemImage: "pencil") {
                 
             }
@@ -126,7 +126,7 @@ private extension SavedPinDetailsView {
 #Preview {
     NavigationStack {
         SavedPinDetailsView(
-            pin: PinData.preview2
+            pin: PinData.preview1
         )
     }
 }

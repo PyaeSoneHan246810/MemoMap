@@ -41,7 +41,7 @@ struct ProfileCoverPhotoView: View {
 
 #Preview {
     ProfileCoverPhotoView(
-        coverPhoto: "https://images.unsplash.com/photo-1743341942781-14f3c65603c4?q=80&w=1742&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        coverPhoto: UserProfileData.preview1.coverPhotoUrl
     )
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background(Color(uiColor: .systemFill))

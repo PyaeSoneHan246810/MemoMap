@@ -15,6 +15,9 @@ struct MemoryData: Identifiable {
     let tags: [String]
     let dateTime: Date
     let publicStatus: Bool
+    let locationName: String
+    let latitude: Double
+    let longitude: Double
     let createdAt: Date
 }
 
@@ -28,6 +31,9 @@ extension MemoryData {
         tags: [ "Friends", "FriendsTime", "Fun", "GoodTimes"],
         dateTime: .now,
         publicStatus: true,
+        locationName: "Central World",
+        latitude: 13.7465,
+        longitude: 100.5391,
         createdAt: .now
     )
     static let preview2: MemoryData = MemoryData(
@@ -38,6 +44,9 @@ extension MemoryData {
         tags: [ "Friends", "FriendsTime", "Fun", "GoodTimes"],
         dateTime: .now,
         publicStatus: false,
+        locationName: "Lotte World Aquarium",
+        latitude: 37.5135,
+        longitude: 127.1049,
         createdAt: .now
     )
 }

@@ -7,7 +7,6 @@
 
 import SwiftUI
 import Kingfisher
-import AVKit
 
 struct MemoryMediasView: View {
     let mediaUrlStrings: [String]
@@ -29,16 +28,17 @@ struct MemoryMediasView: View {
                     case .image:
                         photoView(url: media.urlString)
                     case .video:
-                        videoView(url: media.urlString)
+                        if let url = URL(string: media.urlString) {
+                            videoView(url: url)
+                        } else {
+                            EmptyView()
+                        }
                     }
                 }
             }
         }
         .scrollIndicators(.hidden)
         .contentMargins(.horizontal, 16.0)
-        .onAppear {
-            print(mediaUrlStrings)
-        }
     }
 }
 
@@ -68,10 +68,8 @@ private extension MemoryMediasView {
             }
             .clipShape(RoundedRectangle(cornerRadius: 12.0))
     }
-    func videoView(url: String) -> some View {
-        VideoPlayer(
-            player: AVPlayer(url: URL(string: url)!)
-        )
+    func videoView(url: URL) -> some View {
+        MemoryVideoView(url: url)
         .frame(width: 320.0, height: 320.0)
         .clipShape(RoundedRectangle(cornerRadius: 12.0))
     }

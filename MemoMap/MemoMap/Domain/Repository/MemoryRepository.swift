@@ -13,4 +13,6 @@ protocol MemoryRepository {
     func updateMemoryMedia(memoryId: String, media: [String]) async throws
     
     func listenPinMemories(pinId: String, completion: @escaping (Result<[MemoryData], Error>) -> Void)
+    
+    func listenUserPublicMemories(userData: UserData?, completion: @escaping (Result<[MemoryData], Error>) -> Void)
 }

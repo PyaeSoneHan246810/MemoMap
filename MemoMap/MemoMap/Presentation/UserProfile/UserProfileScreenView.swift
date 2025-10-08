@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftUIIntrospect
 
 struct UserProfileScreenModel: Hashable {
     let userId: String
@@ -31,6 +32,9 @@ struct UserProfileScreenView: View {
                     followUserView
                 }
             }
+        }
+        .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { scrollView in
+            scrollView.bouncesVertically = false
         }
         .scrollIndicators(.hidden)
         .ignoresSafeArea(.all, edges: .top)
@@ -96,14 +100,20 @@ private extension UserProfileScreenView {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 160.0, height: 160.0)
-                .foregroundStyle(.accent)
+                .foregroundStyle(.secondary)
             Text("Follow the user to see their public memories")
                 .multilineTextAlignment(.center)
         }
         .frame(width: 240.0)
     }
     var memoriesView: some View {
-        MemoriesView(
+        MemoryPostsView(
+            memoryPosts: [
+                MemoryPost(
+                    memory: MemoryData.preview1,
+                    userProfile: UserProfileData.preview1
+                )
+            ],
             userProfileScreenModel: .constant(nil)
         )
         .padding(.vertical, 16.0)

@@ -7,7 +7,6 @@
 
 import SwiftUI
 import PhotosUI
-import AVKit
 import WrappingHStack
 
 struct AddMemoryView: View {
@@ -70,7 +69,9 @@ private extension AddMemoryView {
         Group {
             switch mediaItem.media {
             case .image(let uiImage):
-                MemoryImageView(uiImage: uiImage)
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
             case .video(let movie):
                 MemoryVideoView(url: movie.url)
             }
@@ -220,26 +221,6 @@ private extension AddMemoryView {
             }
         }
         .buttonStyle(.plain)
-    }
-}
-
-struct MemoryImageView: View {
-    let uiImage: UIImage
-    var body: some View {
-        Image(uiImage: uiImage)
-            .resizable()
-            .scaledToFill()
-    }
-}
-
-struct MemoryVideoView: View {
-    let url: URL
-    @State private var player: AVPlayer? = nil
-    var body: some View {
-        VideoPlayer(player: player)
-            .onAppear {
-                player = AVPlayer(url: url)
-            }
     }
 }
 

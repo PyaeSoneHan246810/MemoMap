@@ -101,7 +101,13 @@ private extension FeedScreenView {
     }
     var memoriesFeedView: some View {
         ScrollView(.vertical) {
-            MemoriesView(
+            MemoryPostsView(
+                memoryPosts: [
+                    MemoryPost(
+                        memory: MemoryData.preview1,
+                        userProfile: UserProfileData.preview1
+                    )
+                ],
                 userProfileScreenModel: $userProfileScreenModel
             )
         }

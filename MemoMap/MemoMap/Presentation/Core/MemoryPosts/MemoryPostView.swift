@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AVKit
+import Kingfisher
 
 struct MemoryPostView: View {
     let memoryPostInfo: MemoryPostInfo
@@ -51,28 +52,18 @@ struct MemoryPostView: View {
 
 extension MemoryPostView {
     struct MemoryPostInfo {
-        let profilePhotoUrlString: String
-        let userDisplayName: String
+        let userProfile: UserProfileData?
+        let memory: MemoryData
         let ago: String
-        let title: String
-        let caption: String
-        let tags: [String]
-        let mediaUrlStrings: [String]
-        let locationName: String
         let heartCount: Int
         let commentCount: Int
     }
     static let previewMemoryPostInfo: MemoryPostInfo = .init(
-        profilePhotoUrlString: "",
-        userDisplayName: "Display Name",
+        userProfile: UserProfileData.preview1,
+        memory: MemoryData.preview1,
         ago: "2 hours ago",
-        title: "Memory title",
-        caption: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-        tags: ["Tag 1", "Tag 2"],
-        mediaUrlStrings: [],
-        locationName: "Location name",
-        heartCount: 12,
-        commentCount: 4
+        heartCount: 0,
+        commentCount: 0
     )
     enum SheetType: String, Identifiable {
         case viewOnMap = "View on map"
@@ -98,42 +89,61 @@ private extension MemoryPostView {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
     var profilePhotoView: some View {
-        Image(.profilePlaceholder)
-            .resizable()
-            .scaledToFit()
-            .frame(width: 52.0, height: 52.0)
-            .foregroundStyle(Color(uiColor: .secondarySystemBackground))
-            .onTapGesture {
-                navigateToUserProfile()
+        Group {
+            let userProfilePhotoUrl = memoryPostInfo.userProfile?.profilePhotoUrl
+            if let userProfilePhotoUrl {
+                Circle()
+                    .frame(width: 52.0, height: 52.0)
+                    .foregroundStyle(Color(uiColor: .secondarySystemBackground))
+                    .overlay {
+                        KFImage(URL(string: userProfilePhotoUrl))
+                            .resizable()
+                            .scaledToFill()
+                    }
+                    .clipShape(.circle)
+            } else {
+                Image(.profilePlaceholder)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 52.0, height: 52.0)
+                    .foregroundStyle(Color(uiColor: .secondarySystemBackground))
             }
+        }
+        .onTapGesture {
+            navigateToUserProfile()
+        }
     }
     var displayNameView: some View {
-        Text(memoryPostInfo.userDisplayName)
+        let userDisplayName = memoryPostInfo.userProfile?.displayname
+        return Text(userDisplayName ?? "Placeholder")
             .font(.headline)
             .onTapGesture {
                 navigateToUserProfile()
             }
+            .redacted(reason: userDisplayName == nil ? .placeholder : [])
     }
     var memoryInfoView: some View {
         VStack(alignment: .leading, spacing: 8.0) {
-            Text(memoryPostInfo.title)
+            Text(memoryPostInfo.memory.title)
                 .font(.headline)
-            Text(memoryPostInfo.caption)
-                .font(.subheadline)
+            if let memoryDescription = memoryPostInfo.memory.description {
+                Text(memoryDescription)
+                    .font(.subheadline)
+            }
             MemoryTagsView(
-                tags: memoryPostInfo.tags
+                tags: memoryPostInfo.memory.tags
             )
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
     var memoryMediasView: some View {
         MemoryMediasView(
-            mediaUrlStrings: memoryPostInfo.mediaUrlStrings
+            mediaUrlStrings: memoryPostInfo.memory.media
         )
     }
     var locationInfoView: some View {
         HStack {
-            Text(memoryPostInfo.locationName)
+            Text(memoryPostInfo.memory.locationName)
                 .font(.subheadline)
                 .fontWeight(.medium)
             Spacer()
