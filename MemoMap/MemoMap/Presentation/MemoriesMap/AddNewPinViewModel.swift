@@ -63,7 +63,7 @@ final class AddNewPinViewModel {
     func saveNewPin(latitude: Double, longitude: Double) async -> Result<Void, Error> {
         let pinData = PinData(
             id: "",
-            name: locationName,
+            name: trimmedLocationName,
             description: trimmedLocationDescription.isEmpty ? nil : trimmedLocationDescription,
             photoUrl: nil,
             latitude: latitude,
@@ -79,7 +79,13 @@ final class AddNewPinViewModel {
                     await updatePinPhotoUrl(pinId: savedPinId, pinPhotoUrlString: pinPhotoUrlString)
                 }
                 if !trimmedMemoryTitle.isEmpty {
-                    let savedMemoryId = try await saveMemory(pinId: savedPinId, userData: userData)
+                    let savedMemoryId = try await saveMemory(
+                        pinId: savedPinId,
+                        locationName: trimmedLocationName,
+                        latitude: latitude,
+                        longitude: longitude,
+                        userData: userData
+                    )
                     let uploadedMemoryMedia = await uploadMemoryMedia(memoryId: savedMemoryId)
                     if !uploadedMemoryMedia.isEmpty {
                         await updateMemoryMedia(memoryId: savedMemoryId, media: uploadedMemoryMedia)
@@ -136,7 +142,7 @@ final class AddNewPinViewModel {
         }
     }
     
-    private func saveMemory(pinId: String, userData: UserData?) async throws -> String {
+    private func saveMemory(pinId: String, locationName: String, latitude: Double, longitude: Double, userData: UserData?) async throws -> String {
         let memoryData = MemoryData(
             id: "",
             title: trimmedMemoryTitle,
@@ -145,6 +151,9 @@ final class AddNewPinViewModel {
             tags: memoryTags,
             dateTime: memoryDateTime,
             publicStatus: isMemoryPublic,
+            locationName: locationName,
+            latitude: latitude,
+            longitude: longitude,
             createdAt: .now
         )
         let memoryId = try await memoryRepository.saveMemory(memoryData: memoryData, pinId: pinId, userData: userData)

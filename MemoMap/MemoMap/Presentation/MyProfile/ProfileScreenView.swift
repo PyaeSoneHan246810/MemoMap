@@ -19,7 +19,11 @@ struct ProfileScreenView: View {
                     profileInfoView
                 }
                 .background(Color(uiColor: .systemBackground))
-                memoriesView
+                if !viewModel.memoryPosts.isEmpty {
+                    memoriesView
+                } else {
+                    emptyPublicMemoriesView
+                }
             }
         }
         .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { scrollView in
@@ -27,17 +31,22 @@ struct ProfileScreenView: View {
         }
         .scrollIndicators(.hidden)
         .ignoresSafeArea(.all, edges: .top)
+        .background(scrollViewBackgroundColor)
         .background(Color(uiColor: .secondarySystemBackground))
         .toolbar {
             toolbarContentView
         }
         .onAppear {
             viewModel.listenUserProfile()
+            viewModel.listenUserPublicMemories()
         }
     }
 }
 
 private extension ProfileScreenView {
+    var scrollViewBackgroundColor: Color {
+        viewModel.memoryPosts.isEmpty ? Color(uiColor: .systemBackground) : Color(uiColor: .secondarySystemBackground)
+    }
     @ToolbarContentBuilder
     var toolbarContentView: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
@@ -50,11 +59,11 @@ private extension ProfileScreenView {
     }
     var profilePhotosView: some View {
         ProfileCoverPhotoView(
-            coverPhoto: viewModel.userProfileData?.coverPhotoUrl
+            coverPhoto: viewModel.userProfile?.coverPhotoUrl
         )
         .overlay(alignment: .bottomLeading) {
             ProfilePhotoView(
-                profilePhoto: viewModel.userProfileData?.profilePhotoUrl
+                profilePhoto: viewModel.userProfile?.profilePhotoUrl
             )
             .padding(.leading, 16.0)
             .offset(y: 60.0)
@@ -75,7 +84,7 @@ private extension ProfileScreenView {
         .primaryFilledSmallButtonStyle()
     }
     var profileInfoView: some View {
-        let userProfileData = viewModel.userProfileData
+        let userProfileData = viewModel.userProfile
         return ProfileInfoView(
             displayName: userProfileData?.displayname ?? "Placeholder",
             username: userProfileData?.username ?? "@placeholder",
@@ -88,10 +97,23 @@ private extension ProfileScreenView {
         .redacted(reason: userProfileData == nil ? .placeholder : [])
     }
     var memoriesView: some View {
-        MemoriesView(
+        MemoryPostsView(
+            memoryPosts: viewModel.memoryPosts,
             userProfileScreenModel: .constant(nil)
         )
         .padding(.vertical, 16.0)
+    }
+    var emptyPublicMemoriesView: some View {
+        VStack(spacing: 16.0) {
+            Image(.emptyPublicMemories)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 160.0, height: 160.0)
+                .foregroundStyle(.secondary)
+            Text("There is no public memories yet.")
+                .multilineTextAlignment(.center)
+        }
+        .frame(width: 300.0)
     }
 }
 
