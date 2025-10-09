@@ -185,6 +185,21 @@ final class FirebaseMemoryRepository: MemoryRepository {
             throw CheckHeartError.checkFailed
         }
     }
+    
+    func loadMemoryHearts(memoryId: String) async throws -> [HeartData] {
+        do {
+            let heartModels = try await getMemoryHeartsCollectionReference(memoryId: memoryId).getDocumentModels(as: HeartModel.self)
+            let hearts = heartModels.map { heartModel in
+                return HeartData(
+                    id: heartModel.id,
+                    createdAt: heartModel.createdAt
+                )
+            }
+            return hearts
+        } catch {
+            throw LoadMemoryHeartsError.loadFailed
+        }
+    }
 }
 
 private extension FirebaseMemoryRepository {

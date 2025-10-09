@@ -107,7 +107,7 @@ private extension CommentsView {
 #Preview {
     NavigationStack {
         CommentsView(
-            memoryId: "1"
+            memoryId: ""
         )
     }
 }
