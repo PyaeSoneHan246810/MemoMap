@@ -15,4 +15,10 @@ protocol MemoryRepository {
     func listenPinMemories(pinId: String, completion: @escaping (Result<[MemoryData], Error>) -> Void)
     
     func listenUserPublicMemories(userData: UserData?, completion: @escaping (Result<[MemoryData], Error>) -> Void)
+    
+    func addMemoryComment(memoryId: String, commentData: CommentData) async throws
+    
+    func loadMemoryComments(memoryId: String) async throws -> [CommentData]
+    
+    func increaseMemoryCommentsCount(memoryId: String) async throws
 }

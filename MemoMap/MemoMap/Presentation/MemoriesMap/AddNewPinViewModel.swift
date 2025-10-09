@@ -154,6 +154,8 @@ final class AddNewPinViewModel {
             locationName: locationName,
             latitude: latitude,
             longitude: longitude,
+            heartsCount: 0,
+            commentsCount: 0,
             createdAt: .now
         )
         let memoryId = try await memoryRepository.saveMemory(memoryData: memoryData, pinId: pinId, userData: userData)

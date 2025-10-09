@@ -21,6 +21,8 @@ struct MemoryModel: Codable {
         case publicStatus
         case locationName
         case location
+        case heartsCount
+        case commentsCount
         case createdAt
     }
     let id: String
@@ -34,6 +36,8 @@ struct MemoryModel: Codable {
     let publicStatus: Bool
     let locationName: String
     let location: GeoPoint
+    let heartsCount: Int
+    let commentsCount: Int
     let createdAt: Date
 }
 
@@ -51,6 +55,8 @@ extension MemoryModel {
             Self.CodingKeys.publicStatus.rawValue: publicStatus,
             Self.CodingKeys.locationName.rawValue: locationName,
             Self.CodingKeys.location.rawValue: location,
+            Self.CodingKeys.heartsCount.rawValue: heartsCount,
+            Self.CodingKeys.commentsCount.rawValue: commentsCount,
             Self.CodingKeys.createdAt.rawValue: Timestamp(date: createdAt)
         ]
     }

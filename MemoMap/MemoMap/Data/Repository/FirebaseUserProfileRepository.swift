@@ -12,7 +12,7 @@ final class FirebaseUserProfileRepository: UserProfileRepository {
     
     func saveUserProfile(userProfileData: UserProfileData) async throws {
         let id = userProfileData.id
-        let userProfile = UserProfileModel(
+        let userProfileModel = UserProfileModel(
             id: id,
             emailAddress: userProfileData.emailAddress,
             username: userProfileData.username,
@@ -23,7 +23,7 @@ final class FirebaseUserProfileRepository: UserProfileRepository {
             bio: userProfileData.bio,
             createdAt: userProfileData.createdAt
         )
-        let firestoreDocumentData = userProfile.firestoreDocumentData
+        let firestoreDocumentData = userProfileModel.firestoreDocumentData
         do {
             try await getUserCollectionDocumentReference(userId: id)
                 .setData(firestoreDocumentData, merge: false)
@@ -71,24 +71,20 @@ final class FirebaseUserProfileRepository: UserProfileRepository {
                 completion(.failure(ListenUserProfileError.documentNotFound))
                 return
             }
-            guard let userProfile = try? documentSnapshot.data(as: UserProfileModel.self) else {
+            guard let userProfileModel = try? documentSnapshot.data(as: UserProfileModel.self) else {
                 completion(.failure(ListenUserProfileError.getDataFailed))
                 return
             }
-            let userProfileData = UserProfileData(
-                id: userProfile.id,
-                emailAddress: userProfile.emailAddress,
-                username: userProfile.username,
-                displayname: userProfile.displayname,
-                profilePhotoUrl: userProfile.profilePhotoUrl,
-                coverPhotoUrl: userProfile.coverPhotoUrl,
-                birthday: userProfile.birthday,
-                bio: userProfile.bio,
-                createdAt: userProfile.createdAt
-            )
-            completion(.success(userProfileData))
+            let userProfile = self.getUserProfileData(from: userProfileModel)
+            completion(.success(userProfile))
             return
         }
+    }
+    
+    func getUserProfile(userId: String) async throws -> UserProfileData {
+        let userProfileModel = try await getUserCollectionDocumentReference(userId: userId).getDocument(as: UserProfileModel.self)
+        let userProfile = getUserProfileData(from: userProfileModel)
+        return userProfile
     }
     
 }
@@ -104,5 +100,19 @@ private extension FirebaseUserProfileRepository {
     
     func getUserCollectionDocumentReference(userId: String) -> DocumentReference {
         userCollectionReference.document(userId)
+    }
+    
+    func getUserProfileData(from userProfileModel: UserProfileModel) -> UserProfileData {
+        return UserProfileData(
+            id: userProfileModel.id,
+            emailAddress: userProfileModel.emailAddress,
+            username: userProfileModel.username,
+            displayname: userProfileModel.displayname,
+            profilePhotoUrl: userProfileModel.profilePhotoUrl,
+            coverPhotoUrl: userProfileModel.coverPhotoUrl,
+            birthday: userProfileModel.birthday,
+            bio: userProfileModel.bio,
+            createdAt: userProfileModel.createdAt
+        )
     }
 }
