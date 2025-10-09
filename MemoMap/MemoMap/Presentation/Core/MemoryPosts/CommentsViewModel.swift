@@ -91,6 +91,7 @@ final class CommentsViewModel {
             } else {
                 let errorDescription = error.localizedDescription
                 print(errorDescription)
+                userCommentsDataState = .failure(errorDescription)
             }
         }
     }

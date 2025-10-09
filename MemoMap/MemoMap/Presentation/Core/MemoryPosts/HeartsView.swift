@@ -10,6 +10,8 @@ import SwiftUI
 struct HeartsView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var userProfileScreenModel: UserProfileScreenModel? = nil
+    @State private var viewModel: HeartsViewModel = .init()
+    let memoryId: String
     var body: some View {
         heartsScrollView
         .navigationTitle("Hearts")
@@ -19,6 +21,9 @@ struct HeartsView: View {
         }
         .navigationDestination(item: $userProfileScreenModel) {
             UserProfileScreenView(userProfileScreenModel: $0)
+        }
+        .task {
+            await viewModel.getUserHearts(memoryId: memoryId)
         }
     }
 }
@@ -39,9 +44,13 @@ private extension HeartsView {
     var heartsScrollView: some View {
         ScrollView(.vertical) {
             LazyVStack(spacing: 16.0) {
-                ForEach(1...10, id: \.self) { _ in
+                ForEach(viewModel.userHearts) { userHeart in
+                    let userProfileInfo = UserProfileView.UserProfileInfo(
+                        userProfile: userHeart.userProfile,
+                        userType: .following
+                    )
                     UserProfileView(
-                        userProfileInfo: UserProfileView.previewUserProfileInfo1,
+                        userProfileInfo: userProfileInfo,
                         userProfileScreenModel: $userProfileScreenModel
                     )
                 }
@@ -54,6 +63,8 @@ private extension HeartsView {
 
 #Preview {
     NavigationStack {
-        HeartsView()
+        HeartsView(
+            memoryId: ""
+        )
     }
 }

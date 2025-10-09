@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct UserProfileView: View {
     let userProfileInfo: UserProfileInfo
@@ -27,46 +28,59 @@ extension UserProfileView {
         case mutual
     }
     struct UserProfileInfo {
-        let profilePhotoUrl: String
-        let displayName: String
-        let username: String
+        let userProfile: UserProfileData?
         let userType: UserType
     }
     static let previewUserProfileInfo1: UserProfileInfo = .init(
-        profilePhotoUrl: "",
-        displayName: "",
-        username: "",
+        userProfile: UserProfileData.preview1,
         userType: .following
     )
     static let previewUserProfileInfo2: UserProfileInfo = .init(
-        profilePhotoUrl: "",
-        displayName: "",
-        username: "",
+        userProfile: UserProfileData.preview1,
         userType: .unfollowed
     )
 }
 
 private extension UserProfileView {
     var profilePhotoView: some View {
-        Image(.profilePlaceholder)
-            .resizable()
-            .frame(width: 60.0, height: 60.0)
-            .foregroundStyle(Color(uiColor: .secondarySystemBackground))
-            .onTapGesture {
-                navigateToUserProfile()
+        Group {
+            if let userProfilePhotoUrl = userProfileInfo.userProfile?.profilePhotoUrl {
+                Circle()
+                    .foregroundStyle(Color(uiColor: .secondarySystemBackground))
+                    .frame(width: 60.0, height: 60.0)
+                    .overlay {
+                        KFImage(URL(string: userProfilePhotoUrl))
+                            .resizable()
+                            .scaledToFill()
+                    }
+                    .clipShape(.circle)
+            } else {
+                Image(.profilePlaceholder)
+                    .resizable()
+                    .frame(width: 60.0, height: 60.0)
+                    .foregroundStyle(Color(uiColor: .secondarySystemBackground))
+                    
             }
+        }
+        .onTapGesture {
+            navigateToUserProfile()
+        }
     }
     var userInfoView: some View {
         VStack(alignment: .leading, spacing: 2.0) {
-            Text("Display Name")
+            let userDisplayname = userProfileInfo.userProfile?.displayname
+            let username = userProfileInfo.userProfile?.username
+            Text(userDisplayname ?? "Placeholder")
                 .font(.callout)
                 .fontWeight(.medium)
                 .onTapGesture {
                     navigateToUserProfile()
                 }
-            Text("@username")
+                .redacted(reason: userDisplayname == nil ? .placeholder : [])
+            Text(username ?? "Placeholder")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
+                .redacted(reason: username == nil ? .placeholder : [])
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

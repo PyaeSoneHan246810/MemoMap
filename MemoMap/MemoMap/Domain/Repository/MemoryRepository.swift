@@ -31,4 +31,6 @@ protocol MemoryRepository {
     func decreaseMemoryHeartsCount(memoryId: String) async throws
     
     func checkIsHeartGiven(memoryId: String, userId: String) async throws -> Bool
+    
+    func loadMemoryHearts(memoryId: String) async throws -> [HeartData]
 }

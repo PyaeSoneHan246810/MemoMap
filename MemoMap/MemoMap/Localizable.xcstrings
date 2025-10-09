@@ -1,9 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "@username" : {
-
-    },
     "4 Mutuals" : {
 
     },
@@ -268,9 +265,6 @@
           }
         }
       }
-    },
-    "Display Name" : {
-
     },
     "Don't worry. Please enter the email address associated with your account." : {
       "localizations" : {

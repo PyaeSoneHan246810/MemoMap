@@ -188,7 +188,9 @@ private extension MemoryPostView {
     }
     var heartsSheetView: some View {
         NavigationStack {
-            HeartsView()
+            HeartsView(
+                memoryId: memoryPostInfo.memory.id
+            )
         }
     }
     var commentsSheetView: some View {
