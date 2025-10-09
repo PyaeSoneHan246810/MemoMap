@@ -54,16 +54,10 @@ extension MemoryPostView {
     struct MemoryPostInfo {
         let userProfile: UserProfileData?
         let memory: MemoryData
-        let ago: String
-        let heartCount: Int
-        let commentCount: Int
     }
     static let previewMemoryPostInfo: MemoryPostInfo = .init(
         userProfile: UserProfileData.preview1,
         memory: MemoryData.preview1,
-        ago: "2 hours ago",
-        heartCount: 0,
-        commentCount: 0
     )
     enum SheetType: String, Identifiable {
         case viewOnMap = "View on map"
@@ -81,7 +75,7 @@ private extension MemoryPostView {
             profilePhotoView
             VStack(alignment: .leading, spacing: 0.0) {
                 displayNameView
-                Text(memoryPostInfo.ago)
+                Text(memoryPostInfo.memory.createdAt.formatted())
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -165,12 +159,12 @@ private extension MemoryPostView {
             Button {
                 
             } label: {
-                Label(memoryPostInfo.heartCount.description, systemImage: "heart")
+                Label("Comment", systemImage: "heart")
                     .labelStyle(.iconOnly)
             }
             .controlSize(.large)
             .tint(.primary)
-            Label(memoryPostInfo.heartCount.description, systemImage: "heart")
+            Label(memoryPostInfo.memory.heartsCount.description, systemImage: "heart")
                 .labelStyle(.titleOnly)
                 .onTapGesture {
                     currentSheetType = .hearts
@@ -181,7 +175,7 @@ private extension MemoryPostView {
         Button {
             currentSheetType = .comments
         } label: {
-            Label(memoryPostInfo.commentCount.description, systemImage: "message")
+            Label(memoryPostInfo.memory.commentsCount.description, systemImage: "message")
                 .labelIconToTitleSpacing(4.0)
         }
         .controlSize(.large)
@@ -199,7 +193,9 @@ private extension MemoryPostView {
     }
     var commentsSheetView: some View {
         NavigationStack {
-            CommentsView()
+            CommentsView(
+                memoryId: memoryPostInfo.memory.id
+            )
         }
     }
 }

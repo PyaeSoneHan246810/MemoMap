@@ -15,7 +15,7 @@ final class FirebaseMemoryRepository: MemoryRepository {
         }
         let memoryDocument = memoryCollectionReference.document()
         let memoryId = memoryDocument.documentID
-        let memory = MemoryModel(
+        let memoryModel = MemoryModel(
             id: memoryId,
             pinId: pinId,
             ownerId: userId,
@@ -27,9 +27,11 @@ final class FirebaseMemoryRepository: MemoryRepository {
             publicStatus: memoryData.publicStatus,
             locationName: memoryData.locationName,
             location: GeoPoint(latitude: memoryData.latitude, longitude: memoryData.longitude),
+            heartsCount: memoryData.heartsCount,
+            commentsCount: memoryData.commentsCount,
             createdAt: memoryData.createdAt
         )
-        let firestoreDocumentData = memory.firestoreDocumentData
+        let firestoreDocumentData = memoryModel.firestoreDocumentData
         do {
             try await memoryDocument.setData(firestoreDocumentData, merge: false)
             return memoryId
@@ -87,6 +89,51 @@ final class FirebaseMemoryRepository: MemoryRepository {
                 return
             }
     }
+    
+    func addMemoryComment(memoryId: String, commentData: CommentData) async throws {
+        let commentDocument = getMemoryCommentCollectionReference(memoryId: memoryId).document()
+        let commentId = commentDocument.documentID
+        let commentModel = CommentModel(
+            id: commentId,
+            comment: commentData.comment,
+            userId: commentData.userId,
+            createdAt: commentData.createdAt
+        )
+        let firestoreDocumentData = commentModel.firestoreDocumentData
+        do {
+            try await commentDocument.setData(firestoreDocumentData, merge: false)
+        } catch {
+            throw AddMemoryCommentError.commentFailed
+        }
+    }
+    
+    func loadMemoryComments(memoryId: String) async throws -> [CommentData] {
+        do {
+            let commentModels = try await getMemoryCommentCollectionReference(memoryId: memoryId).getDocumentModels(as: CommentModel.self)
+            let comments = commentModels.map { commentModel in
+                return CommentData(
+                    id: commentModel.id,
+                    comment: commentModel.comment,
+                    userId: commentModel.userId,
+                    createdAt: commentModel.createdAt
+                )
+            }
+            return comments
+        } catch {
+            throw LoadMemoryCommentsError.loadFailed
+        }
+    }
+    
+    func increaseMemoryCommentsCount(memoryId: String) async throws {
+        let updatedData = [
+            MemoryModel.CodingKeys.commentsCount.rawValue: FieldValue.increment(Int64(1))
+        ]
+        do {
+            try await memoryCollectionReference.document(memoryId).updateData(updatedData)
+        } catch {
+            throw UpdateMemoryCommentsCountError.updateFailed
+        }
+    }
 }
 
 private extension FirebaseMemoryRepository {
@@ -96,6 +143,10 @@ private extension FirebaseMemoryRepository {
     
     var memoryCollectionReference: CollectionReference {
         firestoreDatabase.collection("memories")
+    }
+    
+    func getMemoryCommentCollectionReference(memoryId: String) -> CollectionReference {
+        memoryCollectionReference.document(memoryId).collection("comments")
     }
     
     func getMemories(documents: [QueryDocumentSnapshot]) -> [MemoryData] {
@@ -114,6 +165,8 @@ private extension FirebaseMemoryRepository {
                 locationName: memoryModel.locationName,
                 latitude: memoryModel.location.latitude,
                 longitude: memoryModel.location.longitude,
+                heartsCount: memoryModel.heartsCount,
+                commentsCount: memoryModel.commentsCount,
                 createdAt: memoryModel.createdAt
             )
         }

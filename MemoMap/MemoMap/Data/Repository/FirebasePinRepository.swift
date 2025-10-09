@@ -15,7 +15,7 @@ final class FirebasePinRepository: PinRepository {
         }
         let pinDocument = pinCollectionReference.document()
         let pinId = pinDocument.documentID
-        let pin = PinModel(
+        let pinModel = PinModel(
             id: pinId,
             ownerId: userId,
             name: pinData.name,
@@ -24,7 +24,7 @@ final class FirebasePinRepository: PinRepository {
             location: GeoPoint(latitude: pinData.latitude, longitude: pinData.longitude),
             createdAt: pinData.createdAt
         )
-        let firestoreDocumentData = pin.firestoreDocumentData
+        let firestoreDocumentData = pinModel.firestoreDocumentData
         do {
             try await pinDocument.setData(firestoreDocumentData, merge: false)
             return pinId

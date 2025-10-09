@@ -4,9 +4,6 @@
     "@username" : {
 
     },
-    "2 hours ago" : {
-
-    },
     "4 Mutuals" : {
 
     },
@@ -178,6 +175,9 @@
           }
         }
       }
+    },
+    "Comment" : {
+
     },
     "Comments" : {
       "localizations" : {
@@ -475,9 +475,6 @@
           }
         }
       }
-    },
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." : {
-
     },
     "MemoMap" : {
       "shouldTranslate" : false

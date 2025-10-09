@@ -17,4 +17,6 @@ protocol UserProfileRepository {
     
     func listenUserProfile(userData: UserData?, completion: @escaping (Result<UserProfileData, Error>) -> Void)
     
+    func getUserProfile(userId: String) async throws -> UserProfileData
+    
 }

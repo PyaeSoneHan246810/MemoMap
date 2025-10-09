@@ -27,10 +27,7 @@ private extension MemoryPostsView {
     func getMemoryPostInfo(from memoryPost: MemoryPost) -> MemoryPostView.MemoryPostInfo {
         let memoryPostInfo = MemoryPostView.MemoryPostInfo(
             userProfile: memoryPost.userProfile,
-            memory: memoryPost.memory,
-            ago: "",
-            heartCount: 0,
-            commentCount: 0
+            memory: memoryPost.memory
         )
         return memoryPostInfo
     }
