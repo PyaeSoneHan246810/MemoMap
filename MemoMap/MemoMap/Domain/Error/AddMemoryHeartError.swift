@@ -1,5 +1,5 @@
 //
-//  AddCommentError.swift
+//  AddMemoryHeartError.swift
 //  MemoMap
 //
 //  Created by Dylan on 9/10/25.
@@ -7,6 +7,6 @@
 
 import Foundation
 
-enum AddMemoryCommentError: Error {
+enum AddMemoryHeartError: Error {
     case addFailed
 }
