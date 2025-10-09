@@ -44,4 +44,11 @@ extension Container {
             }
         }.singleton
     }
+    var userRepository: Factory<UserRepository> {
+        self {
+            MainActor.assumeIsolated {
+                FirebaseUserRepository()
+            }
+        }.singleton
+    }
 }
