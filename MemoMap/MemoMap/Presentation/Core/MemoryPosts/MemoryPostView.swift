@@ -12,7 +12,7 @@ import Kingfisher
 struct MemoryPostView: View {
     let memoryPostInfo: MemoryPostInfo
     @Binding var userProfileScreenModel: UserProfileScreenModel?
-    @State private var currentSheetType: SheetType? = nil
+    @State private var viewModel: MemoryPostViewModel = .init()
     var body: some View {
         VStack(spacing: 12.0) {
             Group {
@@ -34,7 +34,7 @@ struct MemoryPostView: View {
         }
         .padding(.vertical, 16.0)
         .background(Color(uiColor: .systemBackground), in: RoundedRectangle(cornerRadius: 12.0))
-        .sheet(item: $currentSheetType) { sheetType in
+        .sheet(item: $viewModel.currentSheetType) { sheetType in
             Group {
                 switch sheetType {
                 case .viewOnMap:
@@ -46,6 +46,11 @@ struct MemoryPostView: View {
                 }
             }
             .interactiveDismissDisabled()
+        }
+        .task {
+            await viewModel.checkIsHeartGiven(
+                memoryId: memoryPostInfo.memory.id
+            )
         }
     }
 }
@@ -59,14 +64,6 @@ extension MemoryPostView {
         userProfile: UserProfileData.preview1,
         memory: MemoryData.preview1,
     )
-    enum SheetType: String, Identifiable {
-        case viewOnMap = "View on map"
-        case hearts = "Hearts"
-        case comments = "Comments"
-        var id: String {
-            self.rawValue
-        }
-    }
 }
 
 private extension MemoryPostView {
@@ -142,7 +139,7 @@ private extension MemoryPostView {
                 .fontWeight(.medium)
             Spacer()
             Button("View on map", systemImage: "map") {
-                currentSheetType = .viewOnMap
+                viewModel.currentSheetType = .viewOnMap
             }
             .secondaryFilledSmallButtonStyle()
         }
@@ -157,23 +154,26 @@ private extension MemoryPostView {
     var heartButtonView: some View {
         HStack(spacing: 4.0) {
             Button {
-                
+                Task {
+                    await toggleHeart()
+                }
             } label: {
-                Label("Comment", systemImage: "heart")
+                Label("Heart", systemImage: viewModel.isHeartGiven ? "heart.fill" : "heart")
                     .labelStyle(.iconOnly)
+                    .foregroundStyle(viewModel.isHeartGiven ? .pink : .primary)
             }
             .controlSize(.large)
             .tint(.primary)
             Label(memoryPostInfo.memory.heartsCount.description, systemImage: "heart")
                 .labelStyle(.titleOnly)
                 .onTapGesture {
-                    currentSheetType = .hearts
+                    viewModel.currentSheetType = .hearts
                 }
         }
     }
     var commentButtonView: some View {
         Button {
-            currentSheetType = .comments
+            viewModel.currentSheetType = .comments
         } label: {
             Label(memoryPostInfo.memory.commentsCount.description, systemImage: "message")
                 .labelIconToTitleSpacing(4.0)
@@ -204,6 +204,12 @@ private extension MemoryPostView {
     func navigateToUserProfile() {
         let userProfileScreenModel: UserProfileScreenModel = .init(userId: "userId")
         self.userProfileScreenModel = userProfileScreenModel
+    }
+    
+    func toggleHeart() async {
+        await viewModel.toggleHeart(
+            memoryId: memoryPostInfo.memory.id
+        )
     }
 }
 

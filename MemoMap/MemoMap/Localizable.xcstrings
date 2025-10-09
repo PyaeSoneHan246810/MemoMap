@@ -176,9 +176,6 @@
         }
       }
     },
-    "Comment" : {
-
-    },
     "Comments" : {
       "localizations" : {
         "my" : {
@@ -409,6 +406,9 @@
           }
         }
       }
+    },
+    "Heart" : {
+
     },
     "Hearts" : {
       "localizations" : {

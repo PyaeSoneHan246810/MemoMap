@@ -91,7 +91,7 @@ final class FirebaseMemoryRepository: MemoryRepository {
     }
     
     func addMemoryComment(memoryId: String, commentData: CommentData) async throws {
-        let commentDocument = getMemoryCommentCollectionReference(memoryId: memoryId).document()
+        let commentDocument = getMemoryCommentsCollectionReference(memoryId: memoryId).document()
         let commentId = commentDocument.documentID
         let commentModel = CommentModel(
             id: commentId,
@@ -103,13 +103,13 @@ final class FirebaseMemoryRepository: MemoryRepository {
         do {
             try await commentDocument.setData(firestoreDocumentData, merge: false)
         } catch {
-            throw AddMemoryCommentError.commentFailed
+            throw AddMemoryCommentError.addFailed
         }
     }
     
     func loadMemoryComments(memoryId: String) async throws -> [CommentData] {
         do {
-            let commentModels = try await getMemoryCommentCollectionReference(memoryId: memoryId).getDocumentModels(as: CommentModel.self)
+            let commentModels = try await getMemoryCommentsCollectionReference(memoryId: memoryId).getDocumentModels(as: CommentModel.self)
             let comments = commentModels.map { commentModel in
                 return CommentData(
                     id: commentModel.id,
@@ -134,6 +134,57 @@ final class FirebaseMemoryRepository: MemoryRepository {
             throw UpdateMemoryCommentsCountError.updateFailed
         }
     }
+    
+    func addMemoryHeart(memoryId: String, heartData: HeartData) async throws {
+        let heartDocument = getMemoryHeartsCollectionReference(memoryId: memoryId).document(heartData.id)
+        let heartModel = HeartModel(id: heartData.id, createdAt: heartData.createdAt)
+        let firestoreDocumentData = heartModel.firestoreDocumentData
+        do {
+            try await heartDocument.setData(firestoreDocumentData, merge: false)
+        } catch {
+            throw AddMemoryHeartError.addFailed
+        }
+    }
+    
+    func increaseMemoryHeartsCount(memoryId: String) async throws {
+        let updatedData = [
+            MemoryModel.CodingKeys.heartsCount.rawValue: FieldValue.increment(Int64(1))
+        ]
+        do {
+            try await memoryCollectionReference.document(memoryId).updateData(updatedData)
+        } catch {
+            throw UpdateMemoryHeartsCountError.updateFailed
+        }
+    }
+    
+    func removeMemeoryHeart(memoryId: String, userId: String) async throws {
+        let heartDocument = getMemoryHeartsCollectionReference(memoryId: memoryId).document(userId)
+        do {
+            try await heartDocument.delete()
+        } catch {
+            throw RemoveMemoryHeartError.removeFailed
+        }
+    }
+    
+    func decreaseMemoryHeartsCount(memoryId: String) async throws {
+        let updatedData = [
+            MemoryModel.CodingKeys.heartsCount.rawValue: FieldValue.increment(Int64(-1))
+        ]
+        do {
+            try await memoryCollectionReference.document(memoryId).updateData(updatedData)
+        } catch {
+            throw UpdateMemoryHeartsCountError.updateFailed
+        }
+    }
+    
+    func checkIsHeartGiven(memoryId: String, userId: String) async throws -> Bool {
+        do {
+            let documentSnapshot = try await getMemoryHeartsCollectionReference(memoryId: memoryId).document(userId).getDocument()
+            return documentSnapshot.exists
+        } catch {
+            throw CheckHeartError.checkFailed
+        }
+    }
 }
 
 private extension FirebaseMemoryRepository {
@@ -145,8 +196,12 @@ private extension FirebaseMemoryRepository {
         firestoreDatabase.collection("memories")
     }
     
-    func getMemoryCommentCollectionReference(memoryId: String) -> CollectionReference {
+    func getMemoryCommentsCollectionReference(memoryId: String) -> CollectionReference {
         memoryCollectionReference.document(memoryId).collection("comments")
+    }
+    
+    func getMemoryHeartsCollectionReference(memoryId: String) -> CollectionReference {
+        memoryCollectionReference.document(memoryId).collection("hearts")
     }
     
     func getMemories(documents: [QueryDocumentSnapshot]) -> [MemoryData] {
