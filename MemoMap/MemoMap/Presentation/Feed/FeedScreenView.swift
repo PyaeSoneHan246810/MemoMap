@@ -10,8 +10,7 @@ import SwiftUIIntrospect
 
 struct FeedScreenView: View {
     @Environment(\.colorScheme) private var colorScheme
-    @State private var userProfileScreenModel: UserProfileScreenModel? = nil
-    @State private var isPostMemorySheetPresented: Bool = false
+    @State private var viewModel: FeedViewModel = .init()
     private var toolbarBackgroundColor: Color {
         colorScheme == .light ? .white : .black
     }
@@ -26,14 +25,17 @@ struct FeedScreenView: View {
         .toolbar {
             toolbarContentView
         }
-        .sheet(isPresented: $isPostMemorySheetPresented) {
+        .sheet(isPresented: $viewModel.isPostMemorySheetPresented) {
             postMemorySheetView
                 .interactiveDismissDisabled()
         }
-        .navigationDestination(item: $userProfileScreenModel) {
+        .navigationDestination(item: $viewModel.userProfileScreenModel) {
             UserProfileScreenView(
                 userProfileScreenModel: $0
             )
+        }
+        .onAppear {
+            viewModel.listenFollowingIds()
         }
     }
 }
@@ -83,7 +85,7 @@ private extension FeedScreenView {
         .frame(height: 52.0)
         .background(Color(uiColor: .secondarySystemBackground), in: .capsule)
         .onTapGesture {
-            isPostMemorySheetPresented = true
+            viewModel.isPostMemorySheetPresented = true
         }
     }
     var searchButtonView: some View {
@@ -102,13 +104,8 @@ private extension FeedScreenView {
     var memoriesFeedView: some View {
         ScrollView(.vertical) {
             MemoryPostsView(
-                memoryPosts: [
-                    MemoryPost(
-                        memory: MemoryData.preview1,
-                        userProfile: UserProfileData.preview1
-                    )
-                ],
-                userProfileScreenModel: $userProfileScreenModel
+                memoryPosts: viewModel.memoryPosts,
+                userProfileScreenModel: $viewModel.userProfileScreenModel
             )
         }
         .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { scrollView in

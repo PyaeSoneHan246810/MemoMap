@@ -16,9 +16,17 @@ final class MemoryPostViewModel {
     
     @ObservationIgnored @Injected(\.memoryRepository) private var memoryRepository: MemoryRepository
     
+    @ObservationIgnored @Injected(\.userProfileRepository) private var userProfileRepository: UserProfileRepository
+    
     var currentSheetType: SheetType? = nil
     
-    var isHeartGiven: Bool = false
+    var userProfile: UserProfileData? = nil
+    
+    private(set) var isHeartGiven: Bool = false
+    
+    private(set) var heartsCount: Int = 0
+    
+    private(set) var commentsCount: Int = 0
     
     func checkIsHeartGiven(memoryId: String) async {
         guard let userId = authenticationRepository.getUserData()?.uid else { return }
@@ -58,36 +66,49 @@ final class MemoryPostViewModel {
     private func addHeart(memoryId: String, userId: String) async throws {
         let heart = HeartData(id: userId, createdAt: .now)
         try await memoryRepository.addMemoryHeart(memoryId: memoryId, heartData: heart)
-        await increaseHeartsCount(memoryId: memoryId)
     }
     
     private func removeHart(memoryId: String, userId: String) async throws {
         try await memoryRepository.removeMemeoryHeart(memoryId: memoryId, userId: userId)
-        await decreaseHeartsCount(memoryId: memoryId)
     }
     
-    func increaseHeartsCount(memoryId: String) async {
-        do {
-            try await memoryRepository.increaseMemoryHeartsCount(memoryId: memoryId)
-        } catch {
-            if let updateMemoryHeartsCountError = error as? UpdateMemoryHeartsCountError {
-                print(updateMemoryHeartsCountError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
+    func listenHeartsCount(memoryId: String) {
+        memoryRepository.listenHeartsCount(memoryId: memoryId) { [weak self] result in
+            switch result {
+            case .success(let heartsCount):
+                self?.heartsCount = heartsCount
+            case .failure(let error):
+                if let listenCountError = error as? ListenCountError {
+                    let errorDescription = listenCountError.localizedDescription
+                    print(errorDescription)
+                } else {
+                    let errorDescription = error.localizedDescription
+                    print(errorDescription)
+                }
             }
         }
     }
     
-    func decreaseHeartsCount(memoryId: String) async {
-        do {
-            try await memoryRepository.decreaseMemoryHeartsCount(memoryId: memoryId)
-        } catch {
-            if let updateMemoryHeartsCountError = error as? UpdateMemoryHeartsCountError {
-                print(updateMemoryHeartsCountError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
+    func listenCommentsCount(memoryId: String) {
+        memoryRepository.listenCommentsCount(memoryId: memoryId) { [weak self] result in
+            switch result {
+            case .success(let commentsCount):
+                self?.commentsCount = commentsCount
+            case .failure(let error):
+                if let listenCountError = error as? ListenCountError {
+                    let errorDescription = listenCountError.localizedDescription
+                    print(errorDescription)
+                } else {
+                    let errorDescription = error.localizedDescription
+                    print(errorDescription)
+                }
             }
         }
+    }
+    
+    func getUserProfile(userId: String) async {
+        let userProfile = try? await userProfileRepository.getUserProfile(userId: userId)
+        self.userProfile = userProfile
     }
 }
 

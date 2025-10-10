@@ -36,6 +36,28 @@ final class FirebaseUserRepository: UserRepository {
             throw UnfollowUserError.unfollowFailed
         }
     }
+    
+    func listenFollowingIds(userData: UserData?, completion: @escaping (Result<[String], any Error>) -> Void) {
+        guard let userId = userData?.uid else {
+            completion(.failure(ListenFollowingIdsError.userNotFound))
+            return
+        }
+        getUserFollowingsCollectionReference(userId: userId).addSnapshotListener { querySnapshot, error in
+            if error != nil {
+                completion(.failure(ListenFollowingIdsError.listenFailed))
+                return
+            }
+            guard let documents = querySnapshot?.documents else {
+                completion(.success([]))
+                return
+            }
+            let followingIds = documents.map { documentSnapshot in
+                documentSnapshot.documentID
+            }
+            completion(.success(followingIds))
+            return
+        }
+    }
 }
 
 private extension FirebaseUserRepository {

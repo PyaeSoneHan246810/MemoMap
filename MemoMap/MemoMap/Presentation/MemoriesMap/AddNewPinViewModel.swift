@@ -145,6 +145,8 @@ final class AddNewPinViewModel {
     private func saveMemory(pinId: String, locationName: String, latitude: Double, longitude: Double, userData: UserData?) async throws -> String {
         let memoryData = MemoryData(
             id: "",
+            pinId: "",
+            ownerId: "",
             title: trimmedMemoryTitle,
             description: trimmedMemoryDescription,
             media: [],
@@ -154,8 +156,6 @@ final class AddNewPinViewModel {
             locationName: locationName,
             latitude: latitude,
             longitude: longitude,
-            heartsCount: 0,
-            commentsCount: 0,
             createdAt: .now
         )
         let memoryId = try await memoryRepository.saveMemory(memoryData: memoryData, pinId: pinId, userData: userData)
