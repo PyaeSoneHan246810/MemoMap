@@ -20,17 +20,17 @@ protocol MemoryRepository {
     
     func loadMemoryComments(memoryId: String) async throws -> [CommentData]
     
-    func increaseMemoryCommentsCount(memoryId: String) async throws
-    
     func addMemoryHeart(memoryId: String, heartData: HeartData) async throws
-    
-    func increaseMemoryHeartsCount(memoryId: String) async throws
     
     func removeMemeoryHeart(memoryId: String, userId: String) async throws
     
-    func decreaseMemoryHeartsCount(memoryId: String) async throws
+    func loadMemoryHearts(memoryId: String) async throws -> [HeartData]
     
     func checkIsHeartGiven(memoryId: String, userId: String) async throws -> Bool
     
-    func loadMemoryHearts(memoryId: String) async throws -> [HeartData]
+    func listenCommentsCount(memoryId: String, completion: @escaping (Result<Int, Error>) -> Void)
+    
+    func listenHeartsCount(memoryId: String, completion: @escaping (Result<Int, Error>) -> Void)
+    
+    func loadFollowingsPublicMemories(followingIds: [String]) async throws -> [MemoryData]
 }

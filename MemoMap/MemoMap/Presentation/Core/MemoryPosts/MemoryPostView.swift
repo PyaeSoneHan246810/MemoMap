@@ -13,6 +13,8 @@ struct MemoryPostView: View {
     let memoryPostInfo: MemoryPostInfo
     @Binding var userProfileScreenModel: UserProfileScreenModel?
     @State private var viewModel: MemoryPostViewModel = .init()
+    private var memoryId: String { memoryPostInfo.memory.id }
+    private var userId: String { memoryPostInfo.memory.ownerId }
     var body: some View {
         VStack(spacing: 12.0) {
             Group {
@@ -47,10 +49,20 @@ struct MemoryPostView: View {
             }
             .interactiveDismissDisabled()
         }
-        .task {
-            await viewModel.checkIsHeartGiven(
-                memoryId: memoryPostInfo.memory.id
-            )
+        .onAppear {
+            viewModel.userProfile = memoryPostInfo.userProfile
+            if viewModel.userProfile == nil {
+                Task {
+                    await viewModel.getUserProfile(userId: userId)
+                }
+            }
+            viewModel.listenHeartsCount(memoryId: memoryId)
+            viewModel.listenCommentsCount(memoryId: memoryId)
+            Task {
+                await viewModel.checkIsHeartGiven(
+                    memoryId: memoryId
+                )
+            }
         }
     }
 }
@@ -81,7 +93,7 @@ private extension MemoryPostView {
     }
     var profilePhotoView: some View {
         Group {
-            let userProfilePhotoUrl = memoryPostInfo.userProfile?.profilePhotoUrl
+            let userProfilePhotoUrl = viewModel.userProfile?.profilePhotoUrl
             if let userProfilePhotoUrl {
                 Circle()
                     .frame(width: 52.0, height: 52.0)
@@ -105,7 +117,7 @@ private extension MemoryPostView {
         }
     }
     var displayNameView: some View {
-        let userDisplayName = memoryPostInfo.userProfile?.displayname
+        let userDisplayName = viewModel.userProfile?.displayname
         return Text(userDisplayName ?? "Placeholder")
             .font(.headline)
             .onTapGesture {
@@ -164,7 +176,7 @@ private extension MemoryPostView {
             }
             .controlSize(.large)
             .tint(.primary)
-            Label(memoryPostInfo.memory.heartsCount.description, systemImage: "heart")
+            Label(viewModel.heartsCount.description, systemImage: "heart")
                 .labelStyle(.titleOnly)
                 .onTapGesture {
                     viewModel.currentSheetType = .hearts
@@ -175,7 +187,7 @@ private extension MemoryPostView {
         Button {
             viewModel.currentSheetType = .comments
         } label: {
-            Label(memoryPostInfo.memory.commentsCount.description, systemImage: "message")
+            Label(viewModel.commentsCount.description, systemImage: "message")
                 .labelIconToTitleSpacing(4.0)
         }
         .controlSize(.large)
@@ -210,7 +222,7 @@ private extension MemoryPostView {
     
     func toggleHeart() async {
         await viewModel.toggleHeart(
-            memoryId: memoryPostInfo.memory.id
+            memoryId: memoryId
         )
     }
 }

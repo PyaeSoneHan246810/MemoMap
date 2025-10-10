@@ -27,8 +27,6 @@ final class FirebaseMemoryRepository: MemoryRepository {
             publicStatus: memoryData.publicStatus,
             locationName: memoryData.locationName,
             location: GeoPoint(latitude: memoryData.latitude, longitude: memoryData.longitude),
-            heartsCount: memoryData.heartsCount,
-            commentsCount: memoryData.commentsCount,
             createdAt: memoryData.createdAt
         )
         let firestoreDocumentData = memoryModel.firestoreDocumentData
@@ -124,17 +122,6 @@ final class FirebaseMemoryRepository: MemoryRepository {
         }
     }
     
-    func increaseMemoryCommentsCount(memoryId: String) async throws {
-        let updatedData = [
-            MemoryModel.CodingKeys.commentsCount.rawValue: FieldValue.increment(Int64(1))
-        ]
-        do {
-            try await memoryCollectionReference.document(memoryId).updateData(updatedData)
-        } catch {
-            throw UpdateMemoryCommentsCountError.updateFailed
-        }
-    }
-    
     func addMemoryHeart(memoryId: String, heartData: HeartData) async throws {
         let heartDocument = getMemoryHeartsCollectionReference(memoryId: memoryId).document(heartData.id)
         let heartModel = HeartModel(id: heartData.id, createdAt: heartData.createdAt)
@@ -146,43 +133,12 @@ final class FirebaseMemoryRepository: MemoryRepository {
         }
     }
     
-    func increaseMemoryHeartsCount(memoryId: String) async throws {
-        let updatedData = [
-            MemoryModel.CodingKeys.heartsCount.rawValue: FieldValue.increment(Int64(1))
-        ]
-        do {
-            try await memoryCollectionReference.document(memoryId).updateData(updatedData)
-        } catch {
-            throw UpdateMemoryHeartsCountError.updateFailed
-        }
-    }
-    
     func removeMemeoryHeart(memoryId: String, userId: String) async throws {
         let heartDocument = getMemoryHeartsCollectionReference(memoryId: memoryId).document(userId)
         do {
             try await heartDocument.delete()
         } catch {
             throw RemoveMemoryHeartError.removeFailed
-        }
-    }
-    
-    func decreaseMemoryHeartsCount(memoryId: String) async throws {
-        let updatedData = [
-            MemoryModel.CodingKeys.heartsCount.rawValue: FieldValue.increment(Int64(-1))
-        ]
-        do {
-            try await memoryCollectionReference.document(memoryId).updateData(updatedData)
-        } catch {
-            throw UpdateMemoryHeartsCountError.updateFailed
-        }
-    }
-    
-    func checkIsHeartGiven(memoryId: String, userId: String) async throws -> Bool {
-        do {
-            let documentSnapshot = try await getMemoryHeartsCollectionReference(memoryId: memoryId).document(userId).getDocument()
-            return documentSnapshot.exists
-        } catch {
-            throw CheckHeartError.checkFailed
         }
     }
     
@@ -198,6 +154,62 @@ final class FirebaseMemoryRepository: MemoryRepository {
             return hearts
         } catch {
             throw LoadMemoryHeartsError.loadFailed
+        }
+    }
+    
+    func checkIsHeartGiven(memoryId: String, userId: String) async throws -> Bool {
+        do {
+            let documentSnapshot = try await getMemoryHeartsCollectionReference(memoryId: memoryId).document(userId).getDocument()
+            return documentSnapshot.exists
+        } catch {
+            throw CheckHeartError.checkFailed
+        }
+    }
+    
+    func listenCommentsCount(memoryId: String, completion: @escaping (Result<Int, any Error>) -> Void) {
+        getMemoryCommentsCollectionReference(memoryId: memoryId).addSnapshotListener { querySnapshot, error in
+            if error != nil {
+                completion(.failure(ListenCountError.listenFailed))
+                return
+            }
+            guard let documents = querySnapshot?.documents else {
+                completion(.failure(ListenCountError.failedToGetDocuments))
+                return
+            }
+            let commentsCount = documents.count
+            completion(.success(commentsCount))
+            return
+        }
+    }
+    
+    func listenHeartsCount(memoryId: String, completion: @escaping (Result<Int, any Error>) -> Void) {
+        getMemoryHeartsCollectionReference(memoryId: memoryId).addSnapshotListener { querySnapshot, error in
+            if error != nil {
+                completion(.failure(ListenCountError.listenFailed))
+                return
+            }
+            guard let documents = querySnapshot?.documents else {
+                completion(.failure(ListenCountError.failedToGetDocuments))
+                return
+            }
+            let heartsCount = documents.count
+            completion(.success(heartsCount))
+            return
+        }
+    }
+    
+    func loadFollowingsPublicMemories(followingIds: [String]) async throws -> [MemoryData] {
+        do {
+            let memoryModels = try await memoryCollectionReference
+                .whereField(MemoryModel.CodingKeys.ownerId.rawValue, in: followingIds)
+                .whereField(MemoryModel.CodingKeys.publicStatus.rawValue, isEqualTo: true)
+                .getDocumentModels(as: MemoryModel.self)
+            let memories = memoryModels.map { memoryModel in
+                return getMemoryData(from: memoryModel)
+            }
+            return memories
+        } catch {
+            throw LoadFollowingsPublicMemoriesError.loadFailed
         }
     }
 }
@@ -224,22 +236,26 @@ private extension FirebaseMemoryRepository {
             try? documentSnapshot.data(as: MemoryModel.self)
         }
         let memories: [MemoryData] = memoryModels.map { memoryModel in
-            return MemoryData(
-                id: memoryModel.id,
-                title: memoryModel.title,
-                description: memoryModel.description,
-                media: memoryModel.media,
-                tags: memoryModel.tags,
-                dateTime: memoryModel.dateTime,
-                publicStatus: memoryModel.publicStatus,
-                locationName: memoryModel.locationName,
-                latitude: memoryModel.location.latitude,
-                longitude: memoryModel.location.longitude,
-                heartsCount: memoryModel.heartsCount,
-                commentsCount: memoryModel.commentsCount,
-                createdAt: memoryModel.createdAt
-            )
+            return getMemoryData(from: memoryModel)
         }
         return memories
+    }
+    
+    func getMemoryData(from memoryModel: MemoryModel) -> MemoryData {
+        return MemoryData(
+            id: memoryModel.id,
+            pinId: memoryModel.pinId,
+            ownerId: memoryModel.ownerId,
+            title: memoryModel.title,
+            description: memoryModel.description,
+            media: memoryModel.media,
+            tags: memoryModel.tags,
+            dateTime: memoryModel.dateTime,
+            publicStatus: memoryModel.publicStatus,
+            locationName: memoryModel.locationName,
+            latitude: memoryModel.location.latitude,
+            longitude: memoryModel.location.longitude,
+            createdAt: memoryModel.createdAt
+        )
     }
 }

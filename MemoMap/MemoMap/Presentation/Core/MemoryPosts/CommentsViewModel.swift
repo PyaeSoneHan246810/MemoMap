@@ -49,23 +49,10 @@ final class CommentsViewModel {
             try await memoryRepository.addMemoryComment(memoryId: memoryId, commentData: commentData)
             comment = ""
             await getUserComments(memoryId: memoryId)
-            await increaseCommentsCount(memoryId: memoryId)
         } catch {
             if let addMemoryCommentError = error as? AddMemoryCommentError {
                 print(addMemoryCommentError.localizedDescription)
                 self.addCommentError = addMemoryCommentError
-            } else {
-                print(error.localizedDescription)
-            }
-        }
-    }
-    
-    func increaseCommentsCount(memoryId: String) async {
-        do {
-            try await memoryRepository.increaseMemoryCommentsCount(memoryId: memoryId)
-        } catch {
-            if let updateMemoryCommentsCountError = error as? UpdateMemoryCommentsCountError {
-                print(updateMemoryCommentsCountError.localizedDescription)
             } else {
                 print(error.localizedDescription)
             }
