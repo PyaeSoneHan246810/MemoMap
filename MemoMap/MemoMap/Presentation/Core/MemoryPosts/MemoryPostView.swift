@@ -195,7 +195,11 @@ private extension MemoryPostView {
     }
     var viewOnMapSheetView: some View {
         NavigationStack {
-            ViewOnMapView()
+            ViewOnMapView(
+                locationName: memoryPostInfo.memory.locationName,
+                latitude: memoryPostInfo.memory.latitude,
+                longitude: memoryPostInfo.memory.longitude
+            )
         }
     }
     var heartsSheetView: some View {
