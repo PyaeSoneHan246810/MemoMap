@@ -25,7 +25,7 @@ final class FeedViewModel {
         didSet {
             if case .success(let followingIds) = followingIdsDataState {
                 Task {
-                    await getFollowingsPublicMemories(followingIds: followingIds)
+                    await loadFollowingsPublicMemories(followingIds: followingIds)
                 }
             }
         }
