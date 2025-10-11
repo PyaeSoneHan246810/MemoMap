@@ -11,6 +11,7 @@ import SwiftUIIntrospect
 struct FeedScreenView: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var viewModel: FeedViewModel = .init()
+    @State private var userProfileScreenModel: UserProfileScreenModel? = nil
     private var toolbarBackgroundColor: Color {
         colorScheme == .light ? .white : .black
     }
@@ -29,7 +30,7 @@ struct FeedScreenView: View {
             postMemorySheetView
                 .interactiveDismissDisabled()
         }
-        .navigationDestination(item: $viewModel.userProfileScreenModel) {
+        .navigationDestination(item: $userProfileScreenModel) {
             UserProfileScreenView(
                 userProfileScreenModel: $0
             )
@@ -105,7 +106,7 @@ private extension FeedScreenView {
         ScrollView(.vertical) {
             MemoryPostsView(
                 memoryPosts: viewModel.memoryPosts,
-                userProfileScreenModel: $viewModel.userProfileScreenModel
+                userProfileScreenModel: $userProfileScreenModel
             )
         }
         .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { scrollView in

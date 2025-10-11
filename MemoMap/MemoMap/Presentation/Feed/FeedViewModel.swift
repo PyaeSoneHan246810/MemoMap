@@ -19,8 +19,6 @@ final class FeedViewModel {
     
     var isPostMemorySheetPresented: Bool = false
     
-    var userProfileScreenModel: UserProfileScreenModel? = nil
-    
     private(set) var followingIdsDataState: DataState<[String]> = .initial {
         didSet {
             if case .success(let followingIds) = followingIdsDataState {

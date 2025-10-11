@@ -13,4 +13,6 @@ protocol UserRepository {
     func unfollowUser(userId: String, userToUnfollowId: String) async throws
     
     func listenFollowingIds(userData: UserData?, completion: @escaping (Result<[String], Error>) -> Void )
+    
+    func searchUsers(searchText: String) async throws -> [UserProfileData]
 }
