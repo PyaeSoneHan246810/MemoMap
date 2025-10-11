@@ -10,7 +10,7 @@ import Observation
 import Factory
 
 @Observable
-final class ProfileViewModel {
+final class MyProfileViewModel {
     @ObservationIgnored @Injected(\.authenticationRepository) private var authenticationRepository: AuthenticationRepository
     
     @ObservationIgnored @Injected(\.userProfileRepository) private var userProfileRepository: UserProfileRepository

@@ -45,12 +45,8 @@ private extension HeartsView {
         ScrollView(.vertical) {
             LazyVStack(spacing: 16.0) {
                 ForEach(viewModel.userHearts) { userHeart in
-                    let userProfileInfo = UserProfileView.UserProfileInfo(
+                    UserRowView(
                         userProfile: userHeart.userProfile,
-                        userType: .following
-                    )
-                    UserProfileView(
-                        userProfileInfo: userProfileInfo,
                         userProfileScreenModel: $userProfileScreenModel
                     )
                 }

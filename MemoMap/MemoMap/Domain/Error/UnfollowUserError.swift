@@ -8,5 +8,6 @@
 import Foundation
 
 enum UnfollowUserError: Error {
+    case userNotFound
     case unfollowFailed
 }
