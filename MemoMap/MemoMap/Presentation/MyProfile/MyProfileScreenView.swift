@@ -1,5 +1,5 @@
 //
-//  ProfileScreenView.swift
+//  MyProfileScreenView.swift
 //  MemoMap
 //
 //  Created by Dylan on 21/9/25.
@@ -8,8 +8,8 @@
 import SwiftUI
 import SwiftUIIntrospect
 
-struct ProfileScreenView: View {
-    @State private var viewModel: ProfileViewModel = .init()
+struct MyProfileScreenView: View {
+    @State private var viewModel: MyProfileViewModel = .init()
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 0.0) {
@@ -43,7 +43,7 @@ struct ProfileScreenView: View {
     }
 }
 
-private extension ProfileScreenView {
+private extension MyProfileScreenView {
     var scrollViewBackgroundColor: Color {
         viewModel.memoryPosts.isEmpty ? Color(uiColor: .systemBackground) : Color(uiColor: .secondarySystemBackground)
     }
@@ -119,6 +119,6 @@ private extension ProfileScreenView {
 
 #Preview {
     NavigationStack {
-        ProfileScreenView()
+        MyProfileScreenView()
     }
 }

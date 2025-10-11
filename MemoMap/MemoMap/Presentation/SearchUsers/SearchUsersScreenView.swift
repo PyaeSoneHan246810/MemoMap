@@ -174,12 +174,8 @@ private extension SearchUsersScreenView {
         ScrollView(.vertical) {
             LazyVStack(spacing: 16.0) {
                 ForEach(users) { userProfile in
-                    let userProfileInfo = UserProfileView.UserProfileInfo(
+                    UserRowView(
                         userProfile: userProfile,
-                        userType: .following
-                    )
-                    UserProfileView(
-                        userProfileInfo: userProfileInfo,
                         userProfileScreenModel: $userProfileScreenModel
                     )
                 }

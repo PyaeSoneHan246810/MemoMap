@@ -64,8 +64,8 @@ private extension CommunityScreenView {
         ScrollView(.vertical) {
             LazyVStack(spacing: 16.0) {
                 ForEach(0...5, id: \.self) { _ in
-                    UserProfileView(
-                        userProfileInfo: UserProfileView.previewUserProfileInfo1,
+                    UserRowView(
+                        userProfile: UserProfileData.preview1,
                         userProfileScreenModel: $userProfileScreenModel
                     )
                 }

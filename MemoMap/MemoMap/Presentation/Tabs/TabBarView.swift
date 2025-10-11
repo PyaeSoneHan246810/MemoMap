@@ -44,7 +44,7 @@ private extension TabBarView {
     }
     var profileNavigationStackView: some View {
         NavigationStack {
-            ProfileScreenView()
+            MyProfileScreenView()
         }
     }
     var verifyAccountSheetView: some View {

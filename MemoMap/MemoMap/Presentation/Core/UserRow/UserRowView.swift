@@ -1,5 +1,5 @@
 //
-//  UserProfileView.swift
+//  UserRowView.swift
 //  MemoMap
 //
 //  Created by Dylan on 24/9/25.
@@ -8,43 +8,31 @@
 import SwiftUI
 import Kingfisher
 
-struct UserProfileView: View {
-    let userProfileInfo: UserProfileInfo
+struct UserRowView: View {
+    let userProfile: UserProfileData?
     @Binding var userProfileScreenModel: UserProfileScreenModel?
+    @State private var viewModel: UserRowViewModel = .init()
     var body: some View {
         HStack(spacing: 12.0) {
             profilePhotoView
             userInfoView
-            actionButtonView
+            if let userType = viewModel.userType {
+                actionButtonView(userType: userType)
+            }
         }
         .frame(maxWidth: .infinity)
+        .onAppear {
+            if let userId = userProfile?.id {
+                viewModel.listenFollowings(userId: userId)
+            }
+        }
     }
 }
 
-extension UserProfileView {
-    enum UserType {
-        case following
-        case unfollowed
-        case mutual
-    }
-    struct UserProfileInfo {
-        let userProfile: UserProfileData?
-        let userType: UserType
-    }
-    static let previewUserProfileInfo1: UserProfileInfo = .init(
-        userProfile: UserProfileData.preview1,
-        userType: .following
-    )
-    static let previewUserProfileInfo2: UserProfileInfo = .init(
-        userProfile: UserProfileData.preview1,
-        userType: .unfollowed
-    )
-}
-
-private extension UserProfileView {
+private extension UserRowView {
     var profilePhotoView: some View {
         Group {
-            if let userProfilePhotoUrl = userProfileInfo.userProfile?.profilePhotoUrl {
+            if let userProfilePhotoUrl = userProfile?.profilePhotoUrl {
                 Circle()
                     .foregroundStyle(Color(uiColor: .secondarySystemBackground))
                     .frame(width: 60.0, height: 60.0)
@@ -68,8 +56,8 @@ private extension UserProfileView {
     }
     var userInfoView: some View {
         VStack(alignment: .leading, spacing: 2.0) {
-            let userDisplayname = userProfileInfo.userProfile?.displayname
-            let username = userProfileInfo.userProfile?.username
+            let userDisplayname = userProfile?.displayname
+            let username = userProfile?.username
             Text(userDisplayname ?? "Placeholder")
                 .font(.callout)
                 .fontWeight(.medium)
@@ -85,33 +73,35 @@ private extension UserProfileView {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
     @ViewBuilder
-    var actionButtonView: some View {
-        switch userProfileInfo.userType {
+    func actionButtonView(userType: UserType) -> some View {
+        switch userType {
         case .following:
             followingButtonView
-        case .unfollowed:
+        case .notFollowing:
             followButtonView
-        case .mutual:
-            followingButtonView
         }
     }
     var followingButtonView: some View {
         Button("Following") {
-            
+            if let userId = userProfile?.id {
+                Task { await viewModel.unfollowUser(userId: userId) }
+            }
         }
         .secondaryFilledSmallButtonStyle()
         .font(.footnote)
     }
     var followButtonView: some View {
         Button("Follow", systemImage: "person.badge.plus") {
-            
+            if let userId = userProfile?.id {
+                Task { await viewModel.followUser(userId: userId) }
+            }
         }
         .primaryFilledSmallButtonStyle()
         .font(.footnote)
     }
 }
 
-private extension UserProfileView {
+private extension UserRowView {
     func navigateToUserProfile() {
         let userProfileScreenModel: UserProfileScreenModel = .init(userId: "userId")
         self.userProfileScreenModel = userProfileScreenModel
@@ -119,15 +109,15 @@ private extension UserProfileView {
 }
 
 #Preview {
-    UserProfileView(
-        userProfileInfo: UserProfileView.previewUserProfileInfo1,
+    UserRowView(
+        userProfile: UserProfileData.preview1,
         userProfileScreenModel: .constant(nil)
     )
 }
 
 #Preview {
-    UserProfileView(
-        userProfileInfo: UserProfileView.previewUserProfileInfo2,
+    UserRowView(
+        userProfile: UserProfileData.preview1,
         userProfileScreenModel: .constant(nil)
     )
 }

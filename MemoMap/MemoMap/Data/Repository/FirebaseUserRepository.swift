@@ -9,7 +9,10 @@ import Foundation
 import FirebaseFirestore
 
 final class FirebaseUserRepository: UserRepository {
-    func followUser(userId: String, userToFollowId: String) async throws {
+    func followUser(userData: UserData?, userToFollowId: String) async throws {
+        guard let userId = userData?.uid else {
+            throw FollowUserError.userNotFound
+        }
         let batch = firestoreDatabase.batch()
         let newFollowingDocument = getUserFollowingsCollectionReference(userId: userId).document(userToFollowId)
         let newFollowerDocument = getUserFollowersCollectionReference(userId: userToFollowId).document(userId)
@@ -24,7 +27,10 @@ final class FirebaseUserRepository: UserRepository {
         }
     }
     
-    func unfollowUser(userId: String, userToUnfollowId: String) async throws {
+    func unfollowUser(userData: UserData?, userToUnfollowId: String) async throws {
+        guard let userId = userData?.uid else {
+            throw UnfollowUserError.userNotFound
+        }
         let batch = firestoreDatabase.batch()
         let followingDocument = getUserFollowingsCollectionReference(userId: userId).document(userToUnfollowId)
         let followerDocument = getUserFollowersCollectionReference(userId: userToUnfollowId).document(userId)
@@ -55,6 +61,28 @@ final class FirebaseUserRepository: UserRepository {
                 documentSnapshot.documentID
             }
             completion(.success(followingIds))
+            return
+        }
+    }
+    
+    func listenFollowerIds(userData: UserData?, completion: @escaping (Result<[String], any Error>) -> Void) {
+        guard let userId = userData?.uid else {
+            completion(.failure(ListenFollowerIdsError.userNotFound))
+            return
+        }
+        getUserFollowersCollectionReference(userId: userId).addSnapshotListener { querySnapshot, error in
+            if error != nil {
+                completion(.failure(ListenFollowerIdsError.listenFailed))
+                return
+            }
+            guard let documents = querySnapshot?.documents else {
+                completion(.success([]))
+                return
+            }
+            let followerIds = documents.map { documentSnapshot in
+                documentSnapshot.documentID
+            }
+            completion(.success(followerIds))
             return
         }
     }
