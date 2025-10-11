@@ -58,6 +58,35 @@ final class FirebaseUserRepository: UserRepository {
             return
         }
     }
+    
+    func searchUsers(searchText: String) async throws -> [UserProfileData] {
+        let lowercasedSearchText = searchText.lowercased()
+        let queryByUsername = userCollectionReference
+            .whereField(UserProfileModel.CodingKeys.usernameLowercased.rawValue, isGreaterThanOrEqualTo: lowercasedSearchText)
+            .whereField(UserProfileModel.CodingKeys.usernameLowercased.rawValue, isLessThanOrEqualTo: lowercasedSearchText + "\u{f8ff}")
+        let queryByDisplayname = userCollectionReference
+            .whereField(UserProfileModel.CodingKeys.displaynameLowercased.rawValue, isGreaterThanOrEqualTo: lowercasedSearchText)
+            .whereField(UserProfileModel.CodingKeys.displaynameLowercased.rawValue, isLessThanOrEqualTo: lowercasedSearchText + "\u{f8ff}")
+        async let querySnapshotByUsername = queryByUsername.getDocuments()
+        async let querySnapshotByDisplayname = queryByDisplayname.getDocuments()
+        do {
+            let (documentsByUsername, documentsByDisplayname) = try await (querySnapshotByUsername, querySnapshotByDisplayname)
+            let userProfileModelsByUsername = documentsByUsername.documents.compactMap { queryDocumentSnapshot in
+                try? queryDocumentSnapshot.data(as: UserProfileModel.self)
+            }
+            let userProfileModelsByDisplayname = documentsByDisplayname.documents.compactMap { queryDocumentSnapshot in
+                try? queryDocumentSnapshot.data(as: UserProfileModel.self)
+            }
+            let allUserProfileModels = userProfileModelsByUsername + userProfileModelsByDisplayname
+            let uniqueUserProfileModels = Dictionary(grouping: allUserProfileModels, by: \.id).compactMap { $0.value.first }
+            let uniqueUsers = uniqueUserProfileModels.map { userProfileModel in
+                getUserProfileData(from: userProfileModel)
+            }
+            return uniqueUsers
+        } catch {
+            throw SearchUsersError.searchFailed
+        }
+    }
 }
 
 private extension FirebaseUserRepository {
@@ -75,5 +104,19 @@ private extension FirebaseUserRepository {
     
     func getUserFollowersCollectionReference(userId: String) -> CollectionReference {
         userCollectionReference.document(userId).collection("followers")
+    }
+    
+    func getUserProfileData(from userProfileModel: UserProfileModel) -> UserProfileData {
+        return UserProfileData(
+            id: userProfileModel.id,
+            emailAddress: userProfileModel.emailAddress,
+            username: userProfileModel.username,
+            displayname: userProfileModel.displayname,
+            profilePhotoUrl: userProfileModel.profilePhotoUrl,
+            coverPhotoUrl: userProfileModel.coverPhotoUrl,
+            birthday: userProfileModel.birthday,
+            bio: userProfileModel.bio,
+            createdAt: userProfileModel.createdAt
+        )
     }
 }

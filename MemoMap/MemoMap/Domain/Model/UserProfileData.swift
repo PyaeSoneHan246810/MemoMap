@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct UserProfileData {
+struct UserProfileData: Identifiable {
     let id: String
     let emailAddress: String
     let username: String

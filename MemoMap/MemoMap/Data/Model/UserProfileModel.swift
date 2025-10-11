@@ -13,7 +13,9 @@ struct UserProfileModel: Codable {
         case id
         case emailAddress
         case username
+        case usernameLowercased
         case displayname
+        case displaynameLowercased
         case profilePhotoUrl
         case coverPhotoUrl
         case birthday
@@ -23,7 +25,9 @@ struct UserProfileModel: Codable {
     let id: String
     let emailAddress: String
     let username: String
+    let usernameLowercased: String
     let displayname: String
+    let displaynameLowercased: String
     let profilePhotoUrl: String?
     let coverPhotoUrl: String?
     let birthday: Date
@@ -37,7 +41,9 @@ extension UserProfileModel {
             Self.CodingKeys.id.rawValue: id,
             Self.CodingKeys.emailAddress.rawValue: emailAddress,
             Self.CodingKeys.username.rawValue: username,
+            Self.CodingKeys.usernameLowercased.rawValue: usernameLowercased,
             Self.CodingKeys.displayname.rawValue: displayname,
+            Self.CodingKeys.displaynameLowercased.rawValue: displaynameLowercased,
             Self.CodingKeys.profilePhotoUrl.rawValue: profilePhotoUrl as Any,
             Self.CodingKeys.coverPhotoUrl.rawValue: coverPhotoUrl as Any,
             Self.CodingKeys.birthday.rawValue: Timestamp(date: birthday),
