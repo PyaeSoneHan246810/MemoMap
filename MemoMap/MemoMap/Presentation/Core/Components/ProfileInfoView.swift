@@ -14,6 +14,9 @@ struct ProfileInfoView: View {
     let bio: String
     let birthday: String
     let joined: String
+    let followersCount: Int
+    let followingCount: Int
+    let heartsCount: Int
     var body: some View {
         VStack(alignment: .leading, spacing: 12.0) {
             VStack(alignment: .leading, spacing: 4.0) {
@@ -44,9 +47,9 @@ struct ProfileInfoView: View {
             }
             .font(.footnote)
             HStack(spacing: 8.0) {
-                countInfoView(count: 0, label: "Followers")
-                countInfoView(count: 0, label: "Followings")
-                countInfoView(count: 0, label: "Hearts")
+                countInfoView(count: followersCount, label: "Followers")
+                countInfoView(count: followingCount, label: "Followings")
+                countInfoView(count: heartsCount, label: "Hearts")
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -72,6 +75,9 @@ private extension ProfileInfoView {
         email: UserProfileData.preview1.emailAddress,
         bio: UserProfileData.preview1.bio,
         birthday: UserProfileData.preview1.birthday.formatted(date: .abbreviated, time: .omitted),
-        joined: UserProfileData.preview1.createdAt.formatted(date: .abbreviated, time: .omitted)
+        joined: UserProfileData.preview1.createdAt.formatted(date: .abbreviated, time: .omitted),
+        followersCount: 0,
+        followingCount: 0,
+        heartsCount: 0,
     )
 }

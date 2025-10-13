@@ -7,7 +7,6 @@
 
 import SwiftUI
 import PhotosUI
-import SwiftUIIntrospect
 
 struct AddNewPinView: View {
     @Environment(\.dismiss) private var dismiss
@@ -39,9 +38,7 @@ struct AddNewPinView: View {
                 .padding(.vertical, 16.0)
             }
         }
-        .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { scrollView in
-            scrollView.bouncesVertically = false
-        }
+        .disableBouncesVertically()
         .scrollIndicators(.hidden)
         .ignoresSafeArea(edges: .top)
         .toolbar {

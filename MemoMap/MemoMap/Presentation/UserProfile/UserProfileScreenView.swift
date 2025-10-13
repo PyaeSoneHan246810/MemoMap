@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftUIIntrospect
 
 struct UserProfileScreenModel: Hashable {
     let userId: String
@@ -33,9 +32,7 @@ struct UserProfileScreenView: View {
                 }
             }
         }
-        .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { scrollView in
-            scrollView.bouncesVertically = false
-        }
+        .disableBouncesVertically()
         .scrollIndicators(.hidden)
         .ignoresSafeArea(.all, edges: .top)
         .background(scrollViewBackgroundColor)
@@ -90,7 +87,10 @@ private extension UserProfileScreenView {
             email: "",
             bio: "",
             birthday: "",
-            joined: ""
+            joined: "",
+            followersCount: 0,
+            followingCount: 0,
+            heartsCount: 0
         )
         .padding(16.0)
     }
@@ -108,12 +108,7 @@ private extension UserProfileScreenView {
     }
     var memoriesView: some View {
         MemoryPostsView(
-            memoryPosts: [
-                MemoryPost(
-                    memory: MemoryData.preview1,
-                    userProfile: UserProfileData.preview1
-                )
-            ],
+            memories: MemoryData.previews,
             userProfileScreenModel: .constant(nil)
         )
         .padding(.vertical, 16.0)

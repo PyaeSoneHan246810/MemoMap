@@ -8,14 +8,13 @@
 import SwiftUI
 
 struct MemoryPostsView: View {
-    let memoryPosts: [MemoryPost]
+    let memories: [MemoryData]
     @Binding var userProfileScreenModel: UserProfileScreenModel?
     var body: some View {
         LazyVStack(spacing: 16.0) {
-            ForEach(memoryPosts) { memoryPost in
-                let memoryPostInfo = getMemoryPostInfo(from: memoryPost)
+            ForEach(memories) { memory in
                 MemoryPostView(
-                    memoryPostInfo: memoryPostInfo,
+                    memory: memory,
                     userProfileScreenModel: $userProfileScreenModel
                 )
             }
@@ -23,25 +22,10 @@ struct MemoryPostsView: View {
     }
 }
 
-private extension MemoryPostsView {
-    func getMemoryPostInfo(from memoryPost: MemoryPost) -> MemoryPostView.MemoryPostInfo {
-        let memoryPostInfo = MemoryPostView.MemoryPostInfo(
-            userProfile: memoryPost.userProfile,
-            memory: memoryPost.memory
-        )
-        return memoryPostInfo
-    }
-}
-
 #Preview {
     ScrollView(.vertical) {
         MemoryPostsView(
-            memoryPosts: [
-                MemoryPost(
-                    memory: MemoryData.preview1,
-                    userProfile: UserProfileData.preview1
-                )
-            ],
+            memories: MemoryData.previews,
             userProfileScreenModel: .constant(nil)
         )
     }

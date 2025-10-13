@@ -6,10 +6,19 @@
 //
 
 import SwiftUI
-import SwiftUIIntrospect
 
 struct MyProfileScreenView: View {
-    @State private var viewModel: MyProfileViewModel = .init()
+    @State private var myProfileViewModel: MyProfileViewModel = .init()
+    @Environment(UserViewModel.self) private var userViewModel: UserViewModel
+    private var userProfile: UserProfileData? {
+        userViewModel.userProfile
+    }
+    private var followersCount: Int {
+        userViewModel.followersCount
+    }
+    private var followingsCount: Int {
+        userViewModel.followingsCount
+    }
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 0.0) {
@@ -19,16 +28,14 @@ struct MyProfileScreenView: View {
                     profileInfoView
                 }
                 .background(Color(uiColor: .systemBackground))
-                if !viewModel.memoryPosts.isEmpty {
+                if !myProfileViewModel.memories.isEmpty {
                     memoriesView
                 } else {
                     emptyPublicMemoriesView
                 }
             }
         }
-        .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { scrollView in
-            scrollView.bouncesVertically = false
-        }
+        .disableBouncesVertically()
         .scrollIndicators(.hidden)
         .ignoresSafeArea(.all, edges: .top)
         .background(scrollViewBackgroundColor)
@@ -37,15 +44,14 @@ struct MyProfileScreenView: View {
             toolbarContentView
         }
         .onAppear {
-            viewModel.listenUserProfile()
-            viewModel.listenUserPublicMemories()
+            myProfileViewModel.listenUserPublicMemories()
         }
     }
 }
 
 private extension MyProfileScreenView {
     var scrollViewBackgroundColor: Color {
-        viewModel.memoryPosts.isEmpty ? Color(uiColor: .systemBackground) : Color(uiColor: .secondarySystemBackground)
+        myProfileViewModel.memories.isEmpty ? Color(uiColor: .systemBackground) : Color(uiColor: .secondarySystemBackground)
     }
     @ToolbarContentBuilder
     var toolbarContentView: some ToolbarContent {
@@ -59,11 +65,11 @@ private extension MyProfileScreenView {
     }
     var profilePhotosView: some View {
         ProfileCoverPhotoView(
-            coverPhoto: viewModel.userProfile?.coverPhotoUrl
+            coverPhoto: userProfile?.coverPhotoUrl
         )
         .overlay(alignment: .bottomLeading) {
             ProfilePhotoView(
-                profilePhoto: viewModel.userProfile?.profilePhotoUrl
+                profilePhoto: userProfile?.profilePhotoUrl
             )
             .padding(.leading, 16.0)
             .offset(y: 60.0)
@@ -84,41 +90,40 @@ private extension MyProfileScreenView {
         .primaryFilledSmallButtonStyle()
     }
     var profileInfoView: some View {
-        let userProfileData = viewModel.userProfile
-        return ProfileInfoView(
-            displayName: userProfileData?.displayname ?? "Placeholder",
-            username: userProfileData?.username ?? "@placeholder",
-            email: userProfileData?.emailAddress ?? "placeholder@example.com",
-            bio: userProfileData?.bio ?? "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-            birthday: userProfileData?.birthday.formatted(date: .abbreviated, time: .omitted) ?? "placeholder",
-            joined: userProfileData?.createdAt.formatted(date: .abbreviated, time: .omitted) ?? "placeholder"
+        ProfileInfoView(
+            displayName: userProfile?.displayname ?? "Placeholder",
+            username: userProfile?.username ?? "@placeholder",
+            email: userProfile?.emailAddress ?? "placeholder@example.com",
+            bio: userProfile?.bio ?? "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            birthday: userProfile?.birthday.formatted(date: .abbreviated, time: .omitted) ?? "placeholder",
+            joined: userProfile?.createdAt.formatted(date: .abbreviated, time: .omitted) ?? "placeholder",
+            followersCount: followersCount,
+            followingCount: followingsCount,
+            heartsCount: 0
         )
         .padding(16)
-        .redacted(reason: userProfileData == nil ? .placeholder : [])
+        .redacted(reason: userProfile == nil ? .placeholder : [])
     }
     var memoriesView: some View {
         MemoryPostsView(
-            memoryPosts: viewModel.memoryPosts,
+            memories: myProfileViewModel.memories,
             userProfileScreenModel: .constant(nil)
         )
         .padding(.vertical, 16.0)
     }
     var emptyPublicMemoriesView: some View {
-        VStack(spacing: 16.0) {
-            Image(.emptyPublicMemories)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 160.0, height: 160.0)
-                .foregroundStyle(.secondary)
-            Text("There is no public memories yet.")
-                .multilineTextAlignment(.center)
-        }
-        .frame(width: 300.0)
+        EmptyContentView(
+            image: .emptyMemories,
+            title: "There is no public memories yet!",
+            description: "Share your favorite moments to let others discover them!"
+        )
     }
 }
 
 #Preview {
+    @Previewable @State var userViewModel: UserViewModel = .init()
     NavigationStack {
         MyProfileScreenView()
     }
+    .environment(userViewModel)
 }

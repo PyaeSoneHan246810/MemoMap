@@ -7,7 +7,6 @@
 
 import SwiftUI
 import Kingfisher
-import SwiftUIIntrospect
 
 struct SavedPinDetailsView: View {
     @Environment(\.dismiss) private var dismiss
@@ -24,9 +23,7 @@ struct SavedPinDetailsView: View {
                 memoriesSectionView
             }
         }
-        .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { scrollView in
-            scrollView.bouncesVertically = false
-        }
+        .disableBouncesVertically()
         .scrollIndicators(.hidden)
         .background(scrollViewBackgroundColor)
         .ignoresSafeArea(edges: .top)
@@ -97,9 +94,7 @@ private extension SavedPinDetailsView {
                 Spacer()
                 addMemoryButtonView
             }
-            if !viewModel.memories.isEmpty {
-                memoriesView
-            }
+            memoriesView
         }
         .padding(16.0)
     }
@@ -114,10 +109,19 @@ private extension SavedPinDetailsView {
         }
         .primaryFilledSmallButtonStyle()
     }
+    @ViewBuilder
     var memoriesView: some View {
-        LazyVStack(spacing: 16.0) {
-            ForEach(viewModel.memories) { memory in
-                MemoryView(memory: memory)
+        if viewModel.memories.isEmpty {
+            EmptyContentView(
+                image: .emptyMemories,
+                title: "There is no memories yet!",
+                description: "Your memories for this place will appear here once you’ve created one."
+            )
+        } else {
+            LazyVStack(spacing: 16.0) {
+                ForEach(viewModel.memories) { memory in
+                    MemoryView(memory: memory)
+                }
             }
         }
     }

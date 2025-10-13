@@ -17,4 +17,12 @@ protocol UserRepository {
     func listenFollowerIds(userData: UserData?, completion: @escaping (Result<[String], Error>) -> Void )
     
     func searchUsers(searchText: String) async throws -> [UserProfileData]
+    
+    func listenFollowingsCount(userData: UserData?, completion: @escaping (Result<Int, Error>) -> Void)
+    
+    func listenFollowersCount(userData: UserData?, completion: @escaping (Result<Int, Error>) -> Void)
+    
+    func listenFollowings(userData: UserData?, completion: @escaping (Result<[FollowingData], Error>) -> Void)
+    
+    func listenFollowers(userData: UserData?, completion: @escaping (Result<[FollowerData], Error>) -> Void)
 }

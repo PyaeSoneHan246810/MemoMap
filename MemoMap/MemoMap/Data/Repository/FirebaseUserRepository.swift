@@ -115,6 +115,96 @@ final class FirebaseUserRepository: UserRepository {
             throw SearchUsersError.searchFailed
         }
     }
+    
+    func listenFollowingsCount(userData: UserData?, completion: @escaping (Result<Int, any Error>) -> Void) {
+        guard let userId = userData?.uid else {
+            completion(.failure(ListenCountError.userNotFound))
+            return
+        }
+        getUserFollowingsCollectionReference(userId: userId).addSnapshotListener { querySnapshot, error in
+            if error != nil {
+                completion(.failure(ListenCountError.listenFailed))
+                return
+            }
+            guard let documents = querySnapshot?.documents else {
+                completion(.failure(ListenCountError.failedToGetDocuments))
+                return
+            }
+            let followingsCount = documents.count
+            completion(.success(followingsCount))
+            return
+        }
+    }
+    
+    func listenFollowersCount(userData: UserData?, completion: @escaping (Result<Int, any Error>) -> Void) {
+        guard let userId = userData?.uid else {
+            completion(.failure(ListenCountError.userNotFound))
+            return
+        }
+        getUserFollowersCollectionReference(userId: userId).addSnapshotListener { querySnapshot, error in
+            if error != nil {
+                completion(.failure(ListenCountError.listenFailed))
+                return
+            }
+            guard let documents = querySnapshot?.documents else {
+                completion(.failure(ListenCountError.failedToGetDocuments))
+                return
+            }
+            let followersCount = documents.count
+            completion(.success(followersCount))
+            return
+        }
+    }
+    
+    func listenFollowings(userData: UserData?, completion: @escaping (Result<[FollowingData], any Error>) -> Void) {
+        guard let userId = userData?.uid else {
+            completion(.failure(ListenFollowingsError.userNotFound))
+            return
+        }
+        getUserFollowingsCollectionReference(userId: userId).addSnapshotListener { querySnapshot, error in
+            if error != nil {
+                completion(.failure(ListenFollowingsError.listenFailed))
+                return
+            }
+            guard let documents = querySnapshot?.documents else {
+                completion(.success([]))
+                return
+            }
+            let followingModels = documents.compactMap { documentSnapshot in
+                try? documentSnapshot.data(as: FollowingModel.self)
+            }
+            let followings = followingModels.map { followingModel in
+                FollowingData(id: followingModel.id, since: followingModel.since)
+            }
+            completion(.success(followings))
+            return
+        }
+    }
+    
+    func listenFollowers(userData: UserData?, completion: @escaping (Result<[FollowerData], any Error>) -> Void) {
+        guard let userId = userData?.uid else {
+            completion(.failure(ListenFollowersError.userNotFound))
+            return
+        }
+        getUserFollowersCollectionReference(userId: userId).addSnapshotListener { querySnapshot, error in
+            if error != nil {
+                completion(.failure(ListenFollowersError.listenFailed))
+                return
+            }
+            guard let documents = querySnapshot?.documents else {
+                completion(.success([]))
+                return
+            }
+            let followerModels = documents.compactMap { documentSnapshot in
+                try? documentSnapshot.data(as: FollowerModel.self)
+            }
+            let followers = followerModels.map { followerModel in
+                FollowerData(id: followerModel.id, since: followerModel.since)
+            }
+            completion(.success(followers))
+            return
+        }
+    }
 }
 
 private extension FirebaseUserRepository {

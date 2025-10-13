@@ -37,6 +37,7 @@ struct MemoryMediasView: View {
                 }
             }
         }
+        .disableBouncesHorizontally()
         .scrollIndicators(.hidden)
         .contentMargins(.horizontal, 16.0)
     }

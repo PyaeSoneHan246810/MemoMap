@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftUIIntrospect
 
 extension View {
     func primaryFilledLargeButtonStyle() -> some View {
@@ -42,5 +43,19 @@ extension View {
             .buttonStyle(.bordered)
             .controlSize(.small)
             .foregroundStyle(.primary)
+    }
+    
+    func disableBouncesVertically() -> some View {
+        self
+            .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { scrollView in
+                scrollView.bouncesVertically = false
+            }
+    }
+    
+    func disableBouncesHorizontally() -> some View {
+        self
+            .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { scrollView in
+                scrollView.bouncesHorizontally = false
+            }
     }
 }

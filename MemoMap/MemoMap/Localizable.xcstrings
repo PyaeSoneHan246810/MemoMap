@@ -1,13 +1,13 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "4 Mutuals" : {
+    "%lld Followers" : {
 
     },
-    "10 Followers" : {
+    "%lld Followings" : {
 
     },
-    "10 Followings" : {
+    "%lld Mutuals" : {
 
     },
     "About" : {
@@ -805,9 +805,6 @@
           }
         }
       }
-    },
-    "There is no public memories yet." : {
-
     },
     "Update" : {
       "localizations" : {
