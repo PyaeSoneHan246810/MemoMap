@@ -51,4 +51,19 @@ extension Container {
             }
         }.singleton
     }
+    var swiftDataManager: Factory<SwiftDataManager> {
+        self {
+            MainActor.assumeIsolated {
+                SwiftDataManager()
+            }
+        }.singleton
+    }
+    var recentSearchRepository: Factory<RecentSearchRepository> {
+        self {
+            MainActor.assumeIsolated {
+                let swiftDataManager = self.swiftDataManager()
+                return LocalRecentSearchRepository(context: swiftDataManager.context)
+            }
+        }.singleton
+    }
 }

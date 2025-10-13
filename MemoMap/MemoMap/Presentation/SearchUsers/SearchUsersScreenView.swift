@@ -29,6 +29,10 @@ struct SearchUsersScreenView: View {
                 userProfileScreenModel: $0
             )
         }
+        .onAppear {
+            viewModel.deleteRecentSearchesOlderThanOneWeek()
+            viewModel.getRecentSearches()
+        }
     }
 }
 
@@ -69,6 +73,7 @@ private extension SearchUsersScreenView {
             .onChange(of: viewModel.searchText) {
                 if viewModel.trimmedSearchText.isEmpty {
                     viewModel.resetSearchState()
+                    viewModel.getRecentSearches()
                 }
             }
     }
@@ -83,44 +88,55 @@ private extension SearchUsersScreenView {
             recentSearchesListView
         }
     }
+    @ViewBuilder
     var recentSearchedHeaderView: some View {
-        HStack {
-            Text("Recent Searches")
-                .font(.headline)
-            Spacer()
-            Button("Clear all") {
-                
+        if viewModel.recentSearches.isEmpty {
+            EmptyView()
+        } else {
+            HStack {
+                Text("Recent Searches")
+                    .font(.headline)
+                Spacer()
+                Button("Clear all") {
+                    viewModel.deleteAllRecentSearches()
+                    viewModel.getRecentSearches()
+                }
+                .buttonStyle(.bordered)
+                .foregroundStyle(.primary)
+                .controlSize(.mini)
             }
-            .buttonStyle(.bordered)
-            .foregroundStyle(.primary)
-            .controlSize(.mini)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 16.0)
+            .padding(.bottom, 8.0)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal, 16.0)
-        .padding(.bottom, 8.0)
     }
+    @ViewBuilder
     var recentSearchesListView: some View {
-        ScrollView(.vertical) {
-            LazyVStack(spacing: 16.0) {
-                ForEach(1...5, id: \.self) { _ in
-                    recentSearchTextView(
-                        searchText: "Test"
-                    )
+        if viewModel.recentSearches.isEmpty {
+            searchInitialView
+        } else {
+            ScrollView(.vertical) {
+                LazyVStack(spacing: 16.0) {
+                    ForEach(viewModel.recentSearches) { recentSearch in
+                        recentSearchView(recentSearch)
+                    }
                 }
             }
+            .disableBouncesVertically()
+            .scrollIndicators(.hidden)
+            .contentMargins(.horizontal, 16.0)
+            .contentMargins(.top, 8.0)
+            .contentMargins(.bottom, 16.0)
+            
         }
-        .disableBouncesVertically()
-        .scrollIndicators(.hidden)
-        .contentMargins(.horizontal, 16.0)
-        .contentMargins(.top, 8.0)
-        .contentMargins(.bottom, 16.0)
     }
-    func recentSearchTextView(searchText: String) -> some View {
+    func recentSearchView(_ recentSearch: RecentSearch) -> some View {
         HStack {
-            Text(searchText)
+            Text(recentSearch.searchText)
             Spacer()
             Button {
-                
+                viewModel.deleteRecentSearch(recentSearch)
+                viewModel.getRecentSearches()
             } label: {
                 Image(systemName: "xmark")
             }
