@@ -212,6 +212,40 @@ final class FirebaseMemoryRepository: MemoryRepository {
             throw LoadFollowingsPublicMemoriesError.loadFailed
         }
     }
+    
+    private var heartListeners: [ListenerRegistration] = []
+    
+    private var cachedHeartCounts: [String: Int] = [:]
+
+    private func removeAllHeartListeners() {
+        heartListeners.forEach { $0.remove() }
+        heartListeners.removeAll()
+        cachedHeartCounts.removeAll()
+    }
+    
+    func getTotalHeartsCount(userData: UserData?) async throws -> Int {
+        guard let userId = userData?.uid else {
+            throw GetTotalHeartsCountError.userNotFound
+        }
+        var totalHeartsCount: Int = 0
+        do {
+            let publicMemoryModels = try await memoryCollectionReference
+                .whereField(MemoryModel.CodingKeys.ownerId.rawValue, isEqualTo: userId)
+                .whereField(MemoryModel.CodingKeys.publicStatus.rawValue, isEqualTo: true)
+                .getDocumentModels(as: MemoryModel.self)
+            for publicMemoryModel in publicMemoryModels {
+                let memoryId = publicMemoryModel.id
+                let heartQuerySnapshot = try? await getMemoryHeartsCollectionReference(memoryId: memoryId).getDocuments()
+                let heartDocuments = heartQuerySnapshot?.documents
+                let heartDocumentsCount = heartDocuments?.count ?? 0
+                totalHeartsCount += heartDocumentsCount
+            }
+            return totalHeartsCount
+        } catch {
+            throw GetTotalHeartsCountError.failedToGet
+        }
+    }
+
 }
 
 private extension FirebaseMemoryRepository {

@@ -47,8 +47,22 @@ struct ProfileInfoView: View {
             }
             .font(.footnote)
             HStack(spacing: 8.0) {
-                countInfoView(count: followersCount, label: "Followers")
-                countInfoView(count: followingCount, label: "Followings")
+                NavigationLink {
+                    CommunityScreenView(
+                        selectedConnectionType: .followers
+                    )
+                } label: {
+                    countInfoView(count: followersCount, label: "Followers")
+                }
+                .buttonStyle(.plain)
+                NavigationLink {
+                    CommunityScreenView(
+                        selectedConnectionType: .following
+                    )
+                } label: {
+                    countInfoView(count: followingCount, label: "Followings")
+                }
+                .buttonStyle(.plain)
                 countInfoView(count: heartsCount, label: "Hearts")
             }
         }
@@ -69,15 +83,17 @@ private extension ProfileInfoView {
 }
 
 #Preview {
-    ProfileInfoView(
-        displayName: UserProfileData.preview1.displayname,
-        username: UserProfileData.preview1.username,
-        email: UserProfileData.preview1.emailAddress,
-        bio: UserProfileData.preview1.bio,
-        birthday: UserProfileData.preview1.birthday.formatted(date: .abbreviated, time: .omitted),
-        joined: UserProfileData.preview1.createdAt.formatted(date: .abbreviated, time: .omitted),
-        followersCount: 0,
-        followingCount: 0,
-        heartsCount: 0,
-    )
+    NavigationStack {
+        ProfileInfoView(
+            displayName: UserProfileData.preview1.displayname,
+            username: UserProfileData.preview1.username,
+            email: UserProfileData.preview1.emailAddress,
+            bio: UserProfileData.preview1.bio,
+            birthday: UserProfileData.preview1.birthday.formatted(date: .abbreviated, time: .omitted),
+            joined: UserProfileData.preview1.createdAt.formatted(date: .abbreviated, time: .omitted),
+            followersCount: 0,
+            followingCount: 0,
+            heartsCount: 0,
+        )
+    }
 }

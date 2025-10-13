@@ -19,6 +19,9 @@ struct MyProfileScreenView: View {
     private var followingsCount: Int {
         userViewModel.followingsCount
     }
+    private var totalHeartsCount: Int {
+        myProfileViewModel.totalHeartsCount
+    }
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 0.0) {
@@ -45,6 +48,9 @@ struct MyProfileScreenView: View {
         }
         .onAppear {
             myProfileViewModel.listenUserPublicMemories()
+        }
+        .task {
+            await myProfileViewModel.getTotalHeartsCount()
         }
     }
 }
@@ -99,7 +105,7 @@ private extension MyProfileScreenView {
             joined: userProfile?.createdAt.formatted(date: .abbreviated, time: .omitted) ?? "placeholder",
             followersCount: followersCount,
             followingCount: followingsCount,
-            heartsCount: 0
+            heartsCount: totalHeartsCount
         )
         .padding(16)
         .redacted(reason: userProfile == nil ? .placeholder : [])

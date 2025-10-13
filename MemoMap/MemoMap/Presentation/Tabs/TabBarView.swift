@@ -30,12 +30,7 @@ struct TabBarView: View {
             await tabBarViewModel.checkEmailVerificationStatus()
         }
         .onAppear {
-            userViewModel.listenUserProfile()
-            userViewModel.listenFollowingIds()
-            userViewModel.listenFollowers()
-            userViewModel.listenFollowings()
-            userViewModel.listenFollowersCount()
-            userViewModel.listenFollowingsCount()
+            setUpListeners()
         }
         .environment(userViewModel)
     }
@@ -61,6 +56,17 @@ private extension TabBarView {
         VerifyAccountView(
             isPresented: $tabBarViewModel.isVerifyAccountSheetPresented
         )
+    }
+}
+
+private extension TabBarView {
+    func setUpListeners() {
+        userViewModel.listenUserProfile()
+        userViewModel.listenFollowingIds()
+        userViewModel.listenFollowers()
+        userViewModel.listenFollowings()
+        userViewModel.listenFollowersCount()
+        userViewModel.listenFollowingsCount()
     }
 }
 
