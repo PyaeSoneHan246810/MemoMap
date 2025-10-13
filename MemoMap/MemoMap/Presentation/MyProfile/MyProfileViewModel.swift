@@ -16,6 +16,8 @@ final class MyProfileViewModel {
     @ObservationIgnored @Injected(\.memoryRepository) private var memoryRepository: MemoryRepository
     
     private(set) var memoriesDataState: DataState<[MemoryData]> = .initial
+    
+    private(set) var totalHeartsCount: Int = 0
 
     var memories: [MemoryData] {
         if case .success(let data) = memoriesDataState {
@@ -42,6 +44,20 @@ final class MyProfileViewModel {
                     print(errorDescription)
                     self?.memoriesDataState = .failure(errorDescription)
                 }
+            }
+        }
+    }
+    
+    func getTotalHeartsCount() async {
+        let userData = authenticationRepository.getUserData()
+        do {
+            let totalHeartsCount = try await memoryRepository.getTotalHeartsCount(userData: userData)
+            self.totalHeartsCount = totalHeartsCount
+        } catch {
+            if let getTotalHeartsCountError = error as? GetTotalHeartsCountError {
+                print(getTotalHeartsCountError.localizedDescription)
+            } else {
+                print(error.localizedDescription)
             }
         }
     }

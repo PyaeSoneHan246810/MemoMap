@@ -11,6 +11,7 @@ struct CommunityScreenView: View {
     @Environment(UserViewModel.self) private var userViewModel: UserViewModel
     @State private var communityViewModel: CommunityViewModel = .init()
     @State private var userProfileScreenModel: UserProfileScreenModel? = nil
+    var selectedConnectionType: ConnectionType?
     var body: some View {
         VStack(spacing: 0.0) {
             connectionTypePickerView
@@ -26,6 +27,11 @@ struct CommunityScreenView: View {
             UserProfileScreenView(
                 userProfileScreenModel: $0
             )
+        }
+        .onAppear {
+            if let selectedConnectionType {
+                communityViewModel.selectedConnectionType = selectedConnectionType
+            }
         }
     }
 }

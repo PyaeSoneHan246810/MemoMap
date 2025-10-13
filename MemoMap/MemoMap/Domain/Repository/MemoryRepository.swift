@@ -33,4 +33,6 @@ protocol MemoryRepository {
     func listenHeartsCount(memoryId: String, completion: @escaping (Result<Int, Error>) -> Void)
     
     func loadFollowingsPublicMemories(followingIds: [String]) async throws -> [MemoryData]
+    
+    func getTotalHeartsCount(userData: UserData?) async throws -> Int
 }
