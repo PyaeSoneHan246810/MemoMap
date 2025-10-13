@@ -109,6 +109,7 @@ private extension SearchUsersScreenView {
                 }
             }
         }
+        .disableBouncesVertically()
         .scrollIndicators(.hidden)
         .contentMargins(.horizontal, 16.0)
         .contentMargins(.top, 8.0)
@@ -127,32 +128,25 @@ private extension SearchUsersScreenView {
             .controlSize(.small)
         }
     }
+    @ViewBuilder
     var searchResultsView: some View {
-        VStack(spacing: 0.0) {
-            switch viewModel.searchUsersDataState {
-            case .initial:
-                searchInitialView
-            case .loading:
-                searchLoadingView
-            case .success(let users):
-                searchUsersListView(users: users)
-            case .failure(let errorDescription):
-                searchFailureView(errorDescription: errorDescription)
-            }
+        switch viewModel.searchUsersDataState {
+        case .initial:
+            searchInitialView
+        case .loading:
+            searchLoadingView
+        case .success(let users):
+            searchUsersListView(users: users)
+        case .failure(let errorDescription):
+            searchFailureView(errorDescription: errorDescription)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-    }
-    var searchResultsHeaderView: some View {
-        VStack {
-            Text("Results for \"\(viewModel.trimmedSearchText)\"")
-                .font(.headline)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 16.0)
-        .padding(.vertical, 8.0)
     }
     var searchInitialView: some View {
-        EmptyView()
+        EmptyContentView(
+            image: .searchUsers,
+            title: "Search Users",
+            description: "Type a username or display name to find people."
+        )
     }
     var searchLoadingView: some View {
         ZStack {
@@ -166,25 +160,40 @@ private extension SearchUsersScreenView {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+    var searchResultsHeaderView: some View {
+        Text("Results for \"\(viewModel.trimmedSearchText)\"")
+            .font(.headline)
+            .padding(.horizontal, 16.0)
+            .padding(.vertical, 8.0)
+    }
     @ViewBuilder
     func searchUsersListView(users: [UserProfileData]) -> some View {
-        if !viewModel.trimmedSearchText.isEmpty {
-            searchResultsHeaderView
-        }
-        ScrollView(.vertical) {
-            LazyVStack(spacing: 16.0) {
-                ForEach(users) { userProfile in
-                    UserRowView(
-                        userProfile: userProfile,
-                        userProfileScreenModel: $userProfileScreenModel
-                    )
+        if users.isEmpty {
+            EmptyContentView(
+                image: .users,
+                title: "No Users Found",
+                description: "We couldn’t find any users matching your search."
+            )
+        } else {
+            VStack(alignment: .leading, spacing: 0.0) {
+                searchResultsHeaderView
+                ScrollView(.vertical) {
+                    LazyVStack(spacing: 16.0) {
+                        ForEach(users) { userProfile in
+                            UserRowView(
+                                userProfile: userProfile,
+                                userProfileScreenModel: $userProfileScreenModel
+                            )
+                        }
+                    }
                 }
+                .disableBouncesHorizontally()
+                .scrollIndicators(.hidden)
+                .contentMargins(.horizontal, 16.0)
+                .contentMargins(.top, 8.0)
+                .contentMargins(.bottom, 16.0)
             }
         }
-        .scrollIndicators(.hidden)
-        .contentMargins(.horizontal, 16.0)
-        .contentMargins(.top, 8.0)
-        .contentMargins(.bottom, 16.0)
     }
 }
 

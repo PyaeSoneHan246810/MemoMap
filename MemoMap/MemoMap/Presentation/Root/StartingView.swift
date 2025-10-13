@@ -21,10 +21,10 @@ struct StartingView: View {
             }
         }
         .animation(.spring, value: appSessionViewModel.appSession)
-        .environment(appSessionViewModel)
         .onAppear {
             appSessionViewModel.configureAppSession()
         }
+        .environment(appSessionViewModel)
     }
 }
 

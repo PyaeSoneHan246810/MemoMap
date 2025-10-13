@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct CommunityScreenView: View {
-    @State private var selectedConnectionType: ConnectionType = .followers
+    @Environment(UserViewModel.self) private var userViewModel: UserViewModel
+    @State private var communityViewModel: CommunityViewModel = .init()
     @State private var userProfileScreenModel: UserProfileScreenModel? = nil
     var body: some View {
         VStack(spacing: 0.0) {
@@ -49,35 +50,110 @@ private extension CommunityScreenView {
         }
     }
     var connectionTypePickerView: some View {
-        Picker("Connection Type", selection: $selectedConnectionType) {
-            Text("10 Followers")
+        Picker("Connection Type", selection: $communityViewModel.selectedConnectionType) {
+            Text("\(userViewModel.followersCount) Followers")
                 .tag(ConnectionType.followers)
-            Text("10 Followings")
+            Text("\(userViewModel.followingsCount) Followings")
                 .tag(ConnectionType.following)
-            Text("4 Mutuals")
+            Text("\(userViewModel.mutualsCount) Mutuals")
                 .tag(ConnectionType.mutuals)
         }
         .pickerStyle(.segmented)
         .padding(16.0)
     }
+    @ViewBuilder
     var connectionsView: some View {
-        ScrollView(.vertical) {
-            LazyVStack(spacing: 16.0) {
-                ForEach(0...5, id: \.self) { _ in
-                    UserRowView(
-                        userProfile: UserProfileData.preview1,
-                        userProfileScreenModel: $userProfileScreenModel
-                    )
+        switch communityViewModel.selectedConnectionType {
+        case .followers:
+            followersListView
+        case .following:
+            followingsListView
+        case .mutuals:
+            mutualListView
+        }
+    }
+    @ViewBuilder
+    var followersListView: some View {
+        if userViewModel.followerUsers.isEmpty {
+            EmptyContentView(
+                image: .connection,
+                title: "No Followers Yet",
+                description: "Once someone follows you, they’ll appear here."
+            )
+        } else {
+            ScrollView(.vertical) {
+                LazyVStack(spacing: 16.0) {
+                    ForEach(userViewModel.followerUsers) { user in
+                        UserRowView(
+                            userProfile: user,
+                            userProfileScreenModel: $userProfileScreenModel
+                        )
+                    }
                 }
             }
+            .communityScrollViewStyle()
         }
-        .scrollIndicators(.hidden)
-        .contentMargins(16.0)
+        
+    }
+    @ViewBuilder
+    var followingsListView: some View {
+        if userViewModel.followingUsers.isEmpty {
+            EmptyContentView(
+                image: .connection,
+                title: "Not Following Anyone",
+                description: "When you follows people, you’ll see them here."
+            )
+        } else {
+            ScrollView(.vertical) {
+                LazyVStack(spacing: 16.0) {
+                    ForEach(userViewModel.followingUsers) { user in
+                        UserRowView(
+                            userProfile: user,
+                            userProfileScreenModel: $userProfileScreenModel
+                        )
+                    }
+                }
+            }
+            .communityScrollViewStyle()
+        }
+    }
+    @ViewBuilder
+    var mutualListView: some View {
+        if userViewModel.mutualUsers.isEmpty {
+            EmptyContentView(
+                image: .connection,
+                title: "No Mutuals Yet",
+                description: "Follow each other to see mutual connections here."
+            )
+        } else {
+            ScrollView(.vertical) {
+                LazyVStack(spacing: 16.0) {
+                    ForEach(userViewModel.mutualUsers) { user in
+                        UserRowView(
+                            userProfile: user,
+                            userProfileScreenModel: $userProfileScreenModel
+                        )
+                    }
+                }
+            }
+            .communityScrollViewStyle()
+        }
+    }
+}
+
+private extension View {
+    func communityScrollViewStyle() -> some View {
+        self
+            .disableBouncesVertically()
+            .scrollIndicators(.hidden)
+            .contentMargins(16.0)
     }
 }
 
 #Preview {
+    @Previewable @State var userViewModel: UserViewModel = .init()
     NavigationStack {
         CommunityScreenView()
     }
+    .environment(userViewModel)
 }

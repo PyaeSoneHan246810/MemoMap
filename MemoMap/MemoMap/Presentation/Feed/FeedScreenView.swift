@@ -6,14 +6,17 @@
 //
 
 import SwiftUI
-import SwiftUIIntrospect
 
 struct FeedScreenView: View {
     @Environment(\.colorScheme) private var colorScheme
-    @State private var viewModel: FeedViewModel = .init()
+    @Environment(UserViewModel.self) private var userViewModel: UserViewModel
+    @State private var feedViewModel: FeedViewModel = .init()
     @State private var userProfileScreenModel: UserProfileScreenModel? = nil
     private var toolbarBackgroundColor: Color {
         colorScheme == .light ? .white : .black
+    }
+    private var followingIds: [String] {
+        userViewModel.followingIds
     }
     var body: some View {
         memoriesFeedView
@@ -26,7 +29,7 @@ struct FeedScreenView: View {
         .toolbar {
             toolbarContentView
         }
-        .sheet(isPresented: $viewModel.isPostMemorySheetPresented) {
+        .sheet(isPresented: $feedViewModel.isPostMemorySheetPresented) {
             postMemorySheetView
                 .interactiveDismissDisabled()
         }
@@ -35,8 +38,8 @@ struct FeedScreenView: View {
                 userProfileScreenModel: $0
             )
         }
-        .onAppear {
-            viewModel.listenFollowingIds()
+        .task {
+            await feedViewModel.loadFollowingsPublicMemories(followingIds: followingIds)
         }
     }
 }
@@ -86,7 +89,7 @@ private extension FeedScreenView {
         .frame(height: 52.0)
         .background(Color(uiColor: .secondarySystemBackground), in: .capsule)
         .onTapGesture {
-            viewModel.isPostMemorySheetPresented = true
+            feedViewModel.isPostMemorySheetPresented = true
         }
     }
     var searchButtonView: some View {
@@ -102,20 +105,27 @@ private extension FeedScreenView {
         }
         .buttonStyle(.plain)
     }
+    @ViewBuilder
     var memoriesFeedView: some View {
-        ScrollView(.vertical) {
-            MemoryPostsView(
-                memoryPosts: viewModel.memoryPosts,
-                userProfileScreenModel: $userProfileScreenModel
+        if feedViewModel.memories.isEmpty {
+            EmptyContentView(
+                image: .followUser,
+                title: "Make your feed come alive!",
+                description: "Follow people you like and discover their shared memories."
             )
+        } else {
+            ScrollView(.vertical) {
+                MemoryPostsView(
+                    memories: feedViewModel.memories,
+                    userProfileScreenModel: $userProfileScreenModel
+                )
+            }
+            .disableBouncesVertically()
+            .scrollIndicators(.hidden)
+            .contentMargins(.top, 10.0)
+            .contentMargins(.bottom, 16.0)
+            .background(Color(uiColor: .secondarySystemBackground))
         }
-        .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { scrollView in
-            scrollView.bouncesVertically = false
-        }
-        .scrollIndicators(.hidden)
-        .contentMargins(.top, 10.0)
-        .contentMargins(.bottom, 16.0)
-        .background(Color(uiColor: .secondarySystemBackground))
     }
     var postMemorySheetView: some View {
         NavigationStack {
@@ -125,7 +135,9 @@ private extension FeedScreenView {
 }
 
 #Preview {
+    @Previewable @State var userViewModel: UserViewModel = .init()
     NavigationStack {
         FeedScreenView()
     }
+    .environment(userViewModel)
 }

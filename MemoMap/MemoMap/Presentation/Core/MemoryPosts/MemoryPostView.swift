@@ -10,11 +10,15 @@ import AVKit
 import Kingfisher
 
 struct MemoryPostView: View {
-    let memoryPostInfo: MemoryPostInfo
+    let memory: MemoryData
     @Binding var userProfileScreenModel: UserProfileScreenModel?
     @State private var viewModel: MemoryPostViewModel = .init()
-    private var memoryId: String { memoryPostInfo.memory.id }
-    private var userId: String { memoryPostInfo.memory.ownerId }
+    private var memoryId: String {
+        memory.id
+    }
+    private var userId: String {
+        memory.ownerId
+    }
     var body: some View {
         VStack(spacing: 12.0) {
             Group {
@@ -50,12 +54,6 @@ struct MemoryPostView: View {
             .interactiveDismissDisabled()
         }
         .onAppear {
-            viewModel.userProfile = memoryPostInfo.userProfile
-            if viewModel.userProfile == nil {
-                Task {
-                    await viewModel.getUserProfile(userId: userId)
-                }
-            }
             viewModel.listenHeartsCount(memoryId: memoryId)
             viewModel.listenCommentsCount(memoryId: memoryId)
             Task {
@@ -63,19 +61,11 @@ struct MemoryPostView: View {
                     memoryId: memoryId
                 )
             }
+            Task {
+                await viewModel.getUserProfile(userId: userId)
+            }
         }
     }
-}
-
-extension MemoryPostView {
-    struct MemoryPostInfo {
-        let userProfile: UserProfileData?
-        let memory: MemoryData
-    }
-    static let previewMemoryPostInfo: MemoryPostInfo = .init(
-        userProfile: UserProfileData.preview1,
-        memory: MemoryData.preview1,
-    )
 }
 
 private extension MemoryPostView {
@@ -84,7 +74,7 @@ private extension MemoryPostView {
             profilePhotoView
             VStack(alignment: .leading, spacing: 0.0) {
                 displayNameView
-                Text(memoryPostInfo.memory.createdAt.formatted())
+                Text(memory.createdAt.formatted())
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -127,26 +117,26 @@ private extension MemoryPostView {
     }
     var memoryInfoView: some View {
         VStack(alignment: .leading, spacing: 8.0) {
-            Text(memoryPostInfo.memory.title)
+            Text(memory.title)
                 .font(.headline)
-            if let memoryDescription = memoryPostInfo.memory.description {
+            if let memoryDescription = memory.description {
                 Text(memoryDescription)
                     .font(.subheadline)
             }
             MemoryTagsView(
-                tags: memoryPostInfo.memory.tags
+                tags: memory.tags
             )
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
     var memoryMediasView: some View {
         MemoryMediasView(
-            mediaUrlStrings: memoryPostInfo.memory.media
+            mediaUrlStrings: memory.media
         )
     }
     var locationInfoView: some View {
         HStack {
-            Text(memoryPostInfo.memory.locationName)
+            Text(memory.locationName)
                 .font(.subheadline)
                 .fontWeight(.medium)
             Spacer()
@@ -196,23 +186,23 @@ private extension MemoryPostView {
     var viewOnMapSheetView: some View {
         NavigationStack {
             ViewOnMapView(
-                locationName: memoryPostInfo.memory.locationName,
-                latitude: memoryPostInfo.memory.latitude,
-                longitude: memoryPostInfo.memory.longitude
+                locationName: memory.locationName,
+                latitude: memory.latitude,
+                longitude: memory.longitude
             )
         }
     }
     var heartsSheetView: some View {
         NavigationStack {
             HeartsView(
-                memoryId: memoryPostInfo.memory.id
+                memoryId: memory.id
             )
         }
     }
     var commentsSheetView: some View {
         NavigationStack {
             CommentsView(
-                memoryId: memoryPostInfo.memory.id
+                memoryId: memory.id
             )
         }
     }
@@ -233,7 +223,7 @@ private extension MemoryPostView {
 
 #Preview {
     MemoryPostView(
-        memoryPostInfo: MemoryPostView.previewMemoryPostInfo,
+        memory: MemoryData.preview1,
         userProfileScreenModel: .constant(nil)
     )
     .frame(maxWidth: .infinity, maxHeight: .infinity)
