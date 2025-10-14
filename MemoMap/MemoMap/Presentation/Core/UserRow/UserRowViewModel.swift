@@ -17,7 +17,11 @@ final class UserRowViewModel {
     
     var userType: UserType? = nil
     
-    func listenFollowings(userId: String) {
+    var currentUserId: String? {
+        authenticationRepository.getUserData()?.uid
+    }
+    
+    func listenFollowingsIds(userId: String) {
         let userData = authenticationRepository.getUserData()
         userRepository.listenFollowingIds(userData: userData) { [weak self] result in
             switch result {

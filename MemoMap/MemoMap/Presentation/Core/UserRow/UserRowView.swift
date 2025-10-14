@@ -12,18 +12,22 @@ struct UserRowView: View {
     let userProfile: UserProfileData?
     @Binding var userProfileScreenModel: UserProfileScreenModel?
     @State private var viewModel: UserRowViewModel = .init()
+    var showActionButton: Bool {
+        guard let currentUserId = viewModel.currentUserId, let userId = userProfile?.id, currentUserId != userId else { return false }
+        return true
+    }
     var body: some View {
         HStack(spacing: 12.0) {
             profilePhotoView
             userInfoView
-            if let userType = viewModel.userType {
+            if showActionButton, let userType = viewModel.userType {
                 actionButtonView(userType: userType)
             }
         }
         .frame(maxWidth: .infinity)
         .onAppear {
             if let userId = userProfile?.id {
-                viewModel.listenFollowings(userId: userId)
+                viewModel.listenFollowingsIds(userId: userId)
             }
         }
     }
@@ -103,7 +107,8 @@ private extension UserRowView {
 
 private extension UserRowView {
     func navigateToUserProfile() {
-        let userProfileScreenModel: UserProfileScreenModel = .init(userId: "userId")
+        guard let currentUserId = viewModel.currentUserId, let userId = userProfile?.id, currentUserId != userId else { return }
+        let userProfileScreenModel: UserProfileScreenModel = .init(userId: userId)
         self.userProfileScreenModel = userProfileScreenModel
     }
 }

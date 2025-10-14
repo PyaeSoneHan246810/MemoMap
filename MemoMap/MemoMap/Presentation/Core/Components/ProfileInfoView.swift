@@ -17,6 +17,7 @@ struct ProfileInfoView: View {
     let followersCount: Int
     let followingCount: Int
     let heartsCount: Int
+    let profileInfoType: ProfileInfoType
     var body: some View {
         VStack(alignment: .leading, spacing: 12.0) {
             VStack(alignment: .leading, spacing: 4.0) {
@@ -47,26 +48,45 @@ struct ProfileInfoView: View {
             }
             .font(.footnote)
             HStack(spacing: 8.0) {
-                NavigationLink {
-                    CommunityScreenView(
-                        selectedConnectionType: .followers
-                    )
-                } label: {
+                switch profileInfoType {
+                case .ownUser:
+                    NavigationLink {
+                        CommunityScreenView(
+                            selectedConnectionType: .followers
+                        )
+                    } label: {
+                        countInfoView(count: followersCount, label: "Followers")
+                    }
+                    .buttonStyle(.plain)
+                    NavigationLink {
+                        CommunityScreenView(
+                            selectedConnectionType: .following
+                        )
+                    } label: {
+                        countInfoView(count: followingCount, label: "Followings")
+                    }
+                    .buttonStyle(.plain)
+                case .otherUser:
                     countInfoView(count: followersCount, label: "Followers")
-                }
-                .buttonStyle(.plain)
-                NavigationLink {
-                    CommunityScreenView(
-                        selectedConnectionType: .following
-                    )
-                } label: {
+                        .onTapGesture {
+                            
+                        }
                     countInfoView(count: followingCount, label: "Followings")
+                        .onTapGesture {
+                            
+                        }
                 }
-                .buttonStyle(.plain)
                 countInfoView(count: heartsCount, label: "Hearts")
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+extension ProfileInfoView {
+    enum ProfileInfoType {
+        case ownUser
+        case otherUser
     }
 }
 
@@ -94,6 +114,7 @@ private extension ProfileInfoView {
             followersCount: 0,
             followingCount: 0,
             heartsCount: 0,
+            profileInfoType: .ownUser
         )
     }
 }

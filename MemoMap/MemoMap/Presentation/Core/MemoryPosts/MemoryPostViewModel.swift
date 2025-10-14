@@ -28,6 +28,10 @@ final class MemoryPostViewModel {
     
     private(set) var commentsCount: Int = 0
     
+    var currentUserId: String? {
+        authenticationRepository.getUserData()?.uid
+    }
+    
     func checkIsHeartGiven(memoryId: String) async {
         guard let userId = authenticationRepository.getUserData()?.uid else { return }
         do {

@@ -210,7 +210,8 @@ private extension MemoryPostView {
 
 private extension MemoryPostView {
     func navigateToUserProfile() {
-        let userProfileScreenModel: UserProfileScreenModel = .init(userId: "userId")
+        guard let currentUserId = viewModel.currentUserId, currentUserId != memory.ownerId else { return }
+        let userProfileScreenModel: UserProfileScreenModel = .init(userId: memory.ownerId)
         self.userProfileScreenModel = userProfileScreenModel
     }
     

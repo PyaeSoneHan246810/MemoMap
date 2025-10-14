@@ -25,4 +25,8 @@ protocol UserRepository {
     func listenFollowings(userData: UserData?, completion: @escaping (Result<[FollowingData], Error>) -> Void)
     
     func listenFollowers(userData: UserData?, completion: @escaping (Result<[FollowerData], Error>) -> Void)
+
+    func getFollowingsCount(userId: String) async throws -> Int
+    
+    func getFollowersCount(userId: String) async throws -> Int
 }

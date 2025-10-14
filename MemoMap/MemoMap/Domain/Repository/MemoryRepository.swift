@@ -35,4 +35,6 @@ protocol MemoryRepository {
     func loadFollowingsPublicMemories(followingIds: [String]) async throws -> [MemoryData]
     
     func getTotalHeartsCount(userData: UserData?) async throws -> Int
+    
+    func getTotoalHeartsCount(userId: String) async throws -> Int
 }

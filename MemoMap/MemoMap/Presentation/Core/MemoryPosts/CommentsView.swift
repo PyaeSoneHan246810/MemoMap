@@ -52,7 +52,9 @@ private extension CommentsView {
                         userComment: userComment,
                         userProfileScreenModel: $userProfileScreenModel,
                         onUserInfoTapped: {
-                            navigateToUserProfile()
+                            navigateToUserProfile(
+                                userId: userComment.comment.userId
+                            )
                         }
                     )
                 }
@@ -94,8 +96,9 @@ private extension CommentsView {
 }
 
 private extension CommentsView {
-    func navigateToUserProfile() {
-        let userProfileScreenModel: UserProfileScreenModel = .init(userId: "userId")
+    func navigateToUserProfile(userId: String) {
+        guard let currentUserId = viewModel.currentUserId, currentUserId != userId else { return }
+        let userProfileScreenModel: UserProfileScreenModel = .init(userId: userId)
         self.userProfileScreenModel = userProfileScreenModel
     }
     

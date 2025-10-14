@@ -172,11 +172,7 @@ final class FirebaseMemoryRepository: MemoryRepository {
                 completion(.failure(ListenCountError.listenFailed))
                 return
             }
-            guard let documents = querySnapshot?.documents else {
-                completion(.failure(ListenCountError.failedToGetDocuments))
-                return
-            }
-            let commentsCount = documents.count
+            let commentsCount = querySnapshot?.count ?? 0
             completion(.success(commentsCount))
             return
         }
@@ -188,11 +184,7 @@ final class FirebaseMemoryRepository: MemoryRepository {
                 completion(.failure(ListenCountError.listenFailed))
                 return
             }
-            guard let documents = querySnapshot?.documents else {
-                completion(.failure(ListenCountError.failedToGetDocuments))
-                return
-            }
-            let heartsCount = documents.count
+            let heartsCount = querySnapshot?.count ?? 0
             completion(.success(heartsCount))
             return
         }
@@ -213,20 +205,14 @@ final class FirebaseMemoryRepository: MemoryRepository {
         }
     }
     
-    private var heartListeners: [ListenerRegistration] = []
-    
-    private var cachedHeartCounts: [String: Int] = [:]
-
-    private func removeAllHeartListeners() {
-        heartListeners.forEach { $0.remove() }
-        heartListeners.removeAll()
-        cachedHeartCounts.removeAll()
-    }
-    
     func getTotalHeartsCount(userData: UserData?) async throws -> Int {
         guard let userId = userData?.uid else {
             throw GetTotalHeartsCountError.userNotFound
         }
+        return try await getTotoalHeartsCount(userId: userId)
+    }
+    
+    func getTotoalHeartsCount(userId: String) async throws -> Int {
         var totalHeartsCount: Int = 0
         do {
             let publicMemoryModels = try await memoryCollectionReference
@@ -235,10 +221,10 @@ final class FirebaseMemoryRepository: MemoryRepository {
                 .getDocumentModels(as: MemoryModel.self)
             for publicMemoryModel in publicMemoryModels {
                 let memoryId = publicMemoryModel.id
-                let heartQuerySnapshot = try? await getMemoryHeartsCollectionReference(memoryId: memoryId).getDocuments()
-                let heartDocuments = heartQuerySnapshot?.documents
-                let heartDocumentsCount = heartDocuments?.count ?? 0
-                totalHeartsCount += heartDocumentsCount
+                let countQuery = getMemoryHeartsCollectionReference(memoryId: memoryId).count
+                let countQuerySnapshot = try? await countQuery.getAggregation(source: .server)
+                let heartsCount = countQuerySnapshot?.count.intValue ?? 0
+                totalHeartsCount += heartsCount
             }
             return totalHeartsCount
         } catch {

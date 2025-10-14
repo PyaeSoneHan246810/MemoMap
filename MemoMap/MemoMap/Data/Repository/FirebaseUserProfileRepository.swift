@@ -84,9 +84,13 @@ final class FirebaseUserProfileRepository: UserProfileRepository {
     }
     
     func getUserProfile(userId: String) async throws -> UserProfileData {
-        let userProfileModel = try await getUserCollectionDocumentReference(userId: userId).getDocument(as: UserProfileModel.self)
-        let userProfile = getUserProfileData(from: userProfileModel)
-        return userProfile
+        do {
+            let userProfileModel = try await getUserCollectionDocumentReference(userId: userId).getDocument(as: UserProfileModel.self)
+            let userProfile = getUserProfileData(from: userProfileModel)
+            return userProfile
+        } catch {
+            throw GetUserProfileError.failedToGet
+        }
     }
     
 }
