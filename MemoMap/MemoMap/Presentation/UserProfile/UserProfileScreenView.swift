@@ -20,6 +20,9 @@ struct UserProfileScreenView: View {
     private var userProfile: UserProfileData? {
         viewModel.userProfile
     }
+    private var memories: [MemoryData] {
+        viewModel.memories
+    }
     private var userType: UserType? {
         viewModel.userType
     }
@@ -60,17 +63,14 @@ struct UserProfileScreenView: View {
             viewModel.listenFollowingsIds(userId: userId)
         }
         .task {
-            await viewModel.getUserProfile(userId: userId)
-            await viewModel.getFollowingsCount(userId: userId)
-            await viewModel.getFollowersCount(userId: userId)
-            await viewModel.getTotalHeartsCount(userId: userId)
+            await getUserData()
         }
     }
 }
 
 private extension UserProfileScreenView {
     var scrollViewBackgroundColor: Color {
-        isFollowingUser ? Color(uiColor: .secondarySystemBackground) : Color(uiColor: .systemBackground)
+        isFollowingUser && !memories.isEmpty ? Color(uiColor: .secondarySystemBackground) : Color(uiColor: .systemBackground)
     }
     var profilePhotosView: some View {
         ProfileCoverPhotoView(
@@ -140,12 +140,31 @@ private extension UserProfileScreenView {
         }
         .frame(width: 240.0)
     }
+    @ViewBuilder
     var memoriesView: some View {
-        MemoryPostsView(
-            memories: MemoryData.previews,
-            userProfileScreenModel: .constant(nil)
-        )
-        .padding(.vertical, 16.0)
+        if memories.isEmpty {
+            EmptyContentView(
+                image: .emptyMemories,
+                title: "There is no public memories yet!",
+                description: "This user hasn’t shared any memories to be discovered."
+            )
+        } else {
+            MemoryPostsView(
+                memories: memories,
+                userProfileScreenModel: .constant(nil)
+            )
+            .padding(.vertical, 16.0)
+        }
+    }
+}
+
+private extension UserProfileScreenView {
+    func getUserData() async {
+        await viewModel.getUserProfile(userId: userId)
+        await viewModel.getFollowingsCount(userId: userId)
+        await viewModel.getFollowersCount(userId: userId)
+        await viewModel.getTotalHeartsCount(userId: userId)
+        await viewModel.getUserPublicMemories(userId: userId)
     }
 }
 

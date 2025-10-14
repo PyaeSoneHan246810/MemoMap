@@ -231,6 +231,21 @@ final class FirebaseMemoryRepository: MemoryRepository {
             throw GetTotalHeartsCountError.failedToGet
         }
     }
+    
+    func getUserPublicMemories(userId: String) async throws -> [MemoryData] {
+        do {
+            let memoryModels = try await memoryCollectionReference
+                .whereField(MemoryModel.CodingKeys.ownerId.rawValue, isEqualTo: userId)
+                .whereField(MemoryModel.CodingKeys.publicStatus.rawValue, isEqualTo: true)
+                .getDocumentModels(as: MemoryModel.self)
+            let memories = memoryModels.map { memoryModel in
+                getMemoryData(from: memoryModel)
+            }
+            return memories
+        } catch {
+            throw GetUserPublicMemoriesError.failedToGet
+        }
+    }
 
 }
 
