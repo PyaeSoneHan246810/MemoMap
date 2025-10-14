@@ -37,4 +37,6 @@ protocol MemoryRepository {
     func getTotalHeartsCount(userData: UserData?) async throws -> Int
     
     func getTotoalHeartsCount(userId: String) async throws -> Int
+    
+    func getUserPublicMemories(userId: String) async throws -> [MemoryData]
 }

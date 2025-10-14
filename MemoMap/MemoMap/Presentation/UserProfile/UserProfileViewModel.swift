@@ -22,6 +22,8 @@ final class UserProfileViewModel {
     
     private(set) var userProfileDataState: DataState<UserProfileData> = .initial
     
+    private(set) var memoriesDataState: DataState<[MemoryData]> = .initial
+    
     var userType: UserType? = nil
     
     var followingsCount: Int = 0
@@ -35,6 +37,14 @@ final class UserProfileViewModel {
             data
         } else {
             nil
+        }
+    }
+    
+    var memories: [MemoryData] {
+        if case .success(let data) = memoriesDataState {
+            data
+        } else {
+            []
         }
     }
     
@@ -136,4 +146,23 @@ final class UserProfileViewModel {
             }
         }
     }
+    
+    func getUserPublicMemories(userId: String) async {
+        memoriesDataState = .loading
+        do {
+            let memories = try await memoryRepository.getUserPublicMemories(userId: userId)
+            memoriesDataState = .success(memories)
+        } catch {
+            if let getUserPublicMemoriesError = error as? GetUserPublicMemoriesError {
+                let errorDescription = getUserPublicMemoriesError.localizedDescription
+                print(errorDescription)
+                memoriesDataState = .failure(errorDescription)
+            } else {
+                let errorDescription = error.localizedDescription
+                print(errorDescription)
+                memoriesDataState = .failure(errorDescription)
+            }
+        }
+    }
+ 
 }
