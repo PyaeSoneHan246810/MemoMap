@@ -78,18 +78,16 @@ final class AddNewPinViewModel {
                 if let pinPhotoUrlString = await uploadPinPhoto(pinId: savedPinId) {
                     await updatePinPhotoUrl(pinId: savedPinId, pinPhotoUrlString: pinPhotoUrlString)
                 }
-                if !trimmedMemoryTitle.isEmpty {
-                    let savedMemoryId = try await saveMemory(
-                        pinId: savedPinId,
-                        locationName: trimmedLocationName,
-                        latitude: latitude,
-                        longitude: longitude,
-                        userData: userData
-                    )
-                    let uploadedMemoryMedia = await uploadMemoryMedia(memoryId: savedMemoryId)
-                    if !uploadedMemoryMedia.isEmpty {
-                        await updateMemoryMedia(memoryId: savedMemoryId, media: uploadedMemoryMedia)
-                    }
+                let savedMemoryId = try await saveMemory(
+                    pinId: savedPinId,
+                    locationName: trimmedLocationName,
+                    latitude: latitude,
+                    longitude: longitude,
+                    userData: userData
+                )
+                let uploadedMemoryMedia = await uploadMemoryMedia(memoryId: savedMemoryId)
+                if !uploadedMemoryMedia.isEmpty {
+                    await updateMemoryMedia(memoryId: savedMemoryId, media: uploadedMemoryMedia)
                 }
             }
             return .success(())

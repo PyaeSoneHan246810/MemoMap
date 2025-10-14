@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PinData: Identifiable {
+struct PinData: Identifiable, Hashable {
     let id: String
     let name: String
     let description: String?

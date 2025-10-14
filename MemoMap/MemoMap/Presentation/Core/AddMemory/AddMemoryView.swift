@@ -17,7 +17,7 @@ struct AddMemoryView: View {
     @Binding var memoryTags: [String]
     @Binding var memoryDateTime: Date
     @Binding var isMemoryPublic: Bool
-    var option: Option = .selectPublicOrPrivate
+    var publicOrPrivateSelectionEnabled: Bool = true
     var body: some View {
         VStack(alignment: .leading, spacing: 20.0) {
             addMediaView
@@ -25,22 +25,12 @@ struct AddMemoryView: View {
                 textFieldsView
                 addTagsView
                 dateTimePickerView
-                switch option {
-                case .selectPublicOrPrivate:
+                if publicOrPrivateSelectionEnabled {
                     publicToggleView
-                case .selectLocation:
-                    selectLocationView
                 }
             }
             .padding(.horizontal, 16.0)
         }
-    }
-}
-
-extension AddMemoryView {
-    enum Option {
-        case selectPublicOrPrivate
-        case selectLocation
     }
 }
 
@@ -210,18 +200,6 @@ private extension AddMemoryView {
             Text("Share with followers")
         }
         .tint(.accent)
-    }
-    var selectLocationView: some View {
-        NavigationLink {
-            
-        } label: {
-            HStack {
-                Label("Choose location", systemImage: "mappin.square")
-                Spacer()
-                Image(systemName: "chevron.right")
-            }
-        }
-        .buttonStyle(.plain)
     }
 }
 
