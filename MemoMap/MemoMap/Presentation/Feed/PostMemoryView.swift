@@ -17,7 +17,7 @@ struct PostMemoryView: View {
     @State private var memoryDateTime: Date = .now
     var body: some View {
         ScrollView(.vertical) {
-            VStack(spacing: 20.0) {
+            VStack(spacing: 16.0) {
                 AddMemoryView(
                     memoryMediaItems: $memoryMediaItems,
                     memoryTitle: $memoryTitle,
@@ -25,8 +25,10 @@ struct PostMemoryView: View {
                     memoryTags: $memoryTags,
                     memoryDateTime: $memoryDateTime,
                     isMemoryPublic: .constant(true),
-                    option: .selectLocation
+                    publicOrPrivateSelectionEnabled: false
                 )
+                selectLocationView
+                    .padding(.horizontal, 16.0)
                 postButtonView
                     .padding(.horizontal, 16.0)
             }
@@ -51,6 +53,18 @@ private extension PostMemoryView {
                     .fontWeight(.semibold)
             }
         }
+    }
+    var selectLocationView: some View {
+        NavigationLink {
+            
+        } label: {
+            HStack {
+                Label("Choose location", systemImage: "mappin.square")
+                Spacer()
+                Image(systemName: "chevron.right")
+            }
+        }
+        .buttonStyle(.plain)
     }
     var postButtonView: some View {
         Button {

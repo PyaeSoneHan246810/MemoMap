@@ -11,6 +11,7 @@ import Kingfisher
 struct SavedPinDetailsView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: SavedPinDetailsViewModel = .init()
+    @State private var addNewMemoryScreenModel: AddNewMemoryScreenModel? = nil
     let pin: PinData
     private var scrollViewBackgroundColor: Color {
         viewModel.memories.isEmpty ? Color(uiColor: .systemBackground) : Color(uiColor: .secondarySystemBackground)
@@ -29,6 +30,9 @@ struct SavedPinDetailsView: View {
         .ignoresSafeArea(edges: .top)
         .toolbar {
             toolbarContentView
+        }
+        .navigationDestination(item: $addNewMemoryScreenModel) {
+            AddNewMemoryView(addNewMemoryScreenModel: $0)
         }
         .onAppear {
             let pinId = pin.id
@@ -94,9 +98,10 @@ private extension SavedPinDetailsView {
                 Spacer()
                 addMemoryButtonView
             }
+            .padding(.horizontal, 16.0)
             memoriesView
         }
-        .padding(16.0)
+        .padding(.vertical, 16.0)
     }
     var memoriesHeaderView: some View {
         Text("Memories")
@@ -105,7 +110,7 @@ private extension SavedPinDetailsView {
     }
     var addMemoryButtonView: some View {
         Button("Add", systemImage: "plus") {
-            
+            navigateToAddNewMemoryView()
         }
         .primaryFilledSmallButtonStyle()
     }
@@ -124,6 +129,15 @@ private extension SavedPinDetailsView {
                 }
             }
         }
+    }
+}
+
+private extension SavedPinDetailsView {
+    func navigateToAddNewMemoryView() {
+        let addNewMemoryScreenModel: AddNewMemoryScreenModel = .init(
+            pin: pin
+        )
+        self.addNewMemoryScreenModel = addNewMemoryScreenModel
     }
 }
 
