@@ -105,7 +105,8 @@ private extension MyProfileScreenView {
             joined: userProfile?.createdAt.formatted(date: .abbreviated, time: .omitted) ?? "placeholder",
             followersCount: followersCount,
             followingCount: followingsCount,
-            heartsCount: totalHeartsCount
+            heartsCount: totalHeartsCount,
+            profileInfoType: .ownUser
         )
         .padding(16)
         .redacted(reason: userProfile == nil ? .placeholder : [])

@@ -126,11 +126,7 @@ final class FirebaseUserRepository: UserRepository {
                 completion(.failure(ListenCountError.listenFailed))
                 return
             }
-            guard let documents = querySnapshot?.documents else {
-                completion(.failure(ListenCountError.failedToGetDocuments))
-                return
-            }
-            let followingsCount = documents.count
+            let followingsCount = querySnapshot?.count ?? 0
             completion(.success(followingsCount))
             return
         }
@@ -146,11 +142,7 @@ final class FirebaseUserRepository: UserRepository {
                 completion(.failure(ListenCountError.listenFailed))
                 return
             }
-            guard let documents = querySnapshot?.documents else {
-                completion(.failure(ListenCountError.failedToGetDocuments))
-                return
-            }
-            let followersCount = documents.count
+            let followersCount = querySnapshot?.count ?? 0
             completion(.success(followersCount))
             return
         }
@@ -203,6 +195,29 @@ final class FirebaseUserRepository: UserRepository {
             }
             completion(.success(followers))
             return
+        }
+    }
+    
+    func getFollowingsCount(userId: String) async throws -> Int {
+        do {
+            let countQuery = getUserFollowingsCollectionReference(userId: userId).count
+            let countSnapshot = try await countQuery.getAggregation(source: .server)
+            let followingsCount = countSnapshot.count.intValue
+            return followingsCount
+        } catch {
+            throw GetCountError.failedToGet
+        }
+        
+    }
+    
+    func getFollowersCount(userId: String) async throws -> Int {
+        do {
+            let countQuery = getUserFollowersCollectionReference(userId: userId).count
+            let countSnapshot = try await countQuery.getAggregation(source: .server)
+            let followersCount = countSnapshot.count.intValue
+            return followersCount
+        } catch {
+            throw GetCountError.failedToGet
         }
     }
 }

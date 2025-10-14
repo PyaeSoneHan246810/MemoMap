@@ -10,5 +10,4 @@ import Foundation
 enum ListenCountError: Error {
     case userNotFound
     case listenFailed
-    case failedToGetDocuments
 }

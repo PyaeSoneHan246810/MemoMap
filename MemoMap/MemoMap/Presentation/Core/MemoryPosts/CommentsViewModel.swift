@@ -35,6 +35,10 @@ final class CommentsViewModel {
         }
     }
     
+    var currentUserId: String? {
+        authenticationRepository.getUserData()?.uid
+    }
+    
     func addComment(memoryId: String) async {
         guard let userId = authenticationRepository.getUserData()?.uid else {
             return
