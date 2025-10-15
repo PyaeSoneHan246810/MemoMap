@@ -27,23 +27,21 @@ final class MyProfileViewModel {
         }
     }
     
-    func listenUserPublicMemories() {
-        self.memoriesDataState = .loading
+    func getUserPublicMemories() async {
+        memoriesDataState = .loading
         let userData = authenticationRepository.getUserData()
-        memoryRepository.listenUserPublicMemories(userData: userData) { [weak self] result in
-            switch result {
-            case .success(let memories):
-                self?.memoriesDataState = .success(memories)
-            case .failure(let error):
-                if let listenUserPublicMemoriesError = error as? ListenUserPublicMemoriesError {
-                    let errorDescription = listenUserPublicMemoriesError.localizedDescription
-                    print(errorDescription)
-                    self?.memoriesDataState = .failure(errorDescription)
-                } else {
-                    let errorDescription = error.localizedDescription
-                    print(errorDescription)
-                    self?.memoriesDataState = .failure(errorDescription)
-                }
+        do {
+            let memories = try await memoryRepository.getUserPublicMemories(userData: userData)
+            memoriesDataState = .success(memories)
+        } catch {
+            if let getUserPublicMemoriesError = error as? GetUserPublicMemoriesError {
+                let errorDescription = getUserPublicMemoriesError.localizedDescription
+                print(errorDescription)
+                memoriesDataState = .failure(errorDescription)
+            } else {
+                let errorDescription = error.localizedDescription
+                print(errorDescription)
+                memoriesDataState = .failure(errorDescription)
             }
         }
     }

@@ -8,5 +8,6 @@
 import Foundation
 
 enum GetUserPublicMemoriesError: Error {
+    case userNotFound
     case failedToGet
 }
