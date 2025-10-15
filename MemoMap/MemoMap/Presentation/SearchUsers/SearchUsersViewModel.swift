@@ -16,7 +16,6 @@ final class SearchUsersViewModel {
     
     @ObservationIgnored @Injected(\.recentSearchRepository) private var recentSearchRepository: RecentSearchRepository
     
-    
     private(set) var searchUsersDataState: DataState<[UserProfileData]> = .initial
     
     private(set) var recentSearches: [RecentSearch] = []
@@ -39,7 +38,7 @@ final class SearchUsersViewModel {
         saveRecentSearch()
         searchUsersDataState = .loading
         do {
-            let users = try await userRepository.searchUsers(searchText: trimmedSearchText)
+            let users = try await userRepository.searchUsersByUsernameOrDisplayName(name: trimmedSearchText)
             searchUsersDataState = .success(users)
         } catch {
             if let searchUserError = error as? SearchUsersError {

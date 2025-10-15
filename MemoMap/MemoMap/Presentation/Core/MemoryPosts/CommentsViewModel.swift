@@ -66,7 +66,7 @@ final class CommentsViewModel {
     func getUserComments(memoryId: String) async {
         userCommentsDataState = .loading
         do {
-            let comments = try await memoryRepository.loadMemoryComments(memoryId: memoryId)
+            let comments = try await memoryRepository.getMemoryComments(memoryId: memoryId)
             var userComments: [UserComment] = []
             for comment in comments {
                 let userProfile = try? await userProfileRepository.getUserProfile(userId: comment.userId)
@@ -75,8 +75,8 @@ final class CommentsViewModel {
             }
             userCommentsDataState = .success(userComments)
         } catch {
-            if let loadMemoryCommentsError = error as? LoadMemoryCommentsError {
-                let errorDescription = loadMemoryCommentsError.localizedDescription
+            if let getMemoryCommentsError = error as? GetMemoryCommentsError {
+                let errorDescription = getMemoryCommentsError.localizedDescription
                 print(errorDescription)
                 userCommentsDataState = .failure(errorDescription)
             } else {

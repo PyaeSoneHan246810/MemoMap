@@ -16,13 +16,13 @@ protocol MemoryRepository {
     
     func addMemoryComment(memoryId: String, commentData: CommentData) async throws
     
-    func loadMemoryComments(memoryId: String) async throws -> [CommentData]
+    func getMemoryComments(memoryId: String) async throws -> [CommentData]
     
     func addMemoryHeart(memoryId: String, heartData: HeartData) async throws
     
     func removeMemeoryHeart(memoryId: String, userId: String) async throws
     
-    func loadMemoryHearts(memoryId: String) async throws -> [HeartData]
+    func getMemoryHearts(memoryId: String) async throws -> [HeartData]
     
     func checkIsHeartGiven(memoryId: String, userId: String) async throws -> Bool
     
@@ -30,7 +30,7 @@ protocol MemoryRepository {
     
     func listenHeartsCount(memoryId: String, completion: @escaping (Result<Int, Error>) -> Void)
     
-    func loadFollowingsPublicMemories(followingIds: [String]) async throws -> [MemoryData]
+    func getFollowingsPublicMemories(followingIds: [String]) async throws -> [MemoryData]
     
     func getTotalHeartsCount(userData: UserData?) async throws -> Int
     
@@ -39,4 +39,6 @@ protocol MemoryRepository {
     func getUserPublicMemories(userData: UserData?) async throws -> [MemoryData]
     
     func getUserPublicMemories(userId: String) async throws -> [MemoryData]
+    
+    func searchMemoriesByLocationName(locationName: String) async throws -> [MemoryData]
 }

@@ -26,6 +26,7 @@ final class FirebaseMemoryRepository: MemoryRepository {
             dateTime: memoryData.dateTime,
             publicStatus: memoryData.publicStatus,
             locationName: memoryData.locationName,
+            locationNameLowercased: memoryData.locationName.lowercased(),
             location: GeoPoint(latitude: memoryData.latitude, longitude: memoryData.longitude),
             createdAt: memoryData.createdAt
         )
@@ -78,7 +79,7 @@ final class FirebaseMemoryRepository: MemoryRepository {
         }
     }
     
-    func loadMemoryComments(memoryId: String) async throws -> [CommentData] {
+    func getMemoryComments(memoryId: String) async throws -> [CommentData] {
         do {
             let commentModels = try await getMemoryCommentsCollectionReference(memoryId: memoryId).getDocumentModels(as: CommentModel.self)
             let comments = commentModels.map { commentModel in
@@ -91,7 +92,7 @@ final class FirebaseMemoryRepository: MemoryRepository {
             }
             return comments
         } catch {
-            throw LoadMemoryCommentsError.loadFailed
+            throw GetMemoryCommentsError.failedToGet
         }
     }
     
@@ -115,7 +116,7 @@ final class FirebaseMemoryRepository: MemoryRepository {
         }
     }
     
-    func loadMemoryHearts(memoryId: String) async throws -> [HeartData] {
+    func getMemoryHearts(memoryId: String) async throws -> [HeartData] {
         do {
             let heartModels = try await getMemoryHeartsCollectionReference(memoryId: memoryId).getDocumentModels(as: HeartModel.self)
             let hearts = heartModels.map { heartModel in
@@ -126,7 +127,7 @@ final class FirebaseMemoryRepository: MemoryRepository {
             }
             return hearts
         } catch {
-            throw LoadMemoryHeartsError.loadFailed
+            throw GetMemoryHeartsError.failedToGet
         }
     }
     
@@ -163,7 +164,7 @@ final class FirebaseMemoryRepository: MemoryRepository {
         }
     }
     
-    func loadFollowingsPublicMemories(followingIds: [String]) async throws -> [MemoryData] {
+    func getFollowingsPublicMemories(followingIds: [String]) async throws -> [MemoryData] {
         do {
             let memoryModels = try await memoryCollectionReference
                 .whereField(MemoryModel.CodingKeys.ownerId.rawValue, in: followingIds)
@@ -174,7 +175,7 @@ final class FirebaseMemoryRepository: MemoryRepository {
             }
             return memories
         } catch {
-            throw LoadFollowingsPublicMemoriesError.loadFailed
+            throw GetFollowingsPublicMemoriesError.failedToGet
         }
     }
     
@@ -224,6 +225,23 @@ final class FirebaseMemoryRepository: MemoryRepository {
             return memories
         } catch {
             throw GetUserPublicMemoriesError.failedToGet
+        }
+    }
+    
+    func searchMemoriesByLocationName(locationName: String) async throws -> [MemoryData] {
+        do {
+            let locationNameLowercased = locationName.lowercased()
+            let memoryModels = try await memoryCollectionReference
+                .whereField(MemoryModel.CodingKeys.publicStatus.rawValue, isEqualTo: true)
+                .whereField(MemoryModel.CodingKeys.locationNameLowercased.rawValue, isGreaterThanOrEqualTo: locationNameLowercased)
+                .whereField(MemoryModel.CodingKeys.locationNameLowercased.rawValue, isLessThanOrEqualTo: locationNameLowercased + "\u{f8ff}")
+                .getDocumentModels(as: MemoryModel.self)
+            let memories = memoryModels.map { memoryModel in
+                getMemoryData(from: memoryModel)
+            }
+            return memories
+        } catch {
+            throw SearchMemoriesError.searchFailed
         }
     }
 }

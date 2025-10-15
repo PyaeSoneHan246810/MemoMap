@@ -65,14 +65,14 @@ final class FirebaseUserRepository: UserRepository {
         }
     }
     
-    func searchUsers(searchText: String) async throws -> [UserProfileData] {
-        let lowercasedSearchText = searchText.lowercased()
+    func searchUsersByUsernameOrDisplayName(name: String) async throws -> [UserProfileData] {
+        let nameLowercased = name.lowercased()
         let queryByUsername = userCollectionReference
-            .whereField(UserProfileModel.CodingKeys.usernameLowercased.rawValue, isGreaterThanOrEqualTo: lowercasedSearchText)
-            .whereField(UserProfileModel.CodingKeys.usernameLowercased.rawValue, isLessThanOrEqualTo: lowercasedSearchText + "\u{f8ff}")
+            .whereField(UserProfileModel.CodingKeys.usernameLowercased.rawValue, isGreaterThanOrEqualTo: nameLowercased)
+            .whereField(UserProfileModel.CodingKeys.usernameLowercased.rawValue, isLessThanOrEqualTo: nameLowercased + "\u{f8ff}")
         let queryByDisplayname = userCollectionReference
-            .whereField(UserProfileModel.CodingKeys.displaynameLowercased.rawValue, isGreaterThanOrEqualTo: lowercasedSearchText)
-            .whereField(UserProfileModel.CodingKeys.displaynameLowercased.rawValue, isLessThanOrEqualTo: lowercasedSearchText + "\u{f8ff}")
+            .whereField(UserProfileModel.CodingKeys.displaynameLowercased.rawValue, isGreaterThanOrEqualTo: nameLowercased)
+            .whereField(UserProfileModel.CodingKeys.displaynameLowercased.rawValue, isLessThanOrEqualTo: nameLowercased + "\u{f8ff}")
         async let querySnapshotByUsername = queryByUsername.getDocuments()
         async let querySnapshotByDisplayname = queryByDisplayname.getDocuments()
         do {
