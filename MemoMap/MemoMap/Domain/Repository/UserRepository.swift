@@ -27,4 +27,8 @@ protocol UserRepository {
     func getFollowingsCount(userId: String) async throws -> Int
     
     func getFollowersCount(userId: String) async throws -> Int
+    
+    func getFollowings(userId: String) async throws -> [FollowingData]
+    
+    func getFollowers(userId: String) async throws -> [FollowerData]
 }

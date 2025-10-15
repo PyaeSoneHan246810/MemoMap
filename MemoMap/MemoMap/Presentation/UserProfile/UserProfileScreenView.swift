@@ -114,6 +114,7 @@ private extension UserProfileScreenView {
     }
     var profileInfoView: some View {
         ProfileInfoView(
+            id: userProfile?.id,
             displayName: userProfile?.displayname ?? "Placeholder",
             username: userProfile?.username ?? "@placeholder",
             email: userProfile?.emailAddress ?? "placeholder@example.com",

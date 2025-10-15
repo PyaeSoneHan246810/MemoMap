@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ProfileInfoView: View {
+    let id: String?
     let displayName: String
     let username: String
     let email: String
@@ -18,6 +19,7 @@ struct ProfileInfoView: View {
     let followingCount: Int
     let heartsCount: Int
     let profileInfoType: ProfileInfoType
+    @State private var selectedSheetType: SheetType? = nil
     var body: some View {
         VStack(alignment: .leading, spacing: 12.0) {
             VStack(alignment: .leading, spacing: 4.0) {
@@ -69,17 +71,35 @@ struct ProfileInfoView: View {
                 case .otherUser:
                     countInfoView(count: followersCount, label: "Followers")
                         .onTapGesture {
+                            if id != nil {
+                                selectedSheetType = .followers
+                            }
                             
                         }
                     countInfoView(count: followingCount, label: "Followings")
                         .onTapGesture {
-                            
+                            if id != nil {
+                                selectedSheetType = .followings
+                            }
                         }
                 }
                 countInfoView(count: heartsCount, label: "Hearts")
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .sheet(item: $selectedSheetType) { sheetType in
+            Group {
+                if let userId = id {
+                    switch sheetType {
+                    case .followers:
+                        followersSheetView(userId: userId)
+                    case .followings:
+                        followingsSheetView(userId: userId)
+                    }
+                }
+            }
+            .interactiveDismissDisabled()
+        }
     }
 }
 
@@ -87,6 +107,26 @@ extension ProfileInfoView {
     enum ProfileInfoType {
         case ownUser
         case otherUser
+    }
+    enum SheetType: String, Identifiable {
+        case followers = "Followers"
+        case followings = "Followings"
+        var id: String {
+            self.rawValue
+        }
+    }
+}
+
+private extension ProfileInfoView {
+    func followersSheetView(userId: String) -> some View {
+        NavigationStack {
+            UserFollowersView(userId: userId)
+        }
+    }
+    func followingsSheetView(userId: String) -> some View {
+        NavigationStack {
+            UserFollowingsView(userId: userId)
+        }
     }
 }
 
@@ -105,6 +145,7 @@ private extension ProfileInfoView {
 #Preview {
     NavigationStack {
         ProfileInfoView(
+            id: UserProfileData.preview1.id,
             displayName: UserProfileData.preview1.displayname,
             username: UserProfileData.preview1.username,
             email: UserProfileData.preview1.emailAddress,
