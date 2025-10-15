@@ -14,8 +14,6 @@ protocol MemoryRepository {
     
     func listenPinMemories(pinId: String, completion: @escaping (Result<[MemoryData], Error>) -> Void)
     
-    func listenUserPublicMemories(userData: UserData?, completion: @escaping (Result<[MemoryData], Error>) -> Void)
-    
     func addMemoryComment(memoryId: String, commentData: CommentData) async throws
     
     func loadMemoryComments(memoryId: String) async throws -> [CommentData]
@@ -37,6 +35,8 @@ protocol MemoryRepository {
     func getTotalHeartsCount(userData: UserData?) async throws -> Int
     
     func getTotoalHeartsCount(userId: String) async throws -> Int
+    
+    func getUserPublicMemories(userData: UserData?) async throws -> [MemoryData]
     
     func getUserPublicMemories(userId: String) async throws -> [MemoryData]
 }

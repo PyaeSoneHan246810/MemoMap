@@ -65,29 +65,6 @@ final class FirebaseMemoryRepository: MemoryRepository {
         }
     }
     
-    func listenUserPublicMemories(userData: UserData?, completion: @escaping (Result<[MemoryData], any Error>) -> Void) {
-        guard let userId = userData?.uid else {
-            completion(.failure(ListenUserPublicMemoriesError.userNotFound))
-            return
-        }
-        memoryCollectionReference
-            .whereField(MemoryModel.CodingKeys.ownerId.rawValue, isEqualTo: userId)
-            .whereField(MemoryModel.CodingKeys.publicStatus.rawValue, isEqualTo: true)
-            .addSnapshotListener { querySnapshot, error in
-                if error != nil {
-                    completion(.failure(ListenUserPublicMemoriesError.listenFailed))
-                    return
-                }
-                guard let documents = querySnapshot?.documents else {
-                    completion(.success([]))
-                    return
-                }
-                let memories = self.getMemories(documents: documents)
-                completion(.success(memories))
-                return
-            }
-    }
-    
     func addMemoryComment(memoryId: String, commentData: CommentData) async throws {
         let commentDocument = getMemoryCommentsCollectionReference(memoryId: memoryId).document()
         let commentId = commentDocument.documentID
@@ -232,6 +209,13 @@ final class FirebaseMemoryRepository: MemoryRepository {
         }
     }
     
+    func getUserPublicMemories(userData: UserData?) async throws -> [MemoryData] {
+        guard let userId = userData?.uid else {
+            throw GetUserPublicMemoriesError.userNotFound
+        }
+        return try await getUserPublicMemories(userId: userId)
+    }
+    
     func getUserPublicMemories(userId: String) async throws -> [MemoryData] {
         do {
             let memoryModels = try await memoryCollectionReference
@@ -246,7 +230,6 @@ final class FirebaseMemoryRepository: MemoryRepository {
             throw GetUserPublicMemoriesError.failedToGet
         }
     }
-
 }
 
 private extension FirebaseMemoryRepository {

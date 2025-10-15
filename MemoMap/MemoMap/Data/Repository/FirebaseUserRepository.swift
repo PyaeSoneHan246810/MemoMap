@@ -65,28 +65,6 @@ final class FirebaseUserRepository: UserRepository {
         }
     }
     
-    func listenFollowerIds(userData: UserData?, completion: @escaping (Result<[String], any Error>) -> Void) {
-        guard let userId = userData?.uid else {
-            completion(.failure(ListenFollowerIdsError.userNotFound))
-            return
-        }
-        getUserFollowersCollectionReference(userId: userId).addSnapshotListener { querySnapshot, error in
-            if error != nil {
-                completion(.failure(ListenFollowerIdsError.listenFailed))
-                return
-            }
-            guard let documents = querySnapshot?.documents else {
-                completion(.success([]))
-                return
-            }
-            let followerIds = documents.map { documentSnapshot in
-                documentSnapshot.documentID
-            }
-            completion(.success(followerIds))
-            return
-        }
-    }
-    
     func searchUsers(searchText: String) async throws -> [UserProfileData] {
         let lowercasedSearchText = searchText.lowercased()
         let queryByUsername = userCollectionReference

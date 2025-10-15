@@ -22,6 +22,9 @@ struct MyProfileScreenView: View {
     private var totalHeartsCount: Int {
         myProfileViewModel.totalHeartsCount
     }
+    private var memories: [MemoryData] {
+        myProfileViewModel.memories
+    }
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 0.0) {
@@ -31,7 +34,7 @@ struct MyProfileScreenView: View {
                     profileInfoView
                 }
                 .background(Color(uiColor: .systemBackground))
-                if !myProfileViewModel.memories.isEmpty {
+                if !memories.isEmpty {
                     memoriesView
                 } else {
                     emptyPublicMemoriesView
@@ -46,18 +49,16 @@ struct MyProfileScreenView: View {
         .toolbar {
             toolbarContentView
         }
-        .onAppear {
-            myProfileViewModel.listenUserPublicMemories()
-        }
         .task {
             await myProfileViewModel.getTotalHeartsCount()
+            await myProfileViewModel.getUserPublicMemories()
         }
     }
 }
 
 private extension MyProfileScreenView {
     var scrollViewBackgroundColor: Color {
-        myProfileViewModel.memories.isEmpty ? Color(uiColor: .systemBackground) : Color(uiColor: .secondarySystemBackground)
+        memories.isEmpty ? Color(uiColor: .systemBackground) : Color(uiColor: .secondarySystemBackground)
     }
     @ToolbarContentBuilder
     var toolbarContentView: some ToolbarContent {
@@ -113,7 +114,7 @@ private extension MyProfileScreenView {
     }
     var memoriesView: some View {
         MemoryPostsView(
-            memories: myProfileViewModel.memories,
+            memories: memories,
             userProfileScreenModel: .constant(nil)
         )
         .padding(.vertical, 16.0)
