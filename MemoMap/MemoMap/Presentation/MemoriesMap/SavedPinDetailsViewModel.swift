@@ -24,20 +24,20 @@ final class SavedPinDetailsViewModel {
         }
     }
     
-    func listenMemories(for pinId: String) {
-        self.memoriesDataState = .loading
-        memoryRepository.listenPinMemories(pinId: pinId) { [weak self] result in
-            switch result {
-            case .success(let memories):
-                self?.memoriesDataState = .success(memories)
-            case .failure(let error):
-                if let listenPinMemoriesError = error as? ListenPinMemoriesError {
-                    print(listenPinMemoriesError.localizedDescription)
-                    self?.memoriesDataState = .failure(listenPinMemoriesError.localizedDescription)
-                } else {
-                    print(error.localizedDescription)
-                    self?.memoriesDataState = .failure(error.localizedDescription)
-                }
+    func getMemories(for pinId: String) async {
+        memoriesDataState = .loading
+        do {
+            let memories = try await memoryRepository.getPinMemories(pinId: pinId)
+            memoriesDataState = .success(memories)
+        } catch {
+            if let getPinMemoriesError = error as? GetPinMemoriesError {
+                let errorDescription = getPinMemoriesError.localizedDescription
+                print(errorDescription)
+                memoriesDataState = .failure(errorDescription)
+            } else {
+                let errorDescription = error.localizedDescription
+                print(errorDescription)
+                memoriesDataState = .failure(errorDescription)
             }
         }
     }

@@ -12,7 +12,7 @@ protocol MemoryRepository {
     
     func updateMemoryMedia(memoryId: String, media: [String]) async throws
     
-    func listenPinMemories(pinId: String, completion: @escaping (Result<[MemoryData], Error>) -> Void)
+    func getPinMemories(pinId: String) async throws -> [MemoryData]
     
     func addMemoryComment(memoryId: String, commentData: CommentData) async throws
     
