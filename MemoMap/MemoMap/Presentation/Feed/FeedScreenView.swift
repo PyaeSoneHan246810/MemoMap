@@ -39,7 +39,7 @@ struct FeedScreenView: View {
             )
         }
         .task {
-            await feedViewModel.loadFollowingsPublicMemories(followingIds: followingIds)
+            await feedViewModel.getFollowingsPublicMemories(followingIds: followingIds)
         }
     }
 }
@@ -94,7 +94,9 @@ private extension FeedScreenView {
     }
     var searchButtonView: some View {
         NavigationLink {
-            
+            SearchMemoriesScreenView(
+                userProfileScreenModel: $userProfileScreenModel
+            )
         } label: {
             Circle()
                 .frame(width: 52.0, height: 52.0)

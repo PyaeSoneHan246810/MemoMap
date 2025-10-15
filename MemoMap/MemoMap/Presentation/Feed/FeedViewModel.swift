@@ -26,19 +26,19 @@ final class FeedViewModel {
         }
     }
     
-    func loadFollowingsPublicMemories(followingIds: [String]) async {
+    func getFollowingsPublicMemories(followingIds: [String]) async {
         memoriesDataState = .loading
         let chunks = followingIds.chunked(into: 30)
         var allMemories: [MemoryData] = []
         do {
             for chunk in chunks {
-                let chunkedMemories = try await memoryRepository.loadFollowingsPublicMemories(followingIds: chunk)
+                let chunkedMemories = try await memoryRepository.getFollowingsPublicMemories(followingIds: chunk)
                 allMemories.append(contentsOf: chunkedMemories)
             }
             memoriesDataState = .success(allMemories)
         } catch {
-            if let loadFollowingsPublicMemoriesError = error as? LoadFollowingsPublicMemoriesError {
-                let errorDescription = loadFollowingsPublicMemoriesError.localizedDescription
+            if let getFollowingsPublicMemoriesError = error as? GetFollowingsPublicMemoriesError {
+                let errorDescription = getFollowingsPublicMemoriesError.localizedDescription
                 print(errorDescription)
                 memoriesDataState = .failure(errorDescription)
             } else {

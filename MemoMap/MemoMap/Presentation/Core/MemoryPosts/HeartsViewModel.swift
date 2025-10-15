@@ -28,7 +28,7 @@ final class HeartsViewModel {
     func getUserHearts(memoryId: String) async {
         userHeartsDataState = .loading
         do {
-            let hearts = try await memoryRepository.loadMemoryHearts(memoryId: memoryId)
+            let hearts = try await memoryRepository.getMemoryHearts(memoryId: memoryId)
             var userHearts: [UserHeart] = []
             for heart in hearts {
                 let userProfile = try? await userProfileRepository.getUserProfile(userId: heart.id)
@@ -38,8 +38,8 @@ final class HeartsViewModel {
             print(userHearts)
             userHeartsDataState = .success(userHearts)
         } catch {
-            if let loadMemoryHeartsError = error as? LoadMemoryHeartsError {
-                let errorDescription = loadMemoryHeartsError.localizedDescription
+            if let getMemoryHeartsError = error as? GetMemoryHeartsError {
+                let errorDescription = getMemoryHeartsError.localizedDescription
                 print(errorDescription)
                 userHeartsDataState = .failure(errorDescription)
             } else {

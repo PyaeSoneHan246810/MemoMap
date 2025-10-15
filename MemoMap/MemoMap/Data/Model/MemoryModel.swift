@@ -20,6 +20,7 @@ struct MemoryModel: Codable {
         case dateTime
         case publicStatus
         case locationName
+        case locationNameLowercased
         case location
         case createdAt
     }
@@ -33,6 +34,7 @@ struct MemoryModel: Codable {
     let dateTime: Date
     let publicStatus: Bool
     let locationName: String
+    let locationNameLowercased: String
     let location: GeoPoint
     let createdAt: Date
 }
@@ -50,6 +52,7 @@ extension MemoryModel {
             Self.CodingKeys.dateTime.rawValue: Timestamp(date: dateTime),
             Self.CodingKeys.publicStatus.rawValue: publicStatus,
             Self.CodingKeys.locationName.rawValue: locationName,
+            Self.CodingKeys.locationNameLowercased.rawValue: locationNameLowercased,
             Self.CodingKeys.location.rawValue: location,
             Self.CodingKeys.createdAt.rawValue: Timestamp(date: createdAt)
         ]

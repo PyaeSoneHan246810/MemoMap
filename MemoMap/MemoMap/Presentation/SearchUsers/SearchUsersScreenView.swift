@@ -13,21 +13,27 @@ struct SearchUsersScreenView: View {
     @State private var userProfileScreenModel: UserProfileScreenModel? = nil
     @State private var viewModel: SearchUsersViewModel = .init()
     var body: some View {
-        VStack(spacing: 0.0) {
-            topBarView
-            ZStack(alignment: .top) {
-                if viewModel.trimmedSearchText.isEmpty {
-                    recentSearchesView
-                } else {
-                    searchResultsView
-                }
+        ZStack(alignment: .top) {
+            if viewModel.trimmedSearchText.isEmpty {
+                recentSearchesView
+            } else {
+                searchResultsView
             }
         }
+        .navigationTitle("Search Users")
+        .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden()
         .navigationDestination(item: $userProfileScreenModel) {
             UserProfileScreenView(
                 userProfileScreenModel: $0
             )
+        }
+        .toolbar {
+            toolbarContentView
+        }
+        .toolbarVisibility(.hidden, for: .tabBar)
+        .safeAreaInset(edge: .top) {
+            topBarView
         }
         .onAppear {
             viewModel.deleteRecentSearchesOlderThanOneWeek()
@@ -37,45 +43,45 @@ struct SearchUsersScreenView: View {
 }
 
 private extension SearchUsersScreenView {
+    @ToolbarContentBuilder
+    var toolbarContentView: some ToolbarContent {
+        ToolbarItem(placement: .navigation) {
+            Button {
+                viewModel.clearSearchText()
+                viewModel.resetSearchState()
+                dismiss()
+            } label: {
+                Image(systemName: "chevron.left")
+            }
+        }
+    }
     var topBarView: some View {
         HStack(spacing: 0.0) {
-            backButtonView
             searchBarView
             if !viewModel.trimmedSearchText.isEmpty {
                 searchButtonView
             }
         }
-        .padding(.leading, 12.0)
-        .padding(.trailing, 16.0)
-    }
-    var backButtonView: some View {
-        Button {
-            viewModel.clearSearchText()
-            viewModel.resetSearchState()
-            dismiss()
-        } label: {
-            Image(systemName: "chevron.left")
-                .imageScale(.large)
-                .fontWeight(.semibold)
-        }
-        .buttonStyle(.glass)
-        .buttonBorderShape(.circle)
-        .controlSize(.large)
+        .padding(.horizontal, 12.0)
+        .background(Color(uiColor: .systemBackground))
     }
     var searchBarView: some View {
-        SearchBar(text: $viewModel.searchText)
-            .searchBarStyle(.capsule)
-            .searchBarMaterial(.glass)
-            .searchBarCancelButtonDisplayMode(.never)
-            .searchBarTextContentType(.name)
-            .searchBarAutoCorrectionType(.no)
-            .searchBarAutoCapitalizationType(.none)
-            .onChange(of: viewModel.searchText) {
-                if viewModel.trimmedSearchText.isEmpty {
-                    viewModel.resetSearchState()
-                    viewModel.getRecentSearches()
-                }
+        SearchBar(
+            text: $viewModel.searchText,
+            prompt: "Search users"
+        )
+        .searchBarStyle(.capsule)
+        .searchBarMaterial(.glass)
+        .searchBarCancelButtonDisplayMode(.never)
+        .searchBarTextContentType(.name)
+        .searchBarAutoCorrectionType(.no)
+        .searchBarAutoCapitalizationType(.none)
+        .onChange(of: viewModel.searchText) {
+            if viewModel.trimmedSearchText.isEmpty {
+                viewModel.resetSearchState()
+                viewModel.getRecentSearches()
             }
+        }
     }
     var searchButtonView: some View {
         Button("Search") {
@@ -83,7 +89,7 @@ private extension SearchUsersScreenView {
         }
     }
     var recentSearchesView: some View {
-        VStack(spacing: 0.0) {
+        VStack(spacing: 8.0) {
             recentSearchedHeaderView
             recentSearchesListView
         }
@@ -107,7 +113,6 @@ private extension SearchUsersScreenView {
             }
             .frame(maxWidth: .infinity)
             .padding(.horizontal, 16.0)
-            .padding(.bottom, 8.0)
         }
     }
     @ViewBuilder
@@ -125,9 +130,7 @@ private extension SearchUsersScreenView {
             .disableBouncesVertically()
             .scrollIndicators(.hidden)
             .contentMargins(.horizontal, 16.0)
-            .contentMargins(.top, 8.0)
-            .contentMargins(.bottom, 16.0)
-            
+            .contentMargins(.vertical, 8.0)
         }
     }
     func recentSearchView(_ recentSearch: RecentSearch) -> some View {
@@ -180,7 +183,6 @@ private extension SearchUsersScreenView {
         Text("Results for \"\(viewModel.trimmedSearchText)\"")
             .font(.headline)
             .padding(.horizontal, 16.0)
-            .padding(.vertical, 8.0)
     }
     @ViewBuilder
     func searchUsersListView(users: [UserProfileData]) -> some View {
@@ -191,7 +193,7 @@ private extension SearchUsersScreenView {
                 description: "We couldn’t find any users matching your search."
             )
         } else {
-            VStack(alignment: .leading, spacing: 0.0) {
+            VStack(alignment: .leading, spacing: 8.0) {
                 searchResultsHeaderView
                 ScrollView(.vertical) {
                     LazyVStack(spacing: 16.0) {
@@ -203,11 +205,10 @@ private extension SearchUsersScreenView {
                         }
                     }
                 }
-                .disableBouncesHorizontally()
+                .disableBouncesVertically()
                 .scrollIndicators(.hidden)
                 .contentMargins(.horizontal, 16.0)
-                .contentMargins(.top, 8.0)
-                .contentMargins(.bottom, 16.0)
+                .contentMargins(.vertical, 8.0)
             }
         }
     }
