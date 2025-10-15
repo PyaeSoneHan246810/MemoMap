@@ -198,6 +198,30 @@ final class FirebaseUserRepository: UserRepository {
             throw GetCountError.failedToGet
         }
     }
+    
+    func getFollowings(userId: String) async throws -> [FollowingData] {
+        do {
+            let followingModels = try await getUserFollowingsCollectionReference(userId: userId).getDocumentModels(as: FollowingModel.self)
+            let followings = followingModels.map { followingModel in
+                FollowingData(id: followingModel.id, since: followingModel.since)
+            }
+            return followings
+        } catch {
+            throw GetFollowingsError.failedToGet
+        }
+    }
+    
+    func getFollowers(userId: String) async throws -> [FollowerData] {
+        do {
+            let followerModels = try await getUserFollowersCollectionReference(userId: userId).getDocumentModels(as: FollowerModel.self)
+            let followers = followerModels.map { followerModel in
+                FollowerData(id: followerModel.id, since: followerModel.since)
+            }
+            return followers
+        } catch {
+            throw GetFollowersError.failedToGet
+        }
+    }
 }
 
 private extension FirebaseUserRepository {

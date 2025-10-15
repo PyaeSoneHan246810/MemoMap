@@ -351,6 +351,9 @@
         }
       }
     },
+    "Followers" : {
+
+    },
     "Following" : {
       "localizations" : {
         "my" : {
@@ -360,6 +363,9 @@
           }
         }
       }
+    },
+    "Followings" : {
+
     },
     "Font size" : {
       "localizations" : {
