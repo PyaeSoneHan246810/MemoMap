@@ -49,19 +49,15 @@ final class FirebaseMemoryRepository: MemoryRepository {
         }
     }
     
-    func listenPinMemories(pinId: String, completion: @escaping (Result<[MemoryData], any Error>) -> Void) {
-        memoryCollectionReference.whereField(MemoryModel.CodingKeys.pinId.rawValue, isEqualTo: pinId).addSnapshotListener { querySnapshot, error in
-            if error != nil {
-                completion(.failure(ListenPinMemoriesError.listenFailed))
-                return
+    func getPinMemories(pinId: String) async throws -> [MemoryData] {
+        do {
+            let memoryModels = try await memoryCollectionReference.whereField(MemoryModel.CodingKeys.pinId.rawValue, isEqualTo: pinId).getDocumentModels(as: MemoryModel.self)
+            let memories = memoryModels.map { memoryModel in
+                getMemoryData(from: memoryModel)
             }
-            guard let documents = querySnapshot?.documents else {
-                completion(.success([]))
-                return
-            }
-            let memories = self.getMemories(documents: documents)
-            completion(.success(memories))
-            return
+            return memories
+        } catch {
+            throw GetPinMemoriesError.failedToGet
         }
     }
     
@@ -86,7 +82,7 @@ final class FirebaseMemoryRepository: MemoryRepository {
         do {
             let commentModels = try await getMemoryCommentsCollectionReference(memoryId: memoryId).getDocumentModels(as: CommentModel.self)
             let comments = commentModels.map { commentModel in
-                return CommentData(
+                CommentData(
                     id: commentModel.id,
                     comment: commentModel.comment,
                     userId: commentModel.userId,
@@ -123,7 +119,7 @@ final class FirebaseMemoryRepository: MemoryRepository {
         do {
             let heartModels = try await getMemoryHeartsCollectionReference(memoryId: memoryId).getDocumentModels(as: HeartModel.self)
             let hearts = heartModels.map { heartModel in
-                return HeartData(
+                HeartData(
                     id: heartModel.id,
                     createdAt: heartModel.createdAt
                 )
@@ -174,7 +170,7 @@ final class FirebaseMemoryRepository: MemoryRepository {
                 .whereField(MemoryModel.CodingKeys.publicStatus.rawValue, isEqualTo: true)
                 .getDocumentModels(as: MemoryModel.self)
             let memories = memoryModels.map { memoryModel in
-                return getMemoryData(from: memoryModel)
+                getMemoryData(from: memoryModel)
             }
             return memories
         } catch {
@@ -247,16 +243,6 @@ private extension FirebaseMemoryRepository {
     
     func getMemoryHeartsCollectionReference(memoryId: String) -> CollectionReference {
         memoryCollectionReference.document(memoryId).collection("hearts")
-    }
-    
-    func getMemories(documents: [QueryDocumentSnapshot]) -> [MemoryData] {
-        let memoryModels: [MemoryModel] = documents.compactMap { documentSnapshot in
-            try? documentSnapshot.data(as: MemoryModel.self)
-        }
-        let memories: [MemoryData] = memoryModels.map { memoryModel in
-            return getMemoryData(from: memoryModel)
-        }
-        return memories
     }
     
     func getMemoryData(from memoryModel: MemoryModel) -> MemoryData {

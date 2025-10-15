@@ -13,8 +13,14 @@ struct SavedPinDetailsView: View {
     @State private var viewModel: SavedPinDetailsViewModel = .init()
     @State private var addNewMemoryScreenModel: AddNewMemoryScreenModel? = nil
     let pin: PinData
+    private var pinId: String {
+        pin.id
+    }
+    private var memories: [MemoryData] {
+        viewModel.memories
+    }
     private var scrollViewBackgroundColor: Color {
-        viewModel.memories.isEmpty ? Color(uiColor: .systemBackground) : Color(uiColor: .secondarySystemBackground)
+        memories.isEmpty ? Color(uiColor: .systemBackground) : Color(uiColor: .secondarySystemBackground)
     }
     var body: some View {
         ScrollView(.vertical) {
@@ -34,9 +40,8 @@ struct SavedPinDetailsView: View {
         .navigationDestination(item: $addNewMemoryScreenModel) {
             AddNewMemoryView(addNewMemoryScreenModel: $0)
         }
-        .onAppear {
-            let pinId = pin.id
-            viewModel.listenMemories(for: pinId)
+        .task {
+            await viewModel.getMemories(for: pinId)
         }
     }
 }
@@ -116,7 +121,7 @@ private extension SavedPinDetailsView {
     }
     @ViewBuilder
     var memoriesView: some View {
-        if viewModel.memories.isEmpty {
+        if memories.isEmpty {
             EmptyContentView(
                 image: .emptyMemories,
                 title: "There is no memories yet!",
@@ -124,7 +129,7 @@ private extension SavedPinDetailsView {
             )
         } else {
             LazyVStack(spacing: 16.0) {
-                ForEach(viewModel.memories) { memory in
+                ForEach(memories) { memory in
                     MemoryView(memory: memory)
                 }
             }
