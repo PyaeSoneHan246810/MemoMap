@@ -1,15 +1,15 @@
 //
-//  RecentSearch.swift
+//  RecentMemorySearch.swift
 //  MemoMap
 //
-//  Created by Dylan on 13/10/25.
+//  Created by Dylan on 16/10/25.
 //
 
 import Foundation
 import SwiftData
 
 @Model
-class RecentSearch {
+class RecentMemorySearch {
     var searchText: String
     var date: Date
     init(searchText: String, date: Date) {

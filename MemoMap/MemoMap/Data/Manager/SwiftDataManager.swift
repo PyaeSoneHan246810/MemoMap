@@ -14,8 +14,8 @@ final class SwiftDataManager {
     
     init() {
         do {
-            let configurations = ModelConfiguration(isStoredInMemoryOnly: false)
-            container = try ModelContainer(for: RecentSearch.self, configurations: configurations)
+            let configurations = ModelConfiguration(for: RecentUserSearch.self, RecentMemorySearch.self, isStoredInMemoryOnly: false)
+            container = try ModelContainer(for: RecentUserSearch.self, RecentMemorySearch.self, configurations: configurations)
             if let container {
                 context = ModelContext(container)
             }

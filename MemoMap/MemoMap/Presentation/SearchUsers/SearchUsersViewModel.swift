@@ -18,7 +18,7 @@ final class SearchUsersViewModel {
     
     private(set) var searchUsersDataState: DataState<[UserProfileData]> = .initial
     
-    private(set) var recentSearches: [RecentSearch] = []
+    private(set) var recentUserSearches: [RecentUserSearch] = []
     
     var searchText: String = ""
     
@@ -35,7 +35,7 @@ final class SearchUsersViewModel {
     }
     
     func searchUsers() async {
-        saveRecentSearch()
+        saveRecentUserSearch()
         searchUsersDataState = .loading
         do {
             let users = try await userRepository.searchUsersByUsernameOrDisplayName(name: trimmedSearchText)
@@ -53,25 +53,25 @@ final class SearchUsersViewModel {
         }
     }
     
-    private func saveRecentSearch() {
-        let recentSearch = RecentSearch(searchText: trimmedSearchText, date: .now)
-        recentSearchRepository.saveRecentSearch(recentSearch: recentSearch)
+    private func saveRecentUserSearch() {
+        let recentUserSearch = RecentUserSearch(searchText: trimmedSearchText, date: .now)
+        recentSearchRepository.saveRecentUserSearch(recentUserSearch)
     }
     
-    func deleteRecentSearch(_ recentSearch: RecentSearch) {
-        recentSearchRepository.deleteRecentSearch(recentSearch: recentSearch)
+    func deleteRecentUserSearch(_ recentUserSearch: RecentUserSearch) {
+        recentSearchRepository.deleteRecentUserSearch(recentUserSearch)
     }
     
-    func getRecentSearches() {
-        let recentSearches = recentSearchRepository.getRecentSearchesWithinOneWeek()
-        self.recentSearches = recentSearches
+    func getRecentUserSearches() {
+        let recentUserSearches = recentSearchRepository.getRecentUserSearchesWithinOneWeek()
+        self.recentUserSearches = recentUserSearches
     }
     
-    func deleteAllRecentSearches() {
-        recentSearchRepository.deleteAllRecentSearches()
+    func deleteAllRecentUserSearches() {
+        recentSearchRepository.deleteAllRecentUserSearches()
     }
     
-    func deleteRecentSearchesOlderThanOneWeek() {
-        recentSearchRepository.deleteRecentSearchesOlderThanOneWeek()
+    func deleteRecentUserSearchesOlderThanOneWeek() {
+        recentSearchRepository.deleteRecentUserSearchesOlderThanOneWeek()
     }
 }
