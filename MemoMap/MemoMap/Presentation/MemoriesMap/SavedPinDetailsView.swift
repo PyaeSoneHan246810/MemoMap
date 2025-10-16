@@ -12,9 +12,9 @@ struct SavedPinDetailsView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: SavedPinDetailsViewModel = .init()
     @State private var addNewMemoryScreenModel: AddNewMemoryScreenModel? = nil
-    let pin: PinData
-    private var pinId: String {
-        pin.id
+    let pinId: String
+    private var pin: PinData? {
+        viewModel.pin
     }
     private var memories: [MemoryData] {
         viewModel.memories
@@ -40,7 +40,19 @@ struct SavedPinDetailsView: View {
         .navigationDestination(item: $addNewMemoryScreenModel) {
             AddNewMemoryView(addNewMemoryScreenModel: $0)
         }
+        .sheet(isPresented: $viewModel.isEditPinSheetPresented) {
+            editPinSheetView
+                .presentationDetents([.fraction(0.70)])
+                .interactiveDismissDisabled()
+                .onAppear {
+                    if let pin {
+                        viewModel.newPinName = pin.name
+                        viewModel.newPinDescription = pin.description ?? ""
+                    }
+                }
+        }
         .task {
+            await viewModel.getPin(for: pinId)
             await viewModel.getMemories(for: pinId)
         }
     }
@@ -61,7 +73,7 @@ private extension SavedPinDetailsView {
     }
     var locationImageView: some View {
         ZStack(alignment: .bottomTrailing) {
-            if let photoUrl = pin.photoUrl {
+            if let photoUrl = pin?.photoUrl {
                 Rectangle()
                     .foregroundStyle(Color(uiColor: .secondarySystemBackground))
                     .frame(height: 240.0)
@@ -75,22 +87,29 @@ private extension SavedPinDetailsView {
                 LocationImagePlaceholderView()
             }
             LocationImagePickerView(
-                selection: .constant(nil), uiImage: .constant(nil)
+                selection: $viewModel.newPinPhotoPickerItem,
+                uiImage: $viewModel.newPinPhoto
             )
+            .onChange(of: viewModel.newPinPhoto) {
+                Task { await viewModel.updatePinPhoto(for: pinId) }
+            }
             .padding(.bottom, 16.0)
             .padding(.trailing, 16.0)
         }
     }
     var locationInfoView: some View {
         VStack(alignment: .leading, spacing: 8.0) {
-            Text(pin.name)
+            Text(pin?.name ?? "Placeholder")
                 .font(.title)
                 .fontWeight(.semibold)
-            Text(pin.description ?? "No description")
-            Button("Edit", systemImage: "pencil") {
-                
+                .redacted(reason: pin == nil ? .placeholder : [])
+            if let pin {
+                Text(pin.description ?? "No description.")
+                Button("Edit", systemImage: "pencil") {
+                    viewModel.isEditPinSheetPresented = true
+                }
+                .secondaryFilledSmallButtonStyle()
             }
-            .secondaryFilledSmallButtonStyle()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16.0)
@@ -115,7 +134,9 @@ private extension SavedPinDetailsView {
     }
     var addMemoryButtonView: some View {
         Button("Add", systemImage: "plus") {
-            navigateToAddNewMemoryView()
+            if let pin {
+                navigateToAddNewMemoryView(pin: pin)
+            }
         }
         .primaryFilledSmallButtonStyle()
     }
@@ -135,10 +156,23 @@ private extension SavedPinDetailsView {
             }
         }
     }
+    var editPinSheetView: some View {
+        NavigationStack {
+            EditPinView(
+                newPinName: $viewModel.newPinName,
+                newPinDescription: $viewModel.newPinDescription,
+                onSaveClick: {
+                    Task {
+                        await viewModel.editPinInfo(for: pinId)
+                    }
+                }
+            )
+        }
+    }
 }
 
 private extension SavedPinDetailsView {
-    func navigateToAddNewMemoryView() {
+    func navigateToAddNewMemoryView(pin: PinData) {
         let addNewMemoryScreenModel: AddNewMemoryScreenModel = .init(
             pin: pin
         )
@@ -146,10 +180,53 @@ private extension SavedPinDetailsView {
     }
 }
 
+struct EditPinView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Binding var newPinName: String
+    @Binding var newPinDescription: String
+    let onSaveClick: () -> Void
+    var body: some View {
+        ScrollView(.vertical) {
+            LazyVStack(spacing: 16.0) {
+                InputTextFieldView(
+                    localizedTitle: "Location name",
+                    localizedPlaceholder: "Enter name of a location",
+                    text: $newPinName,
+                    axis: .horizontal,
+                    lineLimit: 1
+                )
+                InputTextFieldView(
+                    localizedTitle: "Location description",
+                    localizedPlaceholder: "Enter description for a location",
+                    text: $newPinDescription,
+                    axis: .vertical,
+                    lineLimit: 4
+                )
+                Button("Save") {
+                    onSaveClick()
+                }
+                .primaryFilledLargeButtonStyle()
+            }
+        }
+        .contentMargins(16.0)
+        .scrollIndicators(.hidden)
+        .navigationTitle("Edit Pin")
+        .toolbar {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "xmark")
+                    .imageScale(.large)
+                    .fontWeight(.semibold)
+            }
+        }
+    }
+}
+
 #Preview {
     NavigationStack {
         SavedPinDetailsView(
-            pin: PinData.preview1
+            pinId: PinData.preview1.id
         )
     }
 }

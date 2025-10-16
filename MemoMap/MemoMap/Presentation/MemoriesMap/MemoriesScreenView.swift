@@ -114,7 +114,7 @@ private extension MemoriesScreenView {
     }
     func savedPinDetailsSheetView(pinTapped: PinData) -> some View {
         NavigationStack {
-            SavedPinDetailsView(pin: pinTapped)
+            SavedPinDetailsView(pinId: pinTapped.id)
         }
     }
 }
