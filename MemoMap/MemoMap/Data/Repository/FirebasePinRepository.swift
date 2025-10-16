@@ -70,18 +70,32 @@ final class FirebasePinRepository: PinRepository {
                 try? documentSnapshot.data(as: PinModel.self)
             }
             let pins: [PinData] = pinModels.map { pinModel in
-                return PinData(
-                    id: pinModel.id,
-                    name: pinModel.name,
-                    description: pinModel.description,
-                    photoUrl: pinModel.photoUrl,
-                    latitude: pinModel.location.latitude,
-                    longitude: pinModel.location.longitude,
-                    createdAt: pinModel.createdAt
-                )
+                self.getPinData(from: pinModel)
             }
             completion(.success(pins))
             return
+        }
+    }
+    
+    func getPin(pinId: String) async throws -> PinData {
+        do {
+            let pinModel = try await pinCollectionReference.document(pinId).getDocument(as: PinModel.self)
+            let pin = getPinData(from: pinModel)
+            return pin
+        } catch {
+            throw GetPinError.failedToGet
+        }
+    }
+    
+    func updatePinInfo(pinId: String, pinName: String, pinDescription: String?) async throws {
+        let updatedData = [
+            PinModel.CodingKeys.name.rawValue: pinName,
+            PinModel.CodingKeys.description.rawValue: pinDescription as Any
+        ]
+        do {
+            try await pinCollectionReference.document(pinId).updateData(updatedData)
+        } catch {
+            throw UpdatePinInfoError.updateFailed
         }
     }
 }
@@ -93,5 +107,17 @@ private extension FirebasePinRepository {
     
     var pinCollectionReference: CollectionReference {
         firestoreDatabase.collection("pins")
+    }
+    
+    func getPinData(from pinModel: PinModel) -> PinData {
+        return PinData(
+            id: pinModel.id,
+            name: pinModel.name,
+            description: pinModel.description,
+            photoUrl: pinModel.photoUrl,
+            latitude: pinModel.location.latitude,
+            longitude: pinModel.location.longitude,
+            createdAt: pinModel.createdAt
+        )
     }
 }
