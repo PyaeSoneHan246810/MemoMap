@@ -13,7 +13,17 @@ struct SearchMemoriesScreenView: View {
     @State private var viewModel: SearchMemoriesViewModel = .init()
     @Binding var userProfileScreenModel: UserProfileScreenModel?
     var body: some View {
-        searchResultsView
+        ZStack(alignment: .top) {
+            if viewModel.trimmedSearchText.isEmpty {
+                if viewModel.recentMemorySearches.isEmpty {
+                    searchInitialView
+                } else {
+                    recentSearchesView
+                }
+            } else {
+                searchResultsView
+            }
+        }
         .navigationTitle("Search Memories")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden()
@@ -23,6 +33,10 @@ struct SearchMemoriesScreenView: View {
         .toolbarVisibility(.hidden, for: .tabBar)
         .safeAreaInset(edge: .top) {
             topBarView
+        }
+        .onAppear {
+            viewModel.deleteRecentMemorySearchesOlderThanOneWeek()
+            viewModel.getRecentMemorySearches()
         }
     }
 }
@@ -61,6 +75,12 @@ private extension SearchMemoriesScreenView {
         .searchBarTextContentType(.location)
         .searchBarAutoCorrectionType(.no)
         .searchBarAutoCapitalizationType(.none)
+        .onChange(of: viewModel.searchText) {
+            if viewModel.trimmedSearchText.isEmpty {
+                viewModel.resetSearchState()
+                viewModel.getRecentMemorySearches()
+            }
+        }
     }
     var searchButtonView: some View {
         Button("Search") {
@@ -68,6 +88,52 @@ private extension SearchMemoriesScreenView {
                 await viewModel.searchMemories()
             }
         }
+    }
+    var recentSearchesView: some View {
+        VStack(spacing: 8.0) {
+            recentSearchedHeaderView
+            recentMemorySearchesListView
+        }
+    }
+    @ViewBuilder
+    var recentSearchedHeaderView: some View {
+        HStack {
+            Text("Recent Searches")
+                .font(.headline)
+            Spacer()
+            Button("Clear all") {
+                viewModel.deleteAllRecentMemorySearches()
+                viewModel.getRecentMemorySearches()
+            }
+            .buttonStyle(.bordered)
+            .foregroundStyle(.primary)
+            .controlSize(.mini)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 16.0)
+    }
+    @ViewBuilder
+    var recentMemorySearchesListView: some View {
+        ScrollView(.vertical) {
+            LazyVStack(spacing: 16.0) {
+                ForEach(viewModel.recentMemorySearches) { recentSearch in
+                    recentMemorySearchView(recentSearch)
+                }
+            }
+        }
+        .disableBouncesVertically()
+        .scrollIndicators(.hidden)
+        .contentMargins(.horizontal, 16.0)
+        .contentMargins(.vertical, 8.0)
+    }
+    func recentMemorySearchView(_ recentMemorySearch: RecentMemorySearch) -> some View {
+        RecentSearchView(
+            searchText: recentMemorySearch.searchText,
+            onRemove: {
+                viewModel.deleteRecentMemorySearch(recentMemorySearch)
+                viewModel.getRecentMemorySearches()
+            }
+        )
     }
     @ViewBuilder
     var searchResultsView: some View {

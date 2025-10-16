@@ -15,7 +15,11 @@ struct SearchUsersScreenView: View {
     var body: some View {
         ZStack(alignment: .top) {
             if viewModel.trimmedSearchText.isEmpty {
-                recentSearchesView
+                if viewModel.recentUserSearches.isEmpty {
+                    searchInitialView
+                } else {
+                    recentSearchesView
+                }
             } else {
                 searchResultsView
             }
@@ -36,8 +40,8 @@ struct SearchUsersScreenView: View {
             topBarView
         }
         .onAppear {
-            viewModel.deleteRecentSearchesOlderThanOneWeek()
-            viewModel.getRecentSearches()
+            viewModel.deleteRecentUserSearchesOlderThanOneWeek()
+            viewModel.getRecentUserSearches()
         }
     }
 }
@@ -79,7 +83,7 @@ private extension SearchUsersScreenView {
         .onChange(of: viewModel.searchText) {
             if viewModel.trimmedSearchText.isEmpty {
                 viewModel.resetSearchState()
-                viewModel.getRecentSearches()
+                viewModel.getRecentUserSearches()
             }
         }
     }
@@ -91,61 +95,48 @@ private extension SearchUsersScreenView {
     var recentSearchesView: some View {
         VStack(spacing: 8.0) {
             recentSearchedHeaderView
-            recentSearchesListView
+            recentUserSearchesListView
         }
     }
     @ViewBuilder
     var recentSearchedHeaderView: some View {
-        if viewModel.recentSearches.isEmpty {
-            EmptyView()
-        } else {
-            HStack {
-                Text("Recent Searches")
-                    .font(.headline)
-                Spacer()
-                Button("Clear all") {
-                    viewModel.deleteAllRecentSearches()
-                    viewModel.getRecentSearches()
-                }
-                .buttonStyle(.bordered)
-                .foregroundStyle(.primary)
-                .controlSize(.mini)
+        HStack {
+            Text("Recent Searches")
+                .font(.headline)
+            Spacer()
+            Button("Clear all") {
+                viewModel.deleteAllRecentUserSearches()
+                viewModel.getRecentUserSearches()
             }
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, 16.0)
+            .buttonStyle(.bordered)
+            .foregroundStyle(.primary)
+            .controlSize(.mini)
         }
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 16.0)
     }
     @ViewBuilder
-    var recentSearchesListView: some View {
-        if viewModel.recentSearches.isEmpty {
-            searchInitialView
-        } else {
-            ScrollView(.vertical) {
-                LazyVStack(spacing: 16.0) {
-                    ForEach(viewModel.recentSearches) { recentSearch in
-                        recentSearchView(recentSearch)
-                    }
+    var recentUserSearchesListView: some View {
+        ScrollView(.vertical) {
+            LazyVStack(spacing: 16.0) {
+                ForEach(viewModel.recentUserSearches) { recentSearch in
+                    recentUserSearchView(recentSearch)
                 }
             }
-            .disableBouncesVertically()
-            .scrollIndicators(.hidden)
-            .contentMargins(.horizontal, 16.0)
-            .contentMargins(.vertical, 8.0)
         }
+        .disableBouncesVertically()
+        .scrollIndicators(.hidden)
+        .contentMargins(.horizontal, 16.0)
+        .contentMargins(.vertical, 8.0)
     }
-    func recentSearchView(_ recentSearch: RecentSearch) -> some View {
-        HStack {
-            Text(recentSearch.searchText)
-            Spacer()
-            Button {
-                viewModel.deleteRecentSearch(recentSearch)
-                viewModel.getRecentSearches()
-            } label: {
-                Image(systemName: "xmark")
+    func recentUserSearchView(_ recentSearch: RecentUserSearch) -> some View {
+        RecentSearchView(
+            searchText: recentSearch.searchText,
+            onRemove: {
+                viewModel.deleteRecentUserSearch(recentSearch)
+                viewModel.getRecentUserSearches()
             }
-            .foregroundStyle(.primary)
-            .controlSize(.small)
-        }
+        )
     }
     @ViewBuilder
     var searchResultsView: some View {

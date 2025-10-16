@@ -6,13 +6,23 @@
 //
 
 protocol RecentSearchRepository {
-    func saveRecentSearch(recentSearch: RecentSearch)
+    func saveRecentUserSearch(_ recentUserSearch: RecentUserSearch)
     
-    func deleteRecentSearch(recentSearch: RecentSearch)
+    func saveRecentMemorySearch(_ recentMemorySearch: RecentMemorySearch)
     
-    func getRecentSearchesWithinOneWeek() -> [RecentSearch]
+    func deleteRecentUserSearch(_ recentUserSearch: RecentUserSearch)
     
-    func deleteAllRecentSearches()
+    func deleteRecentMemorySearch(_ recentMemorySearch: RecentMemorySearch)
     
-    func deleteRecentSearchesOlderThanOneWeek()
+    func getRecentUserSearchesWithinOneWeek() -> [RecentUserSearch]
+    
+    func getRecentMemorySearchesWithinOneWeek() -> [RecentMemorySearch]
+    
+    func deleteAllRecentUserSearches()
+    
+    func deleteAllRecentMemorySearches()
+    
+    func deleteRecentUserSearchesOlderThanOneWeek()
+    
+    func deleteRecentMemorySearchesOlderThanOneWeek()
 }
