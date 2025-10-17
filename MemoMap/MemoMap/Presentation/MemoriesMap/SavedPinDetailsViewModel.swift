@@ -115,7 +115,7 @@ final class SavedPinDetailsViewModel {
     func editPinInfo(for pinId: String) async {
         do {
             try await pinRepository.updatePinInfo(pinId: pinId, pinName: trimmedNewPinName, pinDescription: trimmedNewPinDescription)
-            await updateMemoriesPinInfo(pinId: pinId)
+            try await memoryRepository.updateMemoriesPinInfo(pinId: pinId, pinName: trimmedNewPinName)
             await getPin(for: pinId)
             isEditPinSheetPresented = false
         } catch {
@@ -127,12 +127,14 @@ final class SavedPinDetailsViewModel {
         }
     }
     
-    func updateMemoriesPinInfo(pinId: String) async {
+    func deletePin(for pinId: String, onSuccess: () -> Void) async {
         do {
-            try await memoryRepository.updateMemoriesPinInfo(pinId: pinId, pinName: trimmedNewPinName)
+            try await pinRepository.deletePin(pinId: pinId)
+            try await memoryRepository.deletePinMemories(pinId: pinId)
+            onSuccess()
         } catch {
-            if let updatePinInfoError = error as? UpdatePinInfoError {
-                print(updatePinInfoError.localizedDescription)
+            if let deletePinError = error as? DeletePinError {
+                print(deletePinError.localizedDescription)
             } else {
                 print(error.localizedDescription)
             }

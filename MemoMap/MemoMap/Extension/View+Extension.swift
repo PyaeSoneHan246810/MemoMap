@@ -45,6 +45,14 @@ extension View {
             .foregroundStyle(.primary)
     }
     
+    func destructiveButtonStyle(controlSize: ControlSize) -> some View {
+        self
+            .buttonStyle(.bordered)
+            .controlSize(controlSize)
+            .tint(.red)
+            .foregroundStyle(.red)
+    }
+    
     func disableBouncesVertically() -> some View {
         self
             .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { scrollView in

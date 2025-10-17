@@ -253,10 +253,21 @@ final class FirebaseMemoryRepository: MemoryRepository {
             ]
             let querySnapshot = try await memoryCollectionReference.whereField(MemoryModel.CodingKeys.pinId.rawValue, isEqualTo: pinId).getDocuments()
             for document in querySnapshot.documents {
-                try await document.reference.updateData(updatedData)
+                try? await document.reference.updateData(updatedData)
             }
         } catch {
             throw UpdatePinInfoError.updateFailed
+        }
+    }
+    
+    func deletePinMemories(pinId: String) async throws {
+        do {
+            let querySnapshot = try await memoryCollectionReference.whereField(MemoryModel.CodingKeys.pinId.rawValue, isEqualTo: pinId).getDocuments()
+            for document in querySnapshot.documents {
+                try? await document.reference.delete()
+            }
+        } catch {
+            throw DeletePinError.deleteFailed
         }
     }
 }
