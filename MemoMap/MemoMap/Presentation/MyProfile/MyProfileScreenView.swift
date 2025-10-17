@@ -49,6 +49,11 @@ struct MyProfileScreenView: View {
         .toolbar {
             toolbarContentView
         }
+        .fullScreenCover(item: $myProfileViewModel.userProfileToEdit) { userProfile in
+            editProfileView(
+                userProfile: userProfile
+            )
+        }
         .task {
             await myProfileViewModel.getTotalHeartsCount()
             await myProfileViewModel.getUserPublicMemories()
@@ -92,7 +97,7 @@ private extension MyProfileScreenView {
     }
     var editButtonView: some View {
         Button("Edit profile", systemImage: "pencil") {
-            
+            myProfileViewModel.userProfileToEdit = userProfile
         }
         .primaryFilledSmallButtonStyle()
     }
@@ -126,6 +131,13 @@ private extension MyProfileScreenView {
             title: "There is no public memories yet!",
             description: "Share your favorite moments to let others discover them!"
         )
+    }
+    func editProfileView(userProfile: UserProfileData) -> some View {
+        NavigationStack {
+            EditProfileView(
+                userProfile: userProfile
+            )
+        }
     }
 }
 

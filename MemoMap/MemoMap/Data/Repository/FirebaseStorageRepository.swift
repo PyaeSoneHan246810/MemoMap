@@ -24,6 +24,20 @@ final class FirebaseStorageRepository: StorageRepository {
         }
     }
     
+    func uploadCoverPhoto(data: Data, userId: String) async throws -> String {
+        let metaData = StorageMetadata()
+        metaData.contentType = "image/jpeg"
+        let coverPhotoReference = getCoverPhotoStorageRefernce(userId: userId)
+        do {
+            let _ = try await coverPhotoReference.putDataAsync(data, metadata: metaData)
+            let downloadUrl = try await coverPhotoReference.downloadURL()
+            let downloadUrlString = downloadUrl.absoluteString
+            return downloadUrlString
+        } catch {
+            throw UploadCoverPhotoError.uploadFailed
+        }
+    }
+    
     func deleteProfilePhoto(userData: UserData?) async throws {
         guard let userId = userData?.uid else {
             throw DeleteProfilePhotoError.userNotFound
@@ -111,6 +125,10 @@ private extension FirebaseStorageRepository {
         storageRefernce.child("profiles")
     }
     
+    var coversStorageRefernce: StorageReference {
+        storageRefernce.child("covers")
+    }
+    
     var pinsStorageReference: StorageReference {
         storageRefernce.child("pins")
     }
@@ -123,12 +141,20 @@ private extension FirebaseStorageRepository {
         "profile.jpeg"
     }
     
+    var coverPhotoPath: String {
+        "cover.jpeg"
+    }
+    
     var pinPhotoPath: String {
         "pin.jpeg"
     }
     
     func getProfilePhotoStorageRefernce(userId: String) -> StorageReference {
         profilesStorageRefernce.child(userId).child(profilePhotoPath)
+    }
+    
+    func getCoverPhotoStorageRefernce(userId: String) -> StorageReference {
+        coversStorageRefernce.child(userId).child(coverPhotoPath)
     }
     
     func getPinPhotoStorageReference(pinId: String) -> StorageReference {

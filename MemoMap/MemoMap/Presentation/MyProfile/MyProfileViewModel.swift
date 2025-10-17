@@ -18,6 +18,8 @@ final class MyProfileViewModel {
     private(set) var memoriesDataState: DataState<[MemoryData]> = .initial
     
     private(set) var totalHeartsCount: Int = 0
+    
+    var userProfileToEdit: UserProfileData? = nil
 
     var memories: [MemoryData] {
         if case .success(let data) = memoriesDataState {

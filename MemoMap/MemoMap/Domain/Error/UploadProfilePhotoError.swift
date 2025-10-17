@@ -9,5 +9,4 @@ import Foundation
 
 enum UploadProfilePhotoError: Error {
     case uploadFailed
-    case unknownError
 }
