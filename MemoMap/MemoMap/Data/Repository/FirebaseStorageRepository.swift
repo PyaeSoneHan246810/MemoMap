@@ -85,6 +85,17 @@ final class FirebaseStorageRepository: StorageRepository {
         }
     }
     
+    func deleteMemoryMedia(memoryId: String) async throws {
+        let memoryMediaFolderReference = memoriesStorageReference.child(memoryId)
+        do {
+            let mediaList = try await memoryMediaFolderReference.listAll()
+            for item in mediaList.items {
+                try await item.delete()
+            }
+        } catch {
+            throw DeleteMemoryMediaError.deleteFailed
+        }
+    }
 }
 
 private extension FirebaseStorageRepository {

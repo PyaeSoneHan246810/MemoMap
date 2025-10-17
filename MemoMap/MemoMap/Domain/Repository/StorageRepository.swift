@@ -20,4 +20,6 @@ protocol StorageRepository {
     func uploadMemoryPhoto(data: Data, fileName: String, memoryId: String) async throws -> String
     
     func uploadMemoryVideo(url: URL, fileName: String, memoryId: String) async throws -> String
+    
+    func deleteMemoryMedia(memoryId: String) async throws
 }
