@@ -11,6 +11,8 @@ import FirebaseStorage
 protocol StorageRepository {
     func uploadProfilePhoto(data: Data, userId: String) async throws -> String
     
+    func uploadCoverPhoto(data: Data, userId: String) async throws -> String
+    
     func deleteProfilePhoto(userData: UserData?) async throws
     
     func uploadPinPhoto(data: Data, pinId: String) async throws -> String

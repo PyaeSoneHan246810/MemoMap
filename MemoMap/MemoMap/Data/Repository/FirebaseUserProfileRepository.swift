@@ -93,6 +93,22 @@ final class FirebaseUserProfileRepository: UserProfileRepository {
         }
     }
     
+    func updateUserProfileInfo(userid: String, updateUserProfileData: UpdateUserProfileData) async throws {
+        let updatedData = [
+            UserProfileModel.CodingKeys.displayname.rawValue: updateUserProfileData.displayname,
+            UserProfileModel.CodingKeys.displaynameLowercased.rawValue: updateUserProfileData.displayname.lowercased(),
+            UserProfileModel.CodingKeys.bio.rawValue: updateUserProfileData.bio,
+            UserProfileModel.CodingKeys.birthday.rawValue: updateUserProfileData.birthday,
+            UserProfileModel.CodingKeys.profilePhotoUrl.rawValue: updateUserProfileData.profilePhotoUrl as Any,
+            UserProfileModel.CodingKeys.coverPhotoUrl.rawValue: updateUserProfileData.coverPhotoUrl as Any
+        ]
+        do {
+            try await getUserCollectionDocumentReference(userId: userid).updateData(updatedData)
+        } catch {
+            throw UpdateUserProfileInfoError.updateFailed
+        }
+    }
+    
 }
 
 private extension FirebaseUserProfileRepository {

@@ -19,12 +19,11 @@ struct MemoriesScreenView: View {
             toolbarContentView
         }
         .sheet(item: $viewModel.placeTapped) {
-            addNewPinSheetView(placeTapped: $0)
+            addNewPinView(placeTapped: $0)
                 .interactiveDismissDisabled()
         }
-        .sheet(item: $viewModel.pinTapped) {
-            savedPinDetailsSheetView(pinTapped: $0)
-                .interactiveDismissDisabled()
+        .fullScreenCover(item: $viewModel.pinTapped) {
+            savedPinDetailsView(pinTapped: $0)
         }
         .onAppear {
             viewModel.listenPins()
@@ -107,12 +106,12 @@ private extension MemoriesScreenView {
             }
         }
     }
-    func addNewPinSheetView(placeTapped: Place) -> some View {
+    func addNewPinView(placeTapped: Place) -> some View {
         NavigationStack {
             AddNewPinView(place: placeTapped)
         }
     }
-    func savedPinDetailsSheetView(pinTapped: PinData) -> some View {
+    func savedPinDetailsView(pinTapped: PinData) -> some View {
         NavigationStack {
             SavedPinDetailsView(pinId: pinTapped.id)
         }

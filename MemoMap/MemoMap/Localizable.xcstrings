@@ -305,6 +305,9 @@
         }
       }
     },
+    "Edit Profile" : {
+
+    },
     "Enter your current password" : {
       "extractionState" : "manual",
       "localizations" : {

@@ -19,4 +19,6 @@ protocol UserProfileRepository {
     
     func getUserProfile(userId: String) async throws -> UserProfileData
     
+    func updateUserProfileInfo(userid: String, updateUserProfileData: UpdateUserProfileData) async throws
+    
 }
