@@ -7,8 +7,11 @@
 
 import Foundation
 import FirebaseFirestore
+import Factory
 
 final class FirebaseMemoryRepository: MemoryRepository {
+    @Injected(\.storageRepository) private var storageRepository: StorageRepository
+    
     func saveMemory(memoryData: MemoryData, pinId: String, userData: UserData?) async throws -> String {
         guard let userId = userData?.uid else {
             throw SaveMemoryError.userNotFound
@@ -264,6 +267,7 @@ final class FirebaseMemoryRepository: MemoryRepository {
         do {
             let querySnapshot = try await memoryCollectionReference.whereField(MemoryModel.CodingKeys.pinId.rawValue, isEqualTo: pinId).getDocuments()
             for document in querySnapshot.documents {
+                try? await storageRepository.deleteMemoryMedia(memoryId: document.documentID)
                 try? await document.reference.delete()
             }
         } catch {
