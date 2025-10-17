@@ -244,6 +244,21 @@ final class FirebaseMemoryRepository: MemoryRepository {
             throw SearchMemoriesError.searchFailed
         }
     }
+    
+    func updateMemoriesPinInfo(pinId: String, pinName: String) async throws {
+        do {
+            let updatedData = [
+                MemoryModel.CodingKeys.locationName.rawValue: pinName,
+                MemoryModel.CodingKeys.locationNameLowercased.rawValue: pinName.lowercased()
+            ]
+            let querySnapshot = try await memoryCollectionReference.whereField(MemoryModel.CodingKeys.pinId.rawValue, isEqualTo: pinId).getDocuments()
+            for document in querySnapshot.documents {
+                try await document.reference.updateData(updatedData)
+            }
+        } catch {
+            throw UpdatePinInfoError.updateFailed
+        }
+    }
 }
 
 private extension FirebaseMemoryRepository {

@@ -15,9 +15,9 @@ import Factory
 final class SavedPinDetailsViewModel {
     @ObservationIgnored @Injected(\.memoryRepository) private var memoryRepository: MemoryRepository
     
-    @ObservationIgnored @Injected(\.storageRepository) private var storageRepository: StorageRepository
-    
     @ObservationIgnored @Injected(\.pinRepository) private var pinRepository: PinRepository
+    
+    @ObservationIgnored @Injected(\.storageRepository) private var storageRepository: StorageRepository
     
     private(set) var pinDataState: DataState<PinData> = .initial
     
@@ -115,8 +115,21 @@ final class SavedPinDetailsViewModel {
     func editPinInfo(for pinId: String) async {
         do {
             try await pinRepository.updatePinInfo(pinId: pinId, pinName: trimmedNewPinName, pinDescription: trimmedNewPinDescription)
+            await updateMemoriesPinInfo(pinId: pinId)
             await getPin(for: pinId)
             isEditPinSheetPresented = false
+        } catch {
+            if let updatePinInfoError = error as? UpdatePinInfoError {
+                print(updatePinInfoError.localizedDescription)
+            } else {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    func updateMemoriesPinInfo(pinId: String) async {
+        do {
+            try await memoryRepository.updateMemoriesPinInfo(pinId: pinId, pinName: trimmedNewPinName)
         } catch {
             if let updatePinInfoError = error as? UpdatePinInfoError {
                 print(updatePinInfoError.localizedDescription)
