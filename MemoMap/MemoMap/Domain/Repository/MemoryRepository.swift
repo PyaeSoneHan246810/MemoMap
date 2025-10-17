@@ -43,4 +43,6 @@ protocol MemoryRepository {
     func searchMemoriesByLocationName(locationName: String) async throws -> [MemoryData]
     
     func updateMemoriesPinInfo(pinId: String, pinName: String) async throws
+    
+    func deletePinMemories(pinId: String) async throws
 }

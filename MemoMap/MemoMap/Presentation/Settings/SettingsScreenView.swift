@@ -43,9 +43,7 @@ private extension SettingsScreenView {
         Button("Log out", systemImage: "rectangle.portrait.and.arrow.right") {
             logOutUser()
         }
-        .buttonStyle(.bordered)
-        .tint(.red)
-        .foregroundStyle(.red)
+        .destructiveButtonStyle(controlSize: .regular)
     }
 }
 

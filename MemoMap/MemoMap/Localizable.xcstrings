@@ -246,6 +246,9 @@
         }
       }
     },
+    "Delete" : {
+
+    },
     "Delete account" : {
       "localizations" : {
         "my" : {

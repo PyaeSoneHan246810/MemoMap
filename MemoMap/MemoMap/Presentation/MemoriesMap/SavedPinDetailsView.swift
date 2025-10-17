@@ -105,10 +105,23 @@ private extension SavedPinDetailsView {
                 .redacted(reason: pin == nil ? .placeholder : [])
             if let pin {
                 Text(pin.description ?? "No description.")
-                Button("Edit", systemImage: "pencil") {
-                    viewModel.isEditPinSheetPresented = true
+                HStack(spacing: 12.0) {
+                    Button("Edit", systemImage: "pencil") {
+                        viewModel.isEditPinSheetPresented = true
+                    }
+                    .secondaryFilledSmallButtonStyle()
+                    Button("Delete", systemImage: "trash") {
+                        Task {
+                            await viewModel.deletePin(
+                                for: pinId,
+                                onSuccess: {
+                                    dismiss()
+                                }
+                            )
+                        }
+                    }
+                    .destructiveButtonStyle(controlSize: .small)
                 }
-                .secondaryFilledSmallButtonStyle()
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
