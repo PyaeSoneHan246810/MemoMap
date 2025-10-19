@@ -21,25 +21,15 @@ struct MemoryMediasView: View {
         return medias
     }
     var body: some View {
-        ScrollView(.horizontal) {
-            HStack {
-                ForEach(medias) { media in
-                    switch media.type {
-                    case .image:
-                        photoView(url: media.urlString)
-                    case .video:
-                        if let url = URL(string: media.urlString) {
-                            videoView(url: url)
-                        } else {
-                            EmptyView()
-                        }
-                    }
-                }
+        if medias.count == 1 {
+            if let media = medias.first {
+                singleMediaView(media)
+            } else {
+                EmptyView()
             }
+        } else {
+            multiMediaScrollView
         }
-        .disableBouncesHorizontally()
-        .scrollIndicators(.hidden)
-        .contentMargins(.horizontal, 16.0)
     }
 }
 
@@ -58,7 +48,59 @@ extension MemoryMediasView {
 }
 
 private extension MemoryMediasView {
-    func photoView(url: String) -> some View {
+    func singleMediaView(_ media: Media) -> some View {
+        Group {
+            switch media.type {
+            case .image:
+                singleMediaImageView(url: media.urlString)
+            case .video:
+                if let url = URL(string: media.urlString) {
+                    singleMediaVideoView(url: url)
+                } else {
+                    EmptyView()
+                }
+            }
+        }
+        .padding(.horizontal, 16.0)
+    }
+    func singleMediaImageView(url: String) -> some View {
+        RoundedRectangle(cornerRadius: 12.0)
+            .foregroundStyle(Color(uiColor: .secondarySystemBackground))
+            .frame(height: 320.0)
+            .overlay {
+                KFImage(URL(string: url))
+                    .resizable()
+                    .scaledToFill()
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 12.0))
+    }
+    func singleMediaVideoView(url: URL) -> some View {
+        MemoryVideoView(url: url)
+            .frame(height: 320.0)
+            .clipShape(RoundedRectangle(cornerRadius: 12.0))
+    }
+    var multiMediaScrollView: some View {
+        ScrollView(.horizontal) {
+            HStack {
+                ForEach(medias) { media in
+                    switch media.type {
+                    case .image:
+                        multiMediaImageView(url: media.urlString)
+                    case .video:
+                        if let url = URL(string: media.urlString) {
+                            multiMediaVideoView(url: url)
+                        } else {
+                            EmptyView()
+                        }
+                    }
+                }
+            }
+        }
+        .disableBouncesHorizontally()
+        .scrollIndicators(.hidden)
+        .contentMargins(.horizontal, 16.0)
+    }
+    func multiMediaImageView(url: String) -> some View {
         RoundedRectangle(cornerRadius: 12.0)
             .foregroundStyle(Color(uiColor: .secondarySystemBackground))
             .frame(width: 320.0, height: 320.0)
@@ -69,7 +111,7 @@ private extension MemoryMediasView {
             }
             .clipShape(RoundedRectangle(cornerRadius: 12.0))
     }
-    func videoView(url: URL) -> some View {
+    func multiMediaVideoView(url: URL) -> some View {
         MemoryVideoView(url: url)
         .frame(width: 320.0, height: 320.0)
         .clipShape(RoundedRectangle(cornerRadius: 12.0))

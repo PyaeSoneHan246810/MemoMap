@@ -12,5 +12,4 @@ enum ListenUserProfileError: Error {
     case listenFailed
     case documentNotFound
     case getDataFailed
-    case unknownError
 }

@@ -43,7 +43,7 @@ final class FirebaseMemoryRepository: MemoryRepository {
     }
     
     func updateMemoryMedia(memoryId: String, media: [String]) async throws {
-        let updatedData = [
+        let updatedData: [String: Any] = [
             MemoryModel.CodingKeys.media.rawValue: media
         ]
         do {
@@ -250,7 +250,7 @@ final class FirebaseMemoryRepository: MemoryRepository {
     
     func updateMemoriesPinInfo(pinId: String, pinName: String) async throws {
         do {
-            let updatedData = [
+            let updatedData: [String: Any] = [
                 MemoryModel.CodingKeys.locationName.rawValue: pinName,
                 MemoryModel.CodingKeys.locationNameLowercased.rawValue: pinName.lowercased()
             ]
@@ -278,9 +278,34 @@ final class FirebaseMemoryRepository: MemoryRepository {
     
     func deleteMemory(memoryId: String) async throws {
         do {
-            try await memoryCollectionReference.document(memoryId).delete()
+            try await getMemoryDocument(memoryId: memoryId).delete()
         } catch {
             throw DeleteMemoryError.deleteFailed
+        }
+    }
+    
+    func updateMemoryInfo(memoryId: String, editMemoryInfo: EditMemoryInfo) async throws {
+        let updatedData: [String: Any] = [
+            MemoryModel.CodingKeys.title.rawValue: editMemoryInfo.title,
+            MemoryModel.CodingKeys.description.rawValue: editMemoryInfo.description,
+            MemoryModel.CodingKeys.tags.rawValue: editMemoryInfo.tags,
+            MemoryModel.CodingKeys.dateTime.rawValue: Timestamp(date: editMemoryInfo.dateTime),
+            MemoryModel.CodingKeys.publicStatus.rawValue: editMemoryInfo.publicStatus
+        ]
+        do {
+            try await getMemoryDocument(memoryId: memoryId).updateData(updatedData)
+        } catch {
+            throw UpdateMemoryInfoError.updateFailed
+        }
+    }
+    
+    func getMemory(memoryId: String) async throws -> MemoryData {
+        do {
+            let memoryModel = try await getMemoryDocument(memoryId: memoryId).getDocument(as: MemoryModel.self)
+            let memory = getMemoryData(from: memoryModel)
+            return memory
+        } catch {
+            throw GetMemoryError.failedToGet
         }
     }
 }
@@ -300,6 +325,10 @@ private extension FirebaseMemoryRepository {
     
     func getMemoryHeartsCollectionReference(memoryId: String) -> CollectionReference {
         memoryCollectionReference.document(memoryId).collection("hearts")
+    }
+    
+    func getMemoryDocument(memoryId: String) -> DocumentReference {
+        memoryCollectionReference.document(memoryId)
     }
     
     func getMemoryData(from memoryModel: MemoryModel) -> MemoryData {

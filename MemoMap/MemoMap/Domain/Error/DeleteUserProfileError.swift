@@ -10,5 +10,4 @@ import Foundation
 enum DeleteUserProfileError: Error {
     case userNotFound
     case deleteFailed
-    case unknownError
 }

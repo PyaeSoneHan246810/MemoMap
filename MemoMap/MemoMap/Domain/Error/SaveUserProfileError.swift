@@ -9,5 +9,4 @@ import Foundation
 
 enum SaveUserProfileError: Error {
     case saveFailed
-    case unknownError
 }

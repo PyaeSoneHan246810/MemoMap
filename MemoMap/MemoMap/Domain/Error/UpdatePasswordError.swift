@@ -14,5 +14,4 @@ enum UpdatePasswordError: Error {
     case weakPassword
     case networkError
     case updateFailed
-    case unknownError
 }

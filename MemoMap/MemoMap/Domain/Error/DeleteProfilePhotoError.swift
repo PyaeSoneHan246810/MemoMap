@@ -10,5 +10,4 @@ import Foundation
 enum DeleteProfilePhotoError: Error {
     case userNotFound
     case deleteFailed
-    case unknownError
 }

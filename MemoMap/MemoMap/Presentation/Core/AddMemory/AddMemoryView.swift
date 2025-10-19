@@ -21,14 +21,13 @@ struct AddMemoryView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20.0) {
             addMediaView
-            Group {
-                textFieldsView
-                addTagsView
-                dateTimePickerView
-                if publicOrPrivateSelectionEnabled {
-                    publicToggleView
-                }
-            }
+            EditMemoryInfoView(
+                memoryTitle: $memoryTitle,
+                memoryDescription: $memoryDescription,
+                memoryTags: $memoryTags,
+                memoryDateTime: $memoryDateTime,
+                isMemoryPublic: $isMemoryPublic
+            )
             .padding(.horizontal, 16.0)
         }
     }

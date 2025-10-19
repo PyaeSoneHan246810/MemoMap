@@ -37,7 +37,7 @@ final class FirebasePinRepository: PinRepository {
     }
     
     func updatePinPhotoUrl(pinId: String, pinPhotoUrlString: String) async throws {
-        let updatedData = [
+        let updatedData: [String: Any] = [
             PinModel.CodingKeys.photoUrl.rawValue: pinPhotoUrlString
         ]
         do {
@@ -92,7 +92,7 @@ final class FirebasePinRepository: PinRepository {
     }
     
     func updatePinInfo(pinId: String, pinName: String, pinDescription: String?) async throws {
-        let updatedData = [
+        let updatedData: [String: Any] = [
             PinModel.CodingKeys.name.rawValue: pinName,
             PinModel.CodingKeys.description.rawValue: pinDescription as Any
         ]
