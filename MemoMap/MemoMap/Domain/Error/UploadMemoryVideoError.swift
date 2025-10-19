@@ -9,5 +9,4 @@ import Foundation
 
 enum UploadMemoryVideoError: Error {
     case uploadFailed
-    case unknownError
 }

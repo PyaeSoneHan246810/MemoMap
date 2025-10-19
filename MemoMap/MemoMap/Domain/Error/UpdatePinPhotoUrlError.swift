@@ -9,5 +9,4 @@ import Foundation
 
 enum UpdatePinPhotoUrlError: Error {
     case updateFailed
-    case unknownError
 }

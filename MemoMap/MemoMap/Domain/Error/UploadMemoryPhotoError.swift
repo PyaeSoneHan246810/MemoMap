@@ -9,5 +9,4 @@ import Foundation
 
 enum UploadMemoryPhotoError: Error {
     case uploadFailed
-    case unknownError
 }

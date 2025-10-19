@@ -47,4 +47,8 @@ protocol MemoryRepository {
     func deletePinMemories(pinId: String) async throws
     
     func deleteMemory(memoryId: String) async throws
+    
+    func updateMemoryInfo(memoryId: String, editMemoryInfo: EditMemoryInfo) async throws
+    
+    func getMemory(memoryId: String) async throws -> MemoryData
 }

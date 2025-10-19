@@ -10,5 +10,4 @@ import Foundation
 enum SaveMemoryError: Error {
     case userNotFound
     case saveFailed
-    case unknownError
 }

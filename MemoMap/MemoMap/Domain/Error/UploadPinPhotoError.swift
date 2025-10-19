@@ -9,5 +9,4 @@ import Foundation
 
 enum UploadPinPhotoError: Error {
     case uploadFailed
-    case unknownError
 }

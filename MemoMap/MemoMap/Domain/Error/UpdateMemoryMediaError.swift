@@ -9,5 +9,4 @@ import Foundation
 
 enum UpdateMemoryMediaError: Error {
     case updateFailed
-    case unknownError
 }

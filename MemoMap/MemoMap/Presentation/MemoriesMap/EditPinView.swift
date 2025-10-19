@@ -29,12 +29,11 @@ struct EditPinView: View {
                     axis: .vertical,
                     lineLimit: 4
                 )
-                Button("Save") {
-                    onSaveClick()
-                }
-                .primaryFilledLargeButtonStyle()
+                Button("Save", action: onSaveClick)
+                    .primaryFilledLargeButtonStyle()
             }
         }
+        .disableBouncesVertically()
         .contentMargins(16.0)
         .scrollIndicators(.hidden)
         .navigationTitle("Edit Pin")
