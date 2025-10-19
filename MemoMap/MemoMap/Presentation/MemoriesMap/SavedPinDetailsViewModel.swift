@@ -10,7 +10,6 @@ import PhotosUI
 import Observation
 import Factory
 
-
 @Observable
 final class SavedPinDetailsViewModel {
     @ObservationIgnored @Injected(\.memoryRepository) private var memoryRepository: MemoryRepository
@@ -21,7 +20,7 @@ final class SavedPinDetailsViewModel {
     
     private(set) var pinDataState: DataState<PinData> = .initial
     
-    private(set) var memoriesDataState: DataState<[MemoryData]> = .initial
+    private(set) var memories: [MemoryData] = []
     
     var newPinPhotoPickerItem: PhotosPickerItem? = nil
     
@@ -38,14 +37,6 @@ final class SavedPinDetailsViewModel {
             return data
         } else {
             return nil
-        }
-    }
-    
-    var memories: [MemoryData] {
-        if case .success(let data) = memoriesDataState {
-            return data
-        } else {
-            return []
         }
     }
     
@@ -76,19 +67,14 @@ final class SavedPinDetailsViewModel {
     }
     
     func getMemories(for pinId: String) async {
-        memoriesDataState = .loading
         do {
             let memories = try await memoryRepository.getPinMemories(pinId: pinId)
-            memoriesDataState = .success(memories)
+            self.memories = memories
         } catch {
             if let getPinMemoriesError = error as? GetPinMemoriesError {
-                let errorDescription = getPinMemoriesError.localizedDescription
-                print(errorDescription)
-                memoriesDataState = .failure(errorDescription)
+                print(getPinMemoriesError.localizedDescription)
             } else {
-                let errorDescription = error.localizedDescription
-                print(errorDescription)
-                memoriesDataState = .failure(errorDescription)
+                print(error.localizedDescription)
             }
         }
     }
@@ -135,6 +121,24 @@ final class SavedPinDetailsViewModel {
         } catch {
             if let deletePinError = error as? DeletePinError {
                 print(deletePinError.localizedDescription)
+            } else {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    func deleteMemory(for memoryId: String) async {
+        do {
+            try await memoryRepository.deleteMemory(memoryId: memoryId)
+            try await storageRepository.deleteMemoryMedia(memoryId: memoryId)
+            memories.removeAll {
+                $0.id == memoryId
+            }
+        } catch {
+            if let deleteMemoryError = error as? DeleteMemoryError {
+                print(deleteMemoryError.localizedDescription)
+            } else if let deleteMemoryMediaError = error as? DeleteMemoryMediaError {
+                print(deleteMemoryMediaError.localizedDescription)
             } else {
                 print(error.localizedDescription)
             }

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MemoryView: View {
     let memory: MemoryData
+    let onDeleteMemory: () -> Void
     var body: some View {
         VStack(spacing: 12.0) {
             memoryInfoView
@@ -37,9 +38,17 @@ private extension MemoryView {
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                 Spacer()
-                MoreButtonView {
-                    
+                Menu {
+                    Button("Delete", systemImage: "trash", role: .destructive) {
+                        onDeleteMemory()
+                    }
+                } label: {
+                    Image(systemName: "ellipsis")
                 }
+                .controlSize(.large)
+                .buttonStyle(.bordered)
+                .buttonBorderShape(.circle)
+                .foregroundStyle(.primary)
             }
             if !memory.tags.isEmpty {
                 MemoryTagsView(
@@ -57,7 +66,8 @@ private extension MemoryView {
 
 #Preview {
     MemoryView(
-        memory: MemoryData.preview1
+        memory: MemoryData.preview1,
+        onDeleteMemory: {}
     )
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background(Color(uiColor: .systemFill))

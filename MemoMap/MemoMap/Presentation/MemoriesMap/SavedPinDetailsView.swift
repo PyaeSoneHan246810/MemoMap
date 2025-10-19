@@ -164,7 +164,14 @@ private extension SavedPinDetailsView {
         } else {
             LazyVStack(spacing: 16.0) {
                 ForEach(memories) { memory in
-                    MemoryView(memory: memory)
+                    MemoryView(
+                        memory: memory,
+                        onDeleteMemory: {
+                            Task {
+                                await viewModel.deleteMemory(for: memory.id)
+                            }
+                        }
+                    )
                 }
             }
         }
