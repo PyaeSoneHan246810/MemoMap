@@ -84,8 +84,11 @@ private extension AddNewPinView {
         }
     }
     var locationImagePickerView: some View {
-        
-        PhotosPicker(selection: $viewModel.locationPhotoPickerItem) {
+        PhotosPicker(
+            selection: $viewModel.locationPhotoPickerItem,
+            matching: .images,
+            photoLibrary: .shared()
+        ) {
             Label("Edit Photo", systemImage: "pencil")
                 .labelStyle(.iconOnly)
                 .imageScale(.large)

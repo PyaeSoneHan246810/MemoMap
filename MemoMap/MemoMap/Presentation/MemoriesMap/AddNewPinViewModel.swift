@@ -163,8 +163,8 @@ final class AddNewPinViewModel {
     private func uploadMemoryMedia(memoryId: String) async -> [String] {
         var uploadedMemoryMedia: [String] = []
         do {
-            for (id, memoryMediaItem) in memoryMediaItems.enumerated() {
-                let fileName = "media_\(id + 1)"
+            for memoryMediaItem in memoryMediaItems {
+                let fileName = memoryMediaItem.id.uuidString
                 switch memoryMediaItem.media {
                 case .image(let uiImage):
                     if let data = uiImage.jpegData(compressionQuality: 1.0) {

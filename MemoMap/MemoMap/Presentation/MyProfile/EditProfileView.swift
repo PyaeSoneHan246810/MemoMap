@@ -84,7 +84,8 @@ private extension EditProfileView {
                 .clipped()
             PhotosPicker(
                 selection: $viewModel.newCoverPhotoPickerItem,
-                matching: .images
+                matching: .images,
+                photoLibrary: .shared()
             ) {
                 Image(systemName: "pencil")
                     .imageScale(.large)
@@ -135,7 +136,8 @@ private extension EditProfileView {
             }
             PhotosPicker(
                 selection: $viewModel.newProfilePhotoPickerItem,
-                matching: .images
+                matching: .images,
+                photoLibrary: .shared()
             ) {
                 Image(systemName: "pencil")
                     .imageScale(.large)

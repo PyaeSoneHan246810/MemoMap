@@ -51,4 +51,10 @@ protocol MemoryRepository {
     func updateMemoryInfo(memoryId: String, editMemoryInfo: EditMemoryInfo) async throws
     
     func getMemory(memoryId: String) async throws -> MemoryData
+    
+    func removeMemoryMedia(memoryId: String, mediaToRemove: String) async throws
+    
+    func removeAllMemoryMedia(memoryId: String) async throws
+    
+    func addMemoryMedia(memoryId: String, media: String?) async throws
 }

@@ -12,8 +12,8 @@ struct MemoryMediasView: View {
     let mediaUrlStrings: [String]
     private var medias: [Media] {
         let medias = mediaUrlStrings.map { mediaUrlString in
-            let mediaType: MemoryMediasView.MediaType = mediaUrlString.contains(".jpeg") ? .image : .video
-            return MemoryMediasView.Media(
+            let mediaType: MediaType = mediaUrlString.contains(".jpeg") ? .image : .video
+            return Media(
                 type: mediaType,
                 urlString: mediaUrlString
             )
@@ -29,20 +29,6 @@ struct MemoryMediasView: View {
             }
         } else {
             multiMediaScrollView
-        }
-    }
-}
-
-extension MemoryMediasView {
-    enum MediaType {
-        case video
-        case image
-    }
-    struct Media: Identifiable {
-        var type: MediaType
-        var urlString: String
-        var id: String {
-            urlString
         }
     }
 }

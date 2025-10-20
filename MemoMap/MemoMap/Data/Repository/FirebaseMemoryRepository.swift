@@ -308,6 +308,42 @@ final class FirebaseMemoryRepository: MemoryRepository {
             throw GetMemoryError.failedToGet
         }
     }
+    
+    func removeMemoryMedia(memoryId: String, mediaToRemove: String) async throws {
+        do {
+            let updatedData: [String: Any] = [
+                MemoryModel.CodingKeys.media.rawValue: FieldValue.arrayRemove([mediaToRemove])
+            ]
+            try await getMemoryDocument(memoryId: memoryId).updateData(updatedData)
+        } catch {
+            throw RemoveMemoryMediaError.removeFailed
+        }
+    }
+    
+    func removeAllMemoryMedia(memoryId: String) async throws {
+        do {
+            let updatedData: [String: Any] = [
+                MemoryModel.CodingKeys.media.rawValue: []
+            ]
+            try await getMemoryDocument(memoryId: memoryId).updateData(updatedData)
+        } catch {
+            throw RemoveAllMemoryMediaError.removeFailed
+        }
+    }
+    
+    func addMemoryMedia(memoryId: String, media: String?) async throws {
+        guard let media else {
+            throw AddMemoryMediaError.mediaNotExist
+        }
+        do {
+            let updatedData: [String: Any] = [
+                MemoryModel.CodingKeys.media.rawValue: FieldValue.arrayUnion([media])
+            ]
+            try await getMemoryDocument(memoryId: memoryId).updateData(updatedData)
+        } catch {
+            throw AddMemoryMediaError.addFailed
+        }
+    }
 }
 
 private extension FirebaseMemoryRepository {

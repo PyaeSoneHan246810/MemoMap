@@ -10,7 +10,6 @@ import PhotosUI
 import WrappingHStack
 
 struct AddMemoryView: View {
-    @State var memoryPhotoPickerItems: [PhotosPickerItem] = []
     @Binding var memoryMediaItems: [MemoryMediaItem]
     @Binding var memoryTitle: String
     @Binding var memoryDescription: String
@@ -20,7 +19,9 @@ struct AddMemoryView: View {
     var publicOrPrivateSelectionEnabled: Bool = true
     var body: some View {
         VStack(alignment: .leading, spacing: 20.0) {
-            addMediaView
+            AddMemoryMediaView(
+                memoryMediaItems: $memoryMediaItems
+            )
             EditMemoryInfoView(
                 memoryTitle: $memoryTitle,
                 memoryDescription: $memoryDescription,
@@ -34,91 +35,6 @@ struct AddMemoryView: View {
 }
 
 private extension AddMemoryView {
-    var addMediaView: some View {
-        VStack(alignment: .leading, spacing: 12.0) {
-            if !memoryMediaItems.isEmpty {
-                mediaItemsView
-            }
-            addMediaPickerView
-                .padding(.horizontal, 16.0)
-        }
-    }
-    var mediaItemsView: some View {
-        ScrollView(.horizontal) {
-            HStack {
-                ForEach(memoryMediaItems) { memoryMediaItem in
-                    mediaItemView(memoryMediaItem)
-                }
-            }
-        }
-        .disableBouncesHorizontally()
-        .scrollIndicators(.hidden)
-        .contentMargins(.horizontal, 16.0)
-    }
-    func mediaItemView(_ mediaItem: MemoryMediaItem) -> some View {
-        Group {
-            switch mediaItem.media {
-            case .image(let uiImage):
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFill()
-            case .video(let movie):
-                MemoryVideoView(url: movie.url)
-            }
-        }
-        .frame(width: 200.0, height: 200.0)
-        .clipShape(RoundedRectangle(cornerRadius: 12.0))
-        .overlay(alignment: .bottomTrailing) {
-            Button {
-                memoryMediaItems.removeAll {
-                    $0.id == mediaItem.id
-                }
-            } label: {
-                Image(systemName: "trash.fill")
-                    .padding(4.0)
-            }
-            .buttonStyle(.glass)
-            .buttonBorderShape(.circle)
-            .contentShape(.circle)
-            .padding(12.0)
-        }
-    }
-    var addMediaPickerView: some View {
-        PhotosPicker(
-            selection: $memoryPhotoPickerItems,
-            matching: .any(of: [.images, .videos]),
-            photoLibrary: .shared()
-        ) {
-            VStack(alignment: .leading, spacing: 12.0) {
-                if memoryMediaItems.isEmpty {
-                    memoryMediaPlaceholderView
-                }
-                labelView(title: "Add media", systemImage: "plus")
-            }
-        }
-        .onChange(of: memoryPhotoPickerItems) {
-            Task {
-                for item in memoryPhotoPickerItems {
-                    if let data = try? await item.loadTransferable(type: Data.self),
-                       let image = UIImage(data: data) {
-                        let memoryMediaItem = MemoryMediaItem(media: .image(image))
-                        memoryMediaItems.append(memoryMediaItem)
-                    } else if let video = try? await item.loadTransferable(type: Movie.self) {
-                        let memoryMediaItem = MemoryMediaItem(media: .video(video))
-                        memoryMediaItems.append(memoryMediaItem)
-                    }
-                }
-                memoryPhotoPickerItems.removeAll()
-            }
-        }
-    }
-    var memoryMediaPlaceholderView: some View {
-        Image(.imagePlaceholder)
-            .resizable()
-            .scaledToFit()
-            .frame(width: 120.0, height: 120.0)
-            .foregroundStyle(Color(uiColor: .secondarySystemBackground))
-    }
     var textFieldsView: some View {
         VStack(alignment: .leading, spacing: 12.0) {
             TextField(

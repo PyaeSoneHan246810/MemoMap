@@ -12,7 +12,11 @@ struct LocationImagePickerView: View {
     @Binding var selection: PhotosPickerItem?
     @Binding var uiImage: UIImage?
     var body: some View {
-        PhotosPicker(selection: $selection) {
+        PhotosPicker(
+            selection: $selection,
+            matching: .images,
+            photoLibrary: .shared()
+        ) {
             Label("Edit Photo", systemImage: "pencil")
                 .labelStyle(.iconOnly)
                 .imageScale(.large)

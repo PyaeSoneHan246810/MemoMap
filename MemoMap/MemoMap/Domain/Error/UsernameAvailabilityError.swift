@@ -9,5 +9,5 @@ import Foundation
 
 enum UsernameAvailabilityError: Error {
     case taken
-    case failedToCheck
+    case checkFailed
 }
