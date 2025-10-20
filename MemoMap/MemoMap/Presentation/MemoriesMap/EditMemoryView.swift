@@ -1,5 +1,5 @@
 //
-//  EditMemoryView.swift
+//  EditMemoryInfoView.swift
 //  MemoMap
 //
 //  Created by Dylan on 19/10/25.
@@ -36,7 +36,7 @@ struct EditMemoryView: View {
         .disableBouncesVertically()
         .contentMargins(16.0)
         .scrollIndicators(.hidden)
-        .navigationTitle("Edit Pin")
+        .navigationTitle("Edit Memory Info")
         .toolbar {
             toolbarContentView
         }

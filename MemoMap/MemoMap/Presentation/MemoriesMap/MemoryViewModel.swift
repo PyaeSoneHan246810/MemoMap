@@ -15,7 +15,9 @@ class MemoryViewModel {
     
     var updatedMemory: MemoryData? = nil
     
-    var isEditMemorySheetPresented: Bool = false
+    var isEditMemoryInfoViewPresented: Bool = false
+    
+    var memoryToEdit: MemoryData? = nil
     
     var editMemoryInfo: EditMemoryInfo = .init(title: "", description: "", tags: [], dateTime: .now, publicStatus: true)
     
@@ -25,7 +27,7 @@ class MemoryViewModel {
                 memoryId: memoryId, editMemoryInfo: editMemoryInfo
             )
             await getUpdatedMemory(for: memoryId)
-            isEditMemorySheetPresented = false
+            isEditMemoryInfoViewPresented = false
         } catch {
             if let updateMemoryInfoError = error as? UpdateMemoryInfoError {
                 print(updateMemoryInfoError.localizedDescription)

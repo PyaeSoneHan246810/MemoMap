@@ -22,12 +22,7 @@ struct MemoryPostView: View {
     var body: some View {
         VStack(spacing: 12.0) {
             Group {
-                HStack(spacing: 12.0) {
-                    profileInfoView
-                    MoreButtonView {
-                        
-                    }
-                }
+                profileInfoView
                 memoryInfoView
             }
             .padding(.horizontal, 16.0)

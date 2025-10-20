@@ -31,8 +31,9 @@ struct MemoryView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 16.0)
         .background(Color(uiColor: .systemBackground), in: RoundedRectangle(cornerRadius: 12.0))
-        .fullScreenCover(isPresented: $viewModel.isEditMemorySheetPresented) {
-            editMemoryView
+        .sheet(isPresented: $viewModel.isEditMemoryInfoViewPresented) {
+            editMemoryInfoView
+                .presentationBackground(Color(uiColor: .systemBackground))
                 .interactiveDismissDisabled()
                 .onAppear {
                     if let memory = viewModel.updatedMemory {
@@ -45,6 +46,13 @@ struct MemoryView: View {
                         )
                     }
                 }
+        }
+        .sheet(
+            item: $viewModel.memoryToEdit,
+        ) { memory in
+            editMemoryMediaView(memoryId: memory.id)
+                .presentationBackground(Color(uiColor: .systemBackground))
+                .interactiveDismissDisabled()
         }
         .onAppear {
             viewModel.updatedMemory = memory
@@ -69,8 +77,13 @@ private extension MemoryView {
                 }
                 Spacer()
                 Menu {
-                    Button("Edit", systemImage: "pencil") {
-                        viewModel.isEditMemorySheetPresented = true
+                    Button("Edit Info", systemImage: "pencil") {
+                        viewModel.isEditMemoryInfoViewPresented = true
+                    }
+                    Button("Edit Media", systemImage: "pencil") {
+                        if let memoryToEdit = viewModel.updatedMemory {
+                            viewModel.memoryToEdit = memoryToEdit
+                        }
                     }
                     Button("Delete", systemImage: "trash", role: .destructive) {
                         onDeleteMemory()
@@ -95,7 +108,7 @@ private extension MemoryView {
             mediaUrlStrings: media
         )
     }
-    var editMemoryView: some View {
+    var editMemoryInfoView: some View {
         NavigationStack {
             EditMemoryView(
                 editMemoryInfo: $viewModel.editMemoryInfo,
@@ -103,6 +116,21 @@ private extension MemoryView {
                     if let memory = viewModel.updatedMemory {
                         Task {
                             await viewModel.editMemoryInfo(for: memory.id)
+                        }
+                    }
+                }
+            )
+        }
+    }
+    func editMemoryMediaView(memoryId: String) -> some View {
+        NavigationStack {
+            EditMemoryMediaView(
+                memoryId: memoryId,
+                mediaUrlStrings: media,
+                onEdited: {
+                    if let memoryId = viewModel.updatedMemory?.id {
+                        Task {
+                            await viewModel.getUpdatedMemory(for: memoryId)
                         }
                     }
                 }

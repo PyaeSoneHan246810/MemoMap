@@ -44,7 +44,7 @@ final class FirebaseUserProfileRepository: UserProfileRepository {
                 throw UsernameAvailabilityError.taken
             }
         } catch {
-            throw UsernameAvailabilityError.failedToCheck
+            throw UsernameAvailabilityError.checkFailed
         }
     }
     

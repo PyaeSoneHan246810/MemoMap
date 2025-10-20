@@ -38,12 +38,14 @@ struct EditPinView: View {
         .scrollIndicators(.hidden)
         .navigationTitle("Edit Pin")
         .toolbar {
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "xmark")
-                    .imageScale(.large)
-                    .fontWeight(.semibold)
+            ToolbarItem(placement: .navigation) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                        .imageScale(.large)
+                        .fontWeight(.semibold)
+                }
             }
         }
     }

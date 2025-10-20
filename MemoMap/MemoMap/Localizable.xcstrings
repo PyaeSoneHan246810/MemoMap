@@ -53,6 +53,9 @@
         }
       }
     },
+    "Add media" : {
+
+    },
     "Add tags" : {
       "localizations" : {
         "my" : {
@@ -259,6 +262,9 @@
         }
       }
     },
+    "Delete all" : {
+
+    },
     "Describe your moments" : {
       "localizations" : {
         "my" : {
@@ -280,6 +286,18 @@
       }
     },
     "Edit" : {
+
+    },
+    "Edit Info" : {
+
+    },
+    "Edit Media" : {
+
+    },
+    "Edit Memory Info" : {
+
+    },
+    "Edit Memory Media" : {
 
     },
     "Edit Photo" : {

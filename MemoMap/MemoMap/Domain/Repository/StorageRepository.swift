@@ -24,4 +24,6 @@ protocol StorageRepository {
     func uploadMemoryVideo(url: URL, fileName: String, memoryId: String) async throws -> String
     
     func deleteMemoryMedia(memoryId: String) async throws
+    
+    func deleteMemoryMediaItem(with urlString: String) async throws
 }

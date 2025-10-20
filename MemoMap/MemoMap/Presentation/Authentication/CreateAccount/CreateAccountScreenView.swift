@@ -92,7 +92,8 @@ private extension CreateAccountScreenView {
     var profilePhotoPickerView: some View {
         PhotosPicker(
             selection: $createAccountViewModel.createAccountInfo.profilePhotoPickerItem,
-            matching: .images
+            matching: .images,
+            photoLibrary: .shared()
         ) {
             ZStack(alignment: .bottomTrailing) {
                 if let profilePhotoImage = createAccountViewModel.createAccountInfo.profilePhotoImage {

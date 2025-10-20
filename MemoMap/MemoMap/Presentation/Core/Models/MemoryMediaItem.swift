@@ -7,7 +7,10 @@
 
 import Foundation
 
-struct MemoryMediaItem: Identifiable {
+struct MemoryMediaItem: Identifiable, Equatable {
     let id: UUID = UUID()
     let media: MemoryMedia
+    static func == (lhs: MemoryMediaItem, rhs: MemoryMediaItem) -> Bool {
+        lhs.id == rhs.id
+    }
 }

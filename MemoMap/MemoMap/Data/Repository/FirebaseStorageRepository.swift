@@ -110,6 +110,14 @@ final class FirebaseStorageRepository: StorageRepository {
             throw DeleteMemoryMediaError.deleteFailed
         }
     }
+    
+    func deleteMemoryMediaItem(with urlString: String) async throws {
+        do {
+            try await storage.reference(forURL: urlString).delete()
+        } catch {
+            throw DeleteMemoryMediaItemError.deleteFailed
+        }
+    }
 }
 
 private extension FirebaseStorageRepository {
