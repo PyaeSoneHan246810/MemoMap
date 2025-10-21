@@ -32,6 +32,12 @@ extension View {
             .controlSize(.large)
     }
     
+    func primaryFilledButtonStyle(controlSize: ControlSize) -> some View {
+        self
+            .buttonStyle(.borderedProminent)
+            .controlSize(controlSize)
+    }
+    
     func primaryFilledSmallButtonStyle() -> some View {
         self
             .buttonStyle(.borderedProminent)

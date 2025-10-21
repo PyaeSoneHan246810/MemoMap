@@ -145,7 +145,7 @@ private extension UserProfileScreenView {
     var memoriesView: some View {
         if memories.isEmpty {
             EmptyContentView(
-                image: .emptyMemories,
+                image: .emptyData,
                 title: "There is no public memories yet!",
                 description: "This user hasn’t shared any memories to be discovered."
             )

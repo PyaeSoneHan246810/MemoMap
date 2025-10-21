@@ -157,7 +157,7 @@ private extension SavedPinDetailsView {
     var memoriesView: some View {
         if memories.isEmpty {
             EmptyContentView(
-                image: .emptyMemories,
+                image: .emptyData,
                 title: "There is no memories yet!",
                 description: "Your memories for this place will appear here once you’ve created one."
             )

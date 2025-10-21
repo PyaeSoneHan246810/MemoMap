@@ -16,7 +16,6 @@ struct AddMemoryView: View {
     @Binding var memoryTags: [String]
     @Binding var memoryDateTime: Date
     @Binding var isMemoryPublic: Bool
-    var publicOrPrivateSelectionEnabled: Bool = true
     var body: some View {
         VStack(alignment: .leading, spacing: 20.0) {
             AddMemoryMediaView(

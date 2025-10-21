@@ -127,7 +127,7 @@ private extension MyProfileScreenView {
     }
     var emptyPublicMemoriesView: some View {
         EmptyContentView(
-            image: .emptyMemories,
+            image: .emptyData,
             title: "There is no public memories yet!",
             description: "Share your favorite moments to let others discover them!"
         )

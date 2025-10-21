@@ -171,7 +171,7 @@ private extension SearchMemoriesScreenView {
     func searchMemoriesView(memories: [MemoryData]) -> some View {
         if memories.isEmpty {
             EmptyContentView(
-                image: .emptyMemories,
+                image: .emptyData,
                 title: "No Memories Found",
                 description: "We couldn’t find any memories related to this location."
             )

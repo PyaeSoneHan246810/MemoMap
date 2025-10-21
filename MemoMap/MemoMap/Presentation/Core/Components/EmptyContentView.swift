@@ -27,7 +27,7 @@ struct EmptyContentView: View {
 
 #Preview {
     EmptyContentView(
-        image: .emptyMemories,
+        image: .emptyData,
         title: "Title",
         description: "description goes here..."
     )

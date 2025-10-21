@@ -10,22 +10,18 @@ import PhotosUI
 
 struct PostMemoryView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var memoryMediaItems: [MemoryMediaItem] = []
-    @State private var memoryTitle: String = ""
-    @State private var memoryDescription: String = ""
-    @State private var memoryTags: [String] = []
-    @State private var memoryDateTime: Date = .now
+    @State private var viewModel: PostMemoryViewModel = .init()
+    @State private var isChooseLocationViewPresented: Bool = false
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 16.0) {
                 AddMemoryView(
-                    memoryMediaItems: $memoryMediaItems,
-                    memoryTitle: $memoryTitle,
-                    memoryDescription: $memoryDescription,
-                    memoryTags: $memoryTags,
-                    memoryDateTime: $memoryDateTime,
-                    isMemoryPublic: .constant(true),
-                    publicOrPrivateSelectionEnabled: false
+                    memoryMediaItems: $viewModel.memoryMediaItems,
+                    memoryTitle: $viewModel.memoryTitle,
+                    memoryDescription: $viewModel.memoryDescription,
+                    memoryTags: $viewModel.memoryTags,
+                    memoryDateTime: $viewModel.memoryDateTime,
+                    isMemoryPublic: .constant(true)
                 )
                 selectLocationView
                     .padding(.horizontal, 16.0)
@@ -35,6 +31,12 @@ struct PostMemoryView: View {
         }
         .scrollIndicators(.hidden)
         .navigationTitle("Post a memory")
+        .navigationDestination(isPresented: $isChooseLocationViewPresented) {
+            ChooseLocationView(
+                isPresented: $isChooseLocationViewPresented,
+                selectedPin: $viewModel.selectedPin
+            )
+        }
         .toolbar {
             toolbarContentView
         }
@@ -54,21 +56,28 @@ private extension PostMemoryView {
             }
         }
     }
+    @ViewBuilder
     var selectLocationView: some View {
-        NavigationLink {
-            
-        } label: {
-            HStack {
-                Label("Choose location", systemImage: "mappin.square")
-                Spacer()
-                Image(systemName: "chevron.right")
-            }
+        let labelName = viewModel.selectedPin?.name ?? "Choose saved location"
+        HStack {
+            Label(labelName, systemImage: "mappin.square")
+            Spacer()
+            Image(systemName: "chevron.right")
         }
-        .buttonStyle(.plain)
+        .contentShape(.rect)
+        .onTapGesture {
+            isChooseLocationViewPresented = true
+        }
     }
     var postButtonView: some View {
         Button {
-            
+            Task {
+                await viewModel.postMemory(
+                    onComplete: {
+                        dismiss()
+                    }
+                )
+            }
         } label: {
             Text("Post")
         }
