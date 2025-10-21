@@ -1,0 +1,106 @@
+//
+//  ChooseLocationView.swift
+//  MemoMap
+//
+//  Created by Dylan on 21/10/25.
+//
+
+import SwiftUI
+
+struct ChooseLocationView: View {
+    @Binding var isPresented: Bool
+    @Binding var selectedPin: PinData?
+    @State private var viewModel: ChooseLocationViewModel = .init()
+    var body: some View {
+        Group {
+            if viewModel.filteredPins.isEmpty && viewModel.trimmedSearchText.isEmpty {
+                emptyPinsView
+            } else {
+                pinsListView
+            }
+        }
+        .navigationTitle("Choose saved location")
+        .navigationBarTitleDisplayMode(.inline)
+        .task {
+            await viewModel.getPins()
+        }
+    }
+}
+
+private extension ChooseLocationView {
+    var emptyPinsView: some View {
+        EmptyContentView(
+            image: .emptyData,
+            title: "No Pins Yet",
+            description: "You haven’t saved any locations yet."
+        )
+        .safeAreaInset(edge: .bottom) {
+            addPinButtonView
+        }
+    }
+    var pinsListView: some View {
+        List {
+            if viewModel.filteredPins.isEmpty {
+                emptySearchPinsView
+            } else {
+                ForEach(viewModel.filteredPins) { pin in
+                    NavigationLink {
+                        pinMapView(
+                            pin: pin
+                        )
+                    } label: {
+                        pinItemView(pin: pin)
+                    }
+                    .navigationLinkIndicatorVisibility(.hidden)
+                }
+            }
+        }
+        .searchable(
+            text: $viewModel.searchText,
+            prompt: Text("Search for saved locations")
+        )
+    }
+    var emptySearchPinsView: some View {
+        EmptyContentView(
+            image: .emptyData,
+            title: "No Pins Found",
+            description: "We couldn’t find any saved locations that match your search."
+        )
+    }
+    func pinItemView(pin: PinData) -> some View {
+        VStack(alignment: .leading, spacing: 8.0) {
+            HStack(spacing: 4.0) {
+                Image(systemName: "mappin.square")
+                Text(pin.name)
+                    .font(.headline)
+            }
+            Text(pin.description ?? "No description.")
+                .font(.subheadline)
+        }
+    }
+    var addPinButtonView: some View {
+        Button("Add pin", systemImage: "plus") {
+            
+        }
+        .primaryFilledButtonStyle(controlSize: .regular)
+    }
+    func pinMapView(pin: PinData) -> some View {
+        PinSelectionView(
+            selectedPin: $selectedPin,
+            pin: pin,
+            onSelected: {
+                isPresented = false
+            }
+        )
+    }
+    
+}
+
+#Preview {
+    NavigationStack {
+        ChooseLocationView(
+            isPresented: .constant(true),
+            selectedPin: .constant(.preview1)
+        )
+    }
+}

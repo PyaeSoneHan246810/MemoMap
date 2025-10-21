@@ -56,6 +56,9 @@
     "Add media" : {
 
     },
+    "Add pin" : {
+
+    },
     "Add tags" : {
       "localizations" : {
         "my" : {
@@ -147,6 +150,7 @@
       }
     },
     "Choose location" : {
+      "extractionState" : "stale",
       "localizations" : {
         "my" : {
           "stringUnit" : {
@@ -155,6 +159,9 @@
           }
         }
       }
+    },
+    "Choose saved location" : {
+
     },
     "Clear all" : {
       "localizations" : {
@@ -759,10 +766,16 @@
         }
       }
     },
+    "Search for saved locations" : {
+
+    },
     "Search Memories" : {
 
     },
     "Search Users" : {
+
+    },
+    "Select" : {
 
     },
     "Select date and time" : {

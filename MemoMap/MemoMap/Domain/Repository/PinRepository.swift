@@ -16,6 +16,8 @@ protocol PinRepository {
     
     func listenPins(userData: UserData?, completion: @escaping (Result<[PinData], Error>) -> Void)
     
+    func getPins(userData: UserData?) async throws -> [PinData]
+    
     func getPin(pinId: String) async throws -> PinData
     
     func updatePinInfo(pinId: String, pinName: String, pinDescription: String?) async throws

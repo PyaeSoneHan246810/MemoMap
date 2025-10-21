@@ -81,6 +81,21 @@ final class FirebasePinRepository: PinRepository {
         }
     }
     
+    func getPins(userData: UserData?) async throws -> [PinData] {
+        guard let userId = userData?.uid else {
+            throw GetPinsError.userNotFound
+        }
+        do {
+            let pinModels = try await pinCollectionReference.whereField(PinModel.CodingKeys.ownerId.rawValue, isEqualTo: userId).getDocumentModels(as: PinModel.self)
+            let pins = pinModels.map { pinModel in
+                getPinData(from: pinModel)
+            }
+            return pins
+        } catch {
+            throw GetPinsError.failedToGet
+        }
+    }
+    
     func getPin(pinId: String) async throws -> PinData {
         do {
             let pinModel = try await pinCollectionReference.document(pinId).getDocument(as: PinModel.self)
