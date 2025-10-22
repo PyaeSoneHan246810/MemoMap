@@ -62,12 +62,8 @@ private extension SavedPinDetailsView {
     @ToolbarContentBuilder
     var toolbarContentView: some ToolbarContent {
         ToolbarItem(placement: .navigation) {
-            Button {
+            Button(role: .close) {
                 dismiss()
-            } label: {
-                Image(systemName: "xmark")
-                    .imageScale(.large)
-                    .fontWeight(.semibold)
             }
         }
     }

@@ -15,7 +15,7 @@ struct AddNewPinView: View {
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 0.0) {
-                locationImageView
+                locationImagePickerView
                 VStack(spacing: 20.0) {
                     locationInfoTextFieldsView
                         .padding(.horizontal, 16.0)
@@ -51,16 +51,12 @@ private extension AddNewPinView {
     @ToolbarContentBuilder
     var toolbarContentView: some ToolbarContent {
         ToolbarItem(placement: .navigation) {
-            Button {
+            Button(role: .close) {
                 dismiss()
-            } label: {
-                Image(systemName: "xmark")
-                    .imageScale(.large)
-                    .fontWeight(.semibold)
             }
         }
     }
-    var locationImageView: some View {
+    var locationImagePickerView: some View {
         ZStack(alignment: .bottomTrailing) {
             if let locationPhotoImage = viewModel.locationPhotoImage {
                 Rectangle()
@@ -81,29 +77,6 @@ private extension AddNewPinView {
             )
             .padding(.bottom, 16.0)
             .padding(.trailing, 16.0)
-        }
-    }
-    var locationImagePickerView: some View {
-        PhotosPicker(
-            selection: $viewModel.locationPhotoPickerItem,
-            matching: .images,
-            photoLibrary: .shared()
-        ) {
-            Label("Edit Photo", systemImage: "pencil")
-                .labelStyle(.iconOnly)
-                .imageScale(.large)
-                .fontWeight(.semibold)
-                .frame(width: 48.0, height: 48.0)
-                .glassEffect(.regular.interactive(), in: .circle)
-                .tint(.primary)
-        }
-        .onChange(of: viewModel.locationPhotoPickerItem) {
-            Task {
-                if let locationPhotoData = try? await viewModel.locationPhotoPickerItem?.loadTransferable(type: Data.self) {
-                    let locationPhotoImage = UIImage(data: locationPhotoData)
-                    viewModel.locationPhotoImage = locationPhotoImage
-                }
-            }
         }
     }
     @ViewBuilder

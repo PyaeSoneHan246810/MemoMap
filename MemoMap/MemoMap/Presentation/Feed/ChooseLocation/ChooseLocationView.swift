@@ -21,6 +21,10 @@ struct ChooseLocationView: View {
         }
         .navigationTitle("Choose saved location")
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $viewModel.isAddPinSheetViewPresented) {
+            addPinView
+                .interactiveDismissDisabled()
+        }
         .task {
             await viewModel.getPins()
         }
@@ -80,7 +84,7 @@ private extension ChooseLocationView {
     }
     var addPinButtonView: some View {
         Button("Add pin", systemImage: "plus") {
-            
+            viewModel.isAddPinSheetViewPresented = true
         }
         .primaryFilledButtonStyle(controlSize: .regular)
     }
@@ -93,7 +97,21 @@ private extension ChooseLocationView {
             }
         )
     }
-    
+    var addPinView: some View {
+        NavigationStack {
+            AddPinView(
+                locationPhotoImage: $viewModel.locationPhotoImage,
+                locationName: $viewModel.locationName,
+                locationDescription: $viewModel.locationDescription,
+                locationPlace: $viewModel.locationPlace,
+                onSave: {
+                    Task {
+                        await viewModel.saveNewPin()
+                    }
+                }
+            )
+        }
+    }
 }
 
 #Preview {

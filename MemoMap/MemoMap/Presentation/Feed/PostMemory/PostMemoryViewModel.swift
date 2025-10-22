@@ -17,6 +17,8 @@ class PostMemoryViewModel {
     
     @ObservationIgnored @Injected(\.storageRepository) private var storageRepository: StorageRepository
     
+    var isChooseLocationViewPresented: Bool = false
+    
     var memoryMediaItems: [MemoryMediaItem] = []
     
     var memoryTitle: String = ""
