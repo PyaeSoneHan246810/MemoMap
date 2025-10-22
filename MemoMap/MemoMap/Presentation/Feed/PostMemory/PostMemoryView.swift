@@ -11,7 +11,6 @@ import PhotosUI
 struct PostMemoryView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: PostMemoryViewModel = .init()
-    @State private var isChooseLocationViewPresented: Bool = false
     var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 16.0) {
@@ -31,9 +30,9 @@ struct PostMemoryView: View {
         }
         .scrollIndicators(.hidden)
         .navigationTitle("Post a memory")
-        .navigationDestination(isPresented: $isChooseLocationViewPresented) {
+        .navigationDestination(isPresented: $viewModel.isChooseLocationViewPresented) {
             ChooseLocationView(
-                isPresented: $isChooseLocationViewPresented,
+                isPresented: $viewModel.isChooseLocationViewPresented,
                 selectedPin: $viewModel.selectedPin
             )
         }
@@ -47,12 +46,8 @@ private extension PostMemoryView {
     @ToolbarContentBuilder
     var toolbarContentView: some ToolbarContent {
         ToolbarItem(placement: .navigation) {
-            Button {
+            Button(role: .close) {
                 dismiss()
-            } label: {
-                Image(systemName: "xmark")
-                    .imageScale(.large)
-                    .fontWeight(.semibold)
             }
         }
     }
@@ -66,7 +61,7 @@ private extension PostMemoryView {
         }
         .contentShape(.rect)
         .onTapGesture {
-            isChooseLocationViewPresented = true
+            viewModel.isChooseLocationViewPresented = true
         }
     }
     var postButtonView: some View {
