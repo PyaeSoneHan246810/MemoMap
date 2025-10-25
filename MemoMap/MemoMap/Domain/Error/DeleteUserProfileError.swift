@@ -7,7 +7,15 @@
 
 import Foundation
 
-enum DeleteUserProfileError: Error {
+enum DeleteUserProfileError: Error, LocalizedError {
     case userNotFound
     case deleteFailed
+    var errorDescription: String? {
+        switch self {
+        case .userNotFound:
+            "User Not Found"
+        case .deleteFailed:
+            "Delete Failed"
+        }
+    }
 }

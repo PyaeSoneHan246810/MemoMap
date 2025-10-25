@@ -27,6 +27,25 @@ struct DeleteAccountScreenView: View {
         .padding(16.0)
         .navigationTitle("Delete account")
         .navigationBarTitleDisplayMode(.inline)
+        .alert(
+            "Delete account",
+            isPresented: $deleteAccountViewModel.isDeleteAccountConfirmationPresented,
+            actions: {
+                Button("Cancel", role: .cancel) {}
+                Button("Delete", role: .destructive) {
+                    Task {
+                        await deleteAccount()
+                    }
+                }
+            },
+            message: {
+                Text("Are you sure to delete this account?")
+            }
+        )
+        .alert(
+            isPresented: $deleteAccountViewModel.isDeleteAccountAlertPresented,
+            error: deleteAccountViewModel.deleteAccountError
+        ) {}
     }
 }
 
@@ -41,11 +60,12 @@ private extension DeleteAccountScreenView {
     }
     var deleteAccountButtonView: some View {
         Button {
-            Task { await deleteAccount() }
+            deleteAccountViewModel.isDeleteAccountConfirmationPresented = true
         } label: {
             Text("Delete account")
         }
         .primaryFilledLargeButtonStyle()
+        .progressButtonStyle(isInProgress: deleteAccountViewModel.isDeleteAccountInProgress)
         .tint(.red)
     }
     var goBackButtonView: some View {
@@ -62,10 +82,11 @@ private extension DeleteAccountScreenView {
 
 private extension DeleteAccountScreenView {
     func deleteAccount() async {
-        let result = await deleteAccountViewModel.deleteUser()
-        if case .success = result {
-            appSessionViewModel.changeAppSession(.unauthenticated)
-        }
+        await deleteAccountViewModel.deleteAccount(
+            onSuccess: {
+                appSessionViewModel.changeAppSession(.unauthenticated)
+            }
+        )
     }
 }
 

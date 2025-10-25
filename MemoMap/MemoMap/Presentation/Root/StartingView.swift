@@ -21,9 +21,6 @@ struct StartingView: View {
             }
         }
         .animation(.spring, value: appSessionViewModel.appSession)
-        .onTapGesture {
-            hideKeyboard()
-        }
         .onAppear {
             appSessionViewModel.configureAppSession()
         }

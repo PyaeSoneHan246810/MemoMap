@@ -10,7 +10,6 @@ import Foundation
 enum SendEmailVerificationError: Error, LocalizedError {
     case userNotFound
     case networkError
-    case sendFailed
     case unknownError
     var errorDescription: String? {
         switch self {
@@ -18,8 +17,6 @@ enum SendEmailVerificationError: Error, LocalizedError {
             "User Not Found"
         case .networkError:
             "Network Error"
-        case .sendFailed:
-            "Send Failed"
         case .unknownError:
             "Unknown Error"
         }
