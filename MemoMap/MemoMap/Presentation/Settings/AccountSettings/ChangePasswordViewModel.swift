@@ -16,42 +16,63 @@ final class ChangePasswordViewModel {
     
     var currentPassword: String = ""
     
-    var newPassword: String = ""
-    
-    var confirmNewPassword: String = ""
-    
-    private(set) var reauthenticateUserError: ReauthenticateUserError? = nil
-    
-    private(set) var updatePasswordError: UpdatePasswordError? = nil
-    
     private var trimmedCurrentPassword: String {
         currentPassword.trimmed()
     }
+    
+    var newPassword: String = ""
     
     private var trimmedNewPassword: String {
         newPassword.trimmed()
     }
     
+    var confirmNewPassword: String = ""
+    
     private var trimmedConfirmNewPassword: String {
         confirmNewPassword.trimmed()
     }
     
-    func reauthenticateUserAndUpdatePassword() async -> Result<Void, Error> {
+    private(set) var isChangePasswordInProgress: Bool = false
+    
+    enum ChangePasswordError: Error, LocalizedError {
+        case reauthenticateUserError(ReauthenticateUserError)
+        case updatePasswordError(UpdatePasswordError)
+        case unknownError
+        var errorDescription: String? {
+            switch self {
+            case .reauthenticateUserError(let reauthenticateUserError):
+                reauthenticateUserError.localizedDescription
+            case .updatePasswordError(let updatePasswordError):
+                updatePasswordError.localizedDescription
+            case .unknownError:
+                "Unknown Error"
+            }
+        }
+    }
+    
+    private(set) var changePasswordError: ChangePasswordError? = nil
+    
+    var isChangePasswordAlertPresented: Bool = false
+    
+    func changePassword(onSuccess: () -> Void) async {
+        isChangePasswordInProgress = true
         do {
             try await authenticationRepository.reauthenticateUser(currentPassword: trimmedCurrentPassword)
             try await authenticationRepository.updatePassword(newPassword: trimmedConfirmNewPassword)
-            return .success(())
+            isChangePasswordInProgress = false
+            changePasswordError = nil
+            isChangePasswordAlertPresented = false
+            onSuccess()
         } catch {
+            isChangePasswordInProgress = false
             if let reauthenticateUserError = error as? ReauthenticateUserError {
-                print(reauthenticateUserError.localizedDescription)
-                return .failure(reauthenticateUserError)
+                changePasswordError = .reauthenticateUserError(reauthenticateUserError)
             } else if let updatePasswordError = error as? UpdatePasswordError {
-                print(updatePasswordError.localizedDescription)
-                return .failure(updatePasswordError)
+                changePasswordError = .updatePasswordError(updatePasswordError)
             } else {
-                print(error.localizedDescription)
-                return .failure(error)
+                changePasswordError = .unknownError
             }
+            isChangePasswordAlertPresented = true
         }
     }
 }

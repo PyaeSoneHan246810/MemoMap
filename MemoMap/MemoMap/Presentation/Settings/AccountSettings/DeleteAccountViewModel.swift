@@ -17,53 +17,63 @@ final class DeleteAccountViewModel {
     
     @ObservationIgnored @Injected(\.userProfileRepository) private var userProfileRepository: UserProfileRepository
     
-    private(set) var deleteUserProfileError: DeleteUserProfileError? = nil
+    var isDeleteAccountConfirmationPresented: Bool = false
     
-    private(set) var deleteUserError: DeleteUserError? = nil
+    private(set) var isDeleteAccountInProgress: Bool = false
     
-    private(set) var signOutUserError: SignOutUserError? = nil
+    enum DeleteAccountError: Error, LocalizedError {
+        case deleteUserError(DeleteUserError)
+        case deleteUserProfileError(DeleteUserProfileError)
+        case deleteProfilePhotoError(DeleteProfilePhotoError)
+        case signOutUserError(SignOutUserError)
+        case unknownError
+        var errorDescription: String? {
+            switch self {
+            case .deleteUserError(let deleteUserError):
+                deleteUserError.localizedDescription
+            case .deleteUserProfileError(let deleteUserProfileError):
+                deleteUserProfileError.localizedDescription
+            case .deleteProfilePhotoError(let deleteProfilePhotoError):
+                deleteProfilePhotoError.localizedDescription
+            case .signOutUserError(let signOutUserError):
+                signOutUserError.localizedDescription
+            case .unknownError:
+                "Unknown Error"
+            }
+        }
+    }
     
-    func deleteUser() async -> Result<Void, Error> {
+    private(set) var deleteAccountError: DeleteAccountError? = nil
+    
+    var isDeleteAccountAlertPresented: Bool = false
+    
+    func deleteAccount(onSuccess: () -> Void) async {
+        isDeleteAccountInProgress = true
         do {
             let userData = authenticationRepository.getUserData()
             try await authenticationRepository.deleteUser()
-            try authenticationRepository.signOutUser()
-            await deleteUserInfo(userData: userData)
-            return .success(())
-        } catch {
-            if let deleteUserError = error as? DeleteUserError {
-                print(deleteUserError.localizedDescription)
-                self.deleteUserError = deleteUserError
-                return .failure(deleteUserError)
-            } else if let signOutUserError = error as? SignOutUserError {
-                print(signOutUserError.localizedDescription)
-                self.signOutUserError = signOutUserError
-                return .failure(signOutUserError)
-            } else {
-                print(error.localizedDescription)
-                return .failure(error)
-            }
-        }
-    }
-    
-    private func deleteUserInfo(userData: UserData?) async {
-        do {
             try await userProfileRepository.deleteUserProfile(userData: userData)
-        } catch {
-            if let deleteUserProfileError = error as? DeleteUserProfileError {
-                print(deleteUserProfileError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
-        }
-        do {
             try await storageRepository.deleteProfilePhoto(userData: userData)
+            try authenticationRepository.signOutUser()
+            isDeleteAccountInProgress = false
+            deleteAccountError = nil
+            isDeleteAccountAlertPresented = false
+            onSuccess()
         } catch {
-            if let deleteProfilePhotoError = error as? DeleteProfilePhotoError {
-                print(deleteProfilePhotoError.localizedDescription)
+            isDeleteAccountInProgress = false
+            if let deleteUserError = error as? DeleteUserError {
+                deleteAccountError = .deleteUserError(deleteUserError)
+            } else if let deleteUserProfileError = error as? DeleteUserProfileError{
+                deleteAccountError = .deleteUserProfileError(deleteUserProfileError)
+            } else if let deleteProfilePhotoError = error as? DeleteProfilePhotoError {
+                deleteAccountError = .deleteProfilePhotoError(deleteProfilePhotoError)
+            } else if let signOutUserError = error as? SignOutUserError {
+                deleteAccountError = .signOutUserError(signOutUserError)
             } else {
-                print(error.localizedDescription)
+                deleteAccountError = .unknownError
             }
+            isDeleteAccountAlertPresented = true
         }
     }
+
 }

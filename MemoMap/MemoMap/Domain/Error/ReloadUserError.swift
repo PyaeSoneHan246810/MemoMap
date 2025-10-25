@@ -10,7 +10,6 @@ import Foundation
 enum ReloadUserError: Error, LocalizedError {
     case userNotFound
     case networkError
-    case reloadFailed
     case unknownError
     var errorDescription: String? {
         switch self {
@@ -18,8 +17,6 @@ enum ReloadUserError: Error, LocalizedError {
             "User Not Found"
         case .networkError:
             "Network Error"
-        case .reloadFailed:
-            "Reload Failed"
         case .unknownError:
             "Unknown Error"
         }

@@ -12,7 +12,6 @@ enum CreateUserError: Error, LocalizedError {
     case weakPassword
     case emailAlreadyInUse
     case networkError
-    case createFailed
     case unknownError
     var errorDescription: String? {
         switch self {
@@ -24,8 +23,6 @@ enum CreateUserError: Error, LocalizedError {
             "Email Already In Use"
         case .networkError:
             "Network Error"
-        case .createFailed:
-            "Create Failed"
         case .unknownError:
             "Unknown Error"
         }

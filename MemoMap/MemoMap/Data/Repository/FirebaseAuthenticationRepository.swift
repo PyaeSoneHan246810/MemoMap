@@ -31,7 +31,7 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
                 case .networkError:
                     throw ReloadUserError.networkError
                 default:
-                    throw ReloadUserError.reloadFailed
+                    throw ReloadUserError.unknownError
                 }
             } else {
                 throw ReloadUserError.unknownError
@@ -60,7 +60,7 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
                 case .networkError:
                     throw CreateUserError.networkError
                 default:
-                    throw CreateUserError.createFailed
+                    throw CreateUserError.unknownError
                 }
             } else {
                 throw CreateUserError.unknownError
@@ -86,7 +86,7 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
                 case .networkError:
                     throw SignInUserError.networkError
                 default:
-                    throw SignInUserError.signInFailed
+                    throw SignInUserError.unknownError
                 }
             } else {
                 throw SignInUserError.unknownError
@@ -107,7 +107,7 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
                 case .requiresRecentLogin:
                     throw DeleteUserError.requiresRecentLogin
                 default:
-                    throw DeleteUserError.deleteFailed
+                    throw DeleteUserError.unknownError
                 }
             } else {
                 throw DeleteUserError.unknownError
@@ -125,7 +125,7 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
                 case .keychainError:
                     throw SignOutUserError.keychainError
                 default:
-                    throw SignOutUserError.signOutFailed
+                    throw SignOutUserError.unknownError
                 }
             } else {
                 throw SignOutUserError.unknownError
@@ -148,7 +148,7 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
                 case .networkError:
                     throw SendEmailVerificationError.networkError
                 default:
-                    throw SendEmailVerificationError.sendFailed
+                    throw SendEmailVerificationError.unknownError
                 }
             } else {
                 throw SendEmailVerificationError.unknownError
@@ -203,7 +203,7 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
                 case .networkError:
                     throw ReauthenticateUserError.networkError
                 default:
-                    throw ReauthenticateUserError.reauthenticationFailed
+                    throw ReauthenticateUserError.unknownError
                 }
             } else {
                 throw ReauthenticateUserError.unknownError
@@ -230,7 +230,7 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
                 case .networkError:
                     throw UpdatePasswordError.networkError
                 default:
-                    throw UpdatePasswordError.updateFailed
+                    throw UpdatePasswordError.unknownError
                 }
             }
         }

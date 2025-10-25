@@ -12,7 +12,7 @@ struct ForgotPasswordScreenView: View {
     @State private var viewModel: ForgotPasswordViewModel = .init()
     var body: some View {
         ScrollView(.vertical) {
-            VStack(spacing: 0.0) {
+            LazyVStack(spacing: 0.0) {
                 subtitleView
                 Spacer().frame(height: 32.0)
                 emailAddressTextFieldView

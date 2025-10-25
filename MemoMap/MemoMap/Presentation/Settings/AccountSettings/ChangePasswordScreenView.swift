@@ -12,7 +12,7 @@ struct ChangePasswordScreenView: View {
     @State private var changePasswordViewModel: ChangePasswordViewModel = .init()
     var body: some View {
         ScrollView(.vertical) {
-            VStack(spacing: 20.0) {
+            LazyVStack(spacing: 20.0) {
                 passwordTextFieldsView
                 updateButtonView
             }
@@ -21,6 +21,10 @@ struct ChangePasswordScreenView: View {
         .contentMargins(16.0)
         .navigationTitle("Change password")
         .navigationBarTitleDisplayMode(.inline)
+        .alert(
+            isPresented: $changePasswordViewModel.isChangePasswordAlertPresented,
+            error: changePasswordViewModel.changePasswordError
+        ) {}
     }
 }
 
@@ -31,19 +35,28 @@ private extension ChangePasswordScreenView {
             localizedTitle: "Current password",
             localizedPlaceholder: "Enter your current password",
             text: $changePasswordViewModel.currentPassword,
-            isSecured: true
+            isSecured: true,
+            textContentType: .password,
+            autoCorrectionDisabled: true,
+            submitLabel: .next
         )
         InputTextFieldView(
             localizedTitle: "New password",
             localizedPlaceholder: "Enter your new password",
             text: $changePasswordViewModel.newPassword,
-            isSecured: true
+            isSecured: true,
+            textContentType: .newPassword,
+            autoCorrectionDisabled: true,
+            submitLabel: .next
         )
         InputTextFieldView(
             localizedTitle: "Confirm new password",
             localizedPlaceholder: "Confirm your new password",
             text: $changePasswordViewModel.confirmNewPassword,
-            isSecured: true
+            isSecured: true,
+            textContentType: .newPassword,
+            autoCorrectionDisabled: true,
+            submitLabel: .done
         )
     }
     var updateButtonView: some View {
@@ -53,15 +66,17 @@ private extension ChangePasswordScreenView {
             Text("Update")
         }
         .primaryFilledLargeButtonStyle()
+        .progressButtonStyle(isInProgress: changePasswordViewModel.isChangePasswordInProgress)
     }
 }
 
 private extension ChangePasswordScreenView {
     func updatePassword() async {
-        let result = await changePasswordViewModel.reauthenticateUserAndUpdatePassword()
-        if case .success = result {
-            appSessionViewModel.changeAppSession(.unauthenticated)
-        }
+        await changePasswordViewModel.changePassword(
+            onSuccess: {
+                appSessionViewModel.changeAppSession(.unauthenticated)
+            }
+        )
     }
 }
 

@@ -13,7 +13,6 @@ enum SignInUserError: Error, LocalizedError {
     case wrongPassword
     case userDisabled
     case networkError
-    case signInFailed
     case unknownError
     var errorDescription: String? {
         switch self {
@@ -27,8 +26,6 @@ enum SignInUserError: Error, LocalizedError {
             "User Disabled"
         case .networkError:
             "Network Error"
-        case .signInFailed:
-            "Sign In Failed"
         case .unknownError:
             "Unknown Error"
         }

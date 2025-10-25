@@ -36,19 +36,6 @@ struct SettingsScreenView: View {
         }
         .toolbarVisibility(.hidden, for: .tabBar)
         .alert(
-            isPresented: $settingsViewModel.isSignOutUserAlertPresented,
-            error: settingsViewModel.signOutUserError
-        ) {}
-    }
-}
-
-private extension SettingsScreenView {
-    var logOutButtonView: some View {
-        Button("Log out", systemImage: "rectangle.portrait.and.arrow.right") {
-            settingsViewModel.isSignOutConfirmationPresented = true
-        }
-        .destructiveButtonStyle(controlSize: .regular)
-        .alert(
             "Log out",
             isPresented: $settingsViewModel.isSignOutConfirmationPresented,
             actions: {
@@ -61,6 +48,19 @@ private extension SettingsScreenView {
                 Text("Are you sure to log out from the account?")
             }
         )
+        .alert(
+            isPresented: $settingsViewModel.isSignOutUserAlertPresented,
+            error: settingsViewModel.signOutUserError
+        ) {}
+    }
+}
+
+private extension SettingsScreenView {
+    var logOutButtonView: some View {
+        Button("Log out", systemImage: "rectangle.portrait.and.arrow.right") {
+            settingsViewModel.isSignOutConfirmationPresented = true
+        }
+        .destructiveButtonStyle(controlSize: .regular)
     }
 }
 

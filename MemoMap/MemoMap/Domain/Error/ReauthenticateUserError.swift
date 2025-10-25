@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum ReauthenticateUserError: Error {
+enum ReauthenticateUserError: Error, LocalizedError {
     case userNotFound
     case userEmailNotFound
     case invalidCredential
@@ -16,6 +16,27 @@ enum ReauthenticateUserError: Error {
     case userMismatch
     case userDisabled
     case networkError
-    case reauthenticationFailed
     case unknownError
+    var errorDescription: String? {
+        switch self {
+        case .userNotFound:
+            "User Not Found"
+        case .userEmailNotFound:
+            "User Email Not Found"
+        case .invalidCredential:
+            "Invalid Credential"
+        case .invalidEmail:
+            "Invalid Email"
+        case .wrongPassword:
+            "Wrong Password"
+        case .userMismatch:
+            "User Mismatch"
+        case .userDisabled:
+            "User Disabled"
+        case .networkError:
+            "Network Error"
+        case .unknownError:
+            "Unknown Error"
+        }
+    }
 }
