@@ -24,6 +24,10 @@ struct ForgotPasswordScreenView: View {
         .scrollIndicators(.hidden)
         .navigationTitle("Forgot password?")
         .navigationBarTitleDisplayMode(.large)
+        .alert(
+            isPresented: $viewModel.isPasswordResetAlertPresented,
+            error: viewModel.sendPasswordResetError
+        ) {}
         .sheet(isPresented: $viewModel.isSuccessSheetPresented) {
             successSheetView
                 .interactiveDismissDisabled()
@@ -42,7 +46,11 @@ private extension ForgotPasswordScreenView {
         InputTextFieldView(
             localizedTitle: "Email address",
             localizedPlaceholder: "Enter your email address",
-            text: $viewModel.emailAddress
+            text: $viewModel.emailAddress,
+            keyboardType: .emailAddress,
+            textContentType: .emailAddress,
+            autoCorrectionDisabled: true,
+            submitLabel: .done
         )
     }
     var sendEmailButtonView: some View {
@@ -52,6 +60,7 @@ private extension ForgotPasswordScreenView {
             Text("Send email")
         }
         .primaryFilledLargeButtonStyle()
+        .progressButtonStyle(isInProgress: viewModel.isPasswordResetInProgress)
     }
     var successSheetView: some View {
         VStack {

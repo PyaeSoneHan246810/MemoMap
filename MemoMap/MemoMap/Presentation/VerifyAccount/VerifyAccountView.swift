@@ -22,6 +22,14 @@ struct VerifyAccountView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 16.0)
+        .alert(
+            isPresented: $viewModel.isReloadUserAlertPresented,
+            error: viewModel.reloadUserError
+        ) {}
+        .alert(
+            isPresented: $viewModel.isSendEmailVerificationAlertPresented,
+            error: viewModel.sendEmailVerificationError
+        ) {}
     }
 }
 
@@ -54,18 +62,24 @@ private extension VerifyAccountView {
     var buttonsView: some View {
         VStack(spacing: 12.0) {
             Button {
-                Task { await checkEmailVerificationStatus() }
+                Task {
+                    await checkEmailVerificationStatus()
+                }
             } label: {
                 Text("I've verified")
             }
             .primaryFilledLargeButtonStyle()
+            .progressButtonStyle(isInProgress: viewModel.isReloadUserInProgress)
             Button {
-                Task { await viewModel.sendEmailVerification() }
+                Task {
+                    await viewModel.sendEmailVerification()
+                }
             } label: {
                 Text("Resend verification link")
                     .frame(maxWidth: .infinity)
             }
             .textLargeButtonStyle()
+            .progressButtonStyle(isInProgress: viewModel.isSendEmailVerificationInProgress)
         }
     }
 }

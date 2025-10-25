@@ -13,38 +13,59 @@ import Factory
 final class VerifyAccountViewModel {
     @ObservationIgnored @Injected(\.authenticationRepository) private var authenticationRepository: AuthenticationRepository
     
+    private(set) var isReloadUserInProgress: Bool = false
+    
     private(set) var reloadUserError: ReloadUserError? = nil
+    
+    var isReloadUserAlertPresented: Bool = false
+    
+    private(set) var isSendEmailVerificationInProgress: Bool = false
     
     private(set) var sendEmailVerificationError: SendEmailVerificationError? = nil
     
+    var isSendEmailVerificationAlertPresented: Bool = false
+    
     func checkEmailVerificationStatus() async -> EmailVerificationStatus {
+        isReloadUserInProgress = true
         do {
             try await authenticationRepository.reloadUser()
             guard let userData = authenticationRepository.getUserData() else {
+                isReloadUserInProgress = false
+                reloadUserError = .userNotFound
+                isReloadUserAlertPresented = true
                 return .unknown
             }
+            isReloadUserInProgress = false
+            reloadUserError = nil
+            isReloadUserAlertPresented = false
             return userData.isEmailVerified ? .verified : .notVerified
         } catch {
+            isReloadUserInProgress = false
             if let reloadUserError = error as? ReloadUserError {
-                print(reloadUserError.localizedDescription)
                 self.reloadUserError = reloadUserError
             } else {
-                print(error.localizedDescription)
+                reloadUserError = .unknownError
             }
+            isReloadUserAlertPresented = true
             return .unknown
         }
     }
     
     func sendEmailVerification() async {
+        isSendEmailVerificationInProgress = true
         do {
             try await authenticationRepository.sendEmailVerification()
+            isSendEmailVerificationInProgress = false
+            sendEmailVerificationError = nil
+            isSendEmailVerificationAlertPresented = false
         } catch {
+            isSendEmailVerificationInProgress = false
             if let sendEmailVerificationError = error as? SendEmailVerificationError {
-                print(sendEmailVerificationError.localizedDescription)
                 self.sendEmailVerificationError = sendEmailVerificationError
             } else {
-                print(error.localizedDescription)
+                sendEmailVerificationError = .unknownError
             }
+            isSendEmailVerificationAlertPresented = true
         }
     }
 }

@@ -12,7 +12,7 @@ struct LogInScreenView: View {
     @State private var loginViewModel: LoginViewModel = .init()
     var body: some View {
         ScrollView(.vertical) {
-            VStack(spacing: 0.0) {
+            LazyVStack(spacing: 0.0) {
                 Spacer().frame(height: 32.0)
                 loginFormView
                 Spacer().frame(height: 32.0)
@@ -23,6 +23,10 @@ struct LogInScreenView: View {
         .scrollIndicators(.hidden)
         .navigationTitle("Log in")
         .navigationBarTitleDisplayMode(.large)
+        .alert(
+            isPresented: $loginViewModel.isSignInUserAlertPresented,
+            error: loginViewModel.signInUserError
+        ) {}
     }
 }
 
@@ -33,14 +37,19 @@ private extension LogInScreenView {
                 localizedTitle: "Email address",
                 localizedPlaceholder: "Enter your email address",
                 text: $loginViewModel.emailAddress,
-                axis: .horizontal,
-                lineLimit: 1
+                keyboardType: .emailAddress,
+                textContentType: .emailAddress,
+                autoCorrectionDisabled: true,
+                submitLabel: .next
             )
             InputTextFieldView(
                 localizedTitle: "Password",
                 localizedPlaceholder: "Enter your password",
                 text: $loginViewModel.password,
-                isSecured: true
+                isSecured: true,
+                textContentType: .password,
+                autoCorrectionDisabled: true,
+                submitLabel: .done
             )
             forgotPasswordLinkView
         }
@@ -58,6 +67,7 @@ private extension LogInScreenView {
             .tint(.primary)
         }
     }
+    @ViewBuilder
     var signInButtonView: some View {
         Button {
             Task { await signInUser() }
@@ -65,15 +75,17 @@ private extension LogInScreenView {
             Text("Sign in")
         }
         .primaryFilledLargeButtonStyle()
+        .progressButtonStyle(isInProgress: loginViewModel.isSignInUserInProgress)
     }
 }
 
 private extension LogInScreenView {
     func signInUser() async {
-        let result = await loginViewModel.signInUser()
-        if case .success = result {
-            appSessionViewModel.changeAppSession(.authenticated)
-        }
+        await loginViewModel.signInUser(
+            onSuccess: {
+                appSessionViewModel.changeAppSession(.authenticated)
+            }
+        )
     }
 }
 

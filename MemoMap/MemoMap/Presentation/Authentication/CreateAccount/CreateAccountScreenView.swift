@@ -13,7 +13,7 @@ struct CreateAccountScreenView: View {
     @State private var createAccountViewModel: CreateAccountViewModel = .init()
     var body: some View {
         ScrollView(.vertical) {
-            VStack(spacing: 0.0) {
+            LazyVStack(spacing: 0.0) {
                 Spacer().frame(height: 32.0)
                 switch createAccountViewModel.currentCreateAccountSection {
                 case .accountInfo:
@@ -34,6 +34,10 @@ struct CreateAccountScreenView: View {
         .scrollIndicators(.hidden)
         .navigationTitle("Create account")
         .navigationBarTitleDisplayMode(.large)
+        .alert(
+            isPresented: $createAccountViewModel.isSignUpUserAlertPresented,
+            error: createAccountViewModel.signUpUserError
+        ) {}
     }
 }
 
@@ -44,20 +48,28 @@ private extension CreateAccountScreenView {
                 localizedTitle: "Email address",
                 localizedPlaceholder: "Enter your email address",
                 text: $createAccountViewModel.createAccountInfo.emailAddress,
-                axis: .horizontal,
-                lineLimit: 1
+                keyboardType: .emailAddress,
+                textContentType: .emailAddress,
+                autoCorrectionDisabled: true,
+                submitLabel: .next
             )
             InputTextFieldView(
                 localizedTitle: "Password",
                 localizedPlaceholder: "Enter your password",
                 text: $createAccountViewModel.createAccountInfo.password,
-                isSecured: true
+                isSecured: true,
+                textContentType: .newPassword,
+                autoCorrectionDisabled: true,
+                submitLabel: .next
             )
             InputTextFieldView(
                 localizedTitle: "Confirm Password",
                 localizedPlaceholder: "Confirm password",
                 text: $createAccountViewModel.createAccountInfo.confirmPassword,
-                isSecured: true
+                isSecured: true,
+                textContentType: .newPassword,
+                autoCorrectionDisabled: true,
+                submitLabel: .continue
             )
         }
     }
@@ -68,24 +80,28 @@ private extension CreateAccountScreenView {
                 localizedTitle: "Display name",
                 localizedPlaceholder: "Enter your display name",
                 text: $createAccountViewModel.createAccountInfo.displayName,
-                axis: .horizontal,
-                lineLimit: 1
+                keyboardType: .namePhonePad,
+                textContentType: .username,
+                autoCorrectionDisabled: true,
+                submitLabel: .next
             )
             InputTextFieldView(
                 localizedTitle: "Username",
                 localizedPlaceholder: "Enter your user name",
                 text: $createAccountViewModel.createAccountInfo.username,
-                axis: .horizontal,
-                lineLimit: 1
+                keyboardType: .namePhonePad,
+                textContentType: .username,
+                autoCorrectionDisabled: true,
+                submitLabel: .next
             )
             birthdayPickerView
             InputTextFieldView(
                 localizedTitle: "Bio",
                 localizedPlaceholder: "Tell us a bit about yourself",
                 text: $createAccountViewModel.createAccountInfo.bio,
+                submitLabel: .done,
                 axis: .vertical,
                 lineLimit: 5,
-                height: 120.0
             )
         }
     }
@@ -151,7 +167,14 @@ private extension CreateAccountScreenView {
         .primaryFilledLargeButtonStyle()
     }
     var buttonsRowView: some View {
-        HStack(spacing: 12.0) {
+        VStack(spacing: 12.0) {
+            Button {
+                Task { await signUpUser() }
+            } label: {
+                Text("Sign up")
+            }
+            .primaryFilledLargeButtonStyle()
+            .progressButtonStyle(isInProgress: createAccountViewModel.isSignUpUserInProgress)
             Button {
                 withAnimation {
                     createAccountViewModel.currentCreateAccountSection = .accountInfo
@@ -160,22 +183,17 @@ private extension CreateAccountScreenView {
                 Text("Back")
             }
             .secondaryFilledLargeButtonStyle()
-            Button {
-                Task { await signUpUser() }
-            } label: {
-                Text("Sign up")
-            }
-            .primaryFilledLargeButtonStyle()
         }
     }
 }
 
 private extension CreateAccountScreenView {
     func signUpUser() async {
-        let result = await createAccountViewModel.signUpUser()
-        if case .success = result {
-            appSessionViewModel.changeAppSession(.authenticated)
-        }
+        await createAccountViewModel.signUpUser(
+            onSuccess: {
+                appSessionViewModel.changeAppSession(.authenticated)
+            }
+        )
     }
 }
 

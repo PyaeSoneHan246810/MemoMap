@@ -13,21 +13,30 @@ import Factory
 final class SettingsViewModel {
     @ObservationIgnored @Injected(\.authenticationRepository) private var authenticationRepository: AuthenticationRepository
     
+    var isSignOutConfirmationPresented: Bool = false
+    
+    private(set) var isSignOutUserInProgress: Bool = false
+    
     private(set) var signOutUserError: SignOutUserError? = nil
     
-    func logoutUser() -> Result<Void, Error> {
+    var isSignOutUserAlertPresented: Bool = false
+    
+    func logoutUser(onSuccess: () -> Void) {
+        isSignOutUserInProgress = true
         do {
             try authenticationRepository.signOutUser()
-            return .success(())
+            isSignOutUserInProgress = false
+            signOutUserError = nil
+            isSignOutUserAlertPresented = false
+            onSuccess()
         } catch {
+            isSignOutUserInProgress = false
             if let signOutUserError = error as? SignOutUserError {
-                print(signOutUserError.localizedDescription)
                 self.signOutUserError = signOutUserError
-                return .failure(error)
             } else {
-                print(error.localizedDescription)
-                return .failure(error)
+                signOutUserError = .unknownError
             }
+            isSignOutUserAlertPresented = true
         }
     }
 }

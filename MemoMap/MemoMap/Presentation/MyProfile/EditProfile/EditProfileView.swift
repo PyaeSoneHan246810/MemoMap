@@ -168,8 +168,7 @@ private extension EditProfileView {
             localizedPlaceholder: "Tell us a bit about yourself",
             text: $viewModel.newBio,
             axis: .vertical,
-            lineLimit: 5,
-            height: 120.0
+            lineLimit: 5
         )
     }
     var birthdayPickerView: some View {

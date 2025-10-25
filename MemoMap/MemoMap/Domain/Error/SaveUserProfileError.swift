@@ -7,6 +7,12 @@
 
 import Foundation
 
-enum SaveUserProfileError: Error {
+enum SaveUserProfileError: Error, LocalizedError {
     case saveFailed
+    var errorDescription: String? {
+        switch self {
+        case .saveFailed:
+            "Save Failed"
+        }
+    }
 }

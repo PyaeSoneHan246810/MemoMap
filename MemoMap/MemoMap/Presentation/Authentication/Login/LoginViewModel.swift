@@ -15,34 +15,41 @@ final class LoginViewModel {
     
     var emailAddress: String = ""
     
-    var password: String = ""
-    
-    private(set) var signInUserError: SignInUserError? = nil
-    
     private var trimmedEmailAddress: String {
         emailAddress.trimmed()
     }
+    
+    var password: String = ""
     
     private var trimmedPassword: String {
         password.trimmed()
     }
     
-    func signInUser() async -> Result<Void, Error> {
+    private(set) var isSignInUserInProgress: Bool = false
+    
+    private(set) var signInUserError: SignInUserError? = nil
+    
+    var isSignInUserAlertPresented: Bool = false
+    
+    func signInUser(onSuccess: () -> Void) async {
+        isSignInUserInProgress = true
         do {
             try await authenticationRepository.signInUser(
                 email: emailAddress,
                 password: password
             )
-            return .success(())
+            isSignInUserInProgress = false
+            signInUserError = nil
+            isSignInUserAlertPresented = false
+            onSuccess()
         } catch {
+            isSignInUserInProgress = false
             if let signInUserError = error as? SignInUserError {
-                print(signInUserError.localizedDescription)
                 self.signInUserError = signInUserError
-                return .failure(signInUserError)
             } else {
-                print(error.localizedDescription)
-                return .failure(error)
+                signInUserError = .unknownError
             }
+            isSignInUserAlertPresented = true
         }
     }
 }
