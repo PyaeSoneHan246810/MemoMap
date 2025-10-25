@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftUIIntrospect
+import UIKit
 
 extension View {
     func primaryFilledLargeButtonStyle() -> some View {
@@ -71,5 +72,21 @@ extension View {
             .introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26)) { scrollView in
                 scrollView.bouncesHorizontally = false
             }
+    }
+    
+    func progressButtonStyle(isInProgress: Bool) -> some View {
+        ZStack {
+            if isInProgress {
+                ProgressView()
+                    .controlSize(.large)
+            } else {
+                self
+            }
+        }
+        .animation(.easeInOut, value: isInProgress)
+    }
+    
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }

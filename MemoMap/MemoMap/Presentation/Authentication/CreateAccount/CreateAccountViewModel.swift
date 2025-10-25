@@ -18,15 +18,9 @@ final class CreateAccountViewModel {
     
     @ObservationIgnored @Injected(\.storageRepository) private var storageRepository: StorageRepository
     
-    var createAccountInfo: CreateAccountInfo = .init()
-    
     var currentCreateAccountSection: CreateAccountSection = .accountInfo
     
-    private(set) var usernameError: UsernameAvailabilityError? = nil
-    
-    private(set) var createUserError: CreateUserError? = nil
-
-    private(set) var saveUserProfileError: SaveUserProfileError? = nil
+    var createAccountInfo: CreateAccountInfo = .init()
     
     private var trimmedEmailAddress: String {
         createAccountInfo.emailAddress.trimmed()
@@ -60,7 +54,33 @@ final class CreateAccountViewModel {
         createAccountInfo.profilePhotoImage
     }
     
-    func signUpUser() async -> Result<Void, Error> {
+    private(set) var isSignUpUserInProgress: Bool = false
+    
+    enum SignUpUserError: Error, LocalizedError {
+        case usernameAvailabilitError(UsernameAvailabilityError)
+        case createUserError(CreateUserError)
+        case saveUserProfileError(SaveUserProfileError)
+        case unknownError
+        var errorDescription: String? {
+            switch self {
+            case .usernameAvailabilitError(let usernameAvailabilityError):
+                usernameAvailabilityError.localizedDescription
+            case .createUserError(let createUserError):
+                createUserError.localizedDescription
+            case .saveUserProfileError(let saveUserProfileError):
+                saveUserProfileError.localizedDescription
+            case .unknownError:
+                "Unknown Error"
+            }
+        }
+    }
+    
+    private(set) var signUpUserError: SignUpUserError? = nil
+    
+    var isSignUpUserAlertPresented: Bool = false
+    
+    func signUpUser(onSuccess: () -> Void) async {
+        isSignUpUserInProgress = true
         do {
             try await userProfileRepository.checkUsernameAvailability(
                 username: "@\(trimmedUsername)"
@@ -72,29 +92,27 @@ final class CreateAccountViewModel {
                 profilePhotoUrl: profilePhotoUrlString
             )
             await sendEmailVerification()
-            return .success(())
+            isSignUpUserInProgress = false
+            signUpUserError = nil
+            isSignUpUserAlertPresented = false
+            onSuccess()
         } catch {
+            isSignUpUserInProgress = false
             if let usernameAvailabilityError = error as? UsernameAvailabilityError {
-                print(usernameAvailabilityError.localizedDescription)
-                self.usernameError = usernameAvailabilityError
-                return .failure(usernameAvailabilityError)
+                signUpUserError = .usernameAvailabilitError(usernameAvailabilityError)
             } else if let createUserError = error as? CreateUserError {
-                print(createUserError.localizedDescription)
-                self.createUserError = createUserError
-                return .failure(createUserError)
+                signUpUserError = .createUserError(createUserError)
             } else if let saveUserProfileError = error as? SaveUserProfileError {
-                print(saveUserProfileError.localizedDescription)
-                self.saveUserProfileError = saveUserProfileError
                 if case .saveFailed = saveUserProfileError {
                     await deleteProfilePhoto()
                     await deleteUser()
                     signOutUser()
                 }
-                return .failure(saveUserProfileError)
+                signUpUserError = .saveUserProfileError(saveUserProfileError)
             } else {
-                print(error.localizedDescription)
-                return .failure(error)
+                signUpUserError = .unknownError
             }
+            isSignUpUserAlertPresented = true
         }
     }
     

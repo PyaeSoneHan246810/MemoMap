@@ -22,15 +22,35 @@ struct TabBarView: View {
                 profileNavigationStackView
             }
         }
-        .sheet(isPresented: $tabBarViewModel.isVerifyAccountSheetPresented) {
-            verifyAccountSheetView
-                .interactiveDismissDisabled()
+        .overlay {
+            if tabBarViewModel.isReloadUserInProgress {
+                LoadingOverlayView()
+            }
         }
         .task {
             await tabBarViewModel.checkEmailVerificationStatus()
         }
         .onAppear {
             setUpListeners()
+        }
+        .sheet(isPresented: $tabBarViewModel.isVerifyAccountSheetPresented) {
+            verifyAccountSheetView
+                .interactiveDismissDisabled()
+        }
+        .alert(
+            isPresented: $tabBarViewModel.isReloadUserAlertPresented,
+            error: tabBarViewModel.reloadUserError
+        ) {
+            switch tabBarViewModel.reloadUserError {
+            case .userNotFound:
+                Button("Log out") {
+                    
+                }
+            default:
+                Button("Retry") {
+                    
+                }
+            }
         }
         .environment(userViewModel)
     }

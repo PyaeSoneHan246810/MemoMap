@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum SignInUserError: Error {
+enum SignInUserError: Error, LocalizedError {
     case invalidEmail
     case invalidCredential
     case wrongPassword
@@ -15,4 +15,22 @@ enum SignInUserError: Error {
     case networkError
     case signInFailed
     case unknownError
+    var errorDescription: String? {
+        switch self {
+        case .invalidEmail:
+            "Invalid Email"
+        case .invalidCredential:
+            "Invalid Credential"
+        case .wrongPassword:
+            "Wrong Password"
+        case .userDisabled:
+            "User Disabled"
+        case .networkError:
+            "Network Error"
+        case .signInFailed:
+            "Sign In Failed"
+        case .unknownError:
+            "Unknown Error"
+        }
+    }
 }

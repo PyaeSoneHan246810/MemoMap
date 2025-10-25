@@ -35,24 +35,42 @@ struct SettingsScreenView: View {
             }
         }
         .toolbarVisibility(.hidden, for: .tabBar)
+        .alert(
+            isPresented: $settingsViewModel.isSignOutUserAlertPresented,
+            error: settingsViewModel.signOutUserError
+        ) {}
     }
 }
 
 private extension SettingsScreenView {
     var logOutButtonView: some View {
         Button("Log out", systemImage: "rectangle.portrait.and.arrow.right") {
-            logOutUser()
+            settingsViewModel.isSignOutConfirmationPresented = true
         }
         .destructiveButtonStyle(controlSize: .regular)
+        .alert(
+            "Log out",
+            isPresented: $settingsViewModel.isSignOutConfirmationPresented,
+            actions: {
+                Button("Cancel", role: .cancel) {}
+                Button("Log out", role: .destructive) {
+                    logOutUser()
+                }
+            },
+            message: {
+                Text("Are you sure to log out from the account?")
+            }
+        )
     }
 }
 
 private extension SettingsScreenView {
     func logOutUser() {
-        let result = settingsViewModel.logoutUser()
-        if case .success = result {
-            appSessionViewModel.changeAppSession(.unauthenticated)
-        }
+        settingsViewModel.logoutUser(
+            onSuccess: {
+                appSessionViewModel.changeAppSession(.unauthenticated)
+            }
+        )
     }
 }
 

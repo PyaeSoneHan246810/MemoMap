@@ -89,6 +89,9 @@
         }
       }
     },
+    "Are you sure to log out from the account?" : {
+
+    },
     "Are your sure you want to delete your account?" : {
       "localizations" : {
         "my" : {
@@ -128,6 +131,9 @@
           }
         }
       }
+    },
+    "Cancel" : {
+
     },
     "Change password" : {
       "localizations" : {

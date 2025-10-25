@@ -15,25 +15,35 @@ final class ForgotPasswordViewModel {
     
     var emailAddress: String = ""
     
-    var isSuccessSheetPresented: Bool = false
-    
-    private(set) var sendPasswordResetError: SendPasswordResetError? = nil
-    
     private var trimmedEmailAddress: String {
         emailAddress.trimmed()
     }
     
+    private(set) var isPasswordResetInProgress: Bool = false
+    
+    private(set) var sendPasswordResetError: SendPasswordResetError? = nil
+    
+    var isPasswordResetAlertPresented: Bool = false
+    
+    var isSuccessSheetPresented: Bool = false
+    
     func sendPasswordReset() async {
+        isPasswordResetInProgress = true
         do {
             try await authenticationRepository.sendPasswordReset(email: trimmedEmailAddress)
+            isPasswordResetInProgress = false
+            sendPasswordResetError = nil
+            isPasswordResetAlertPresented = false
             isSuccessSheetPresented = true
         } catch {
+            isPasswordResetInProgress = false
             if let sendPasswordResetError = error as? SendPasswordResetError {
-                print(sendPasswordResetError.localizedDescription)
                 self.sendPasswordResetError = sendPasswordResetError
             } else {
-                print(error.localizedDescription)
+                sendPasswordResetError = .unknownError
             }
+            isPasswordResetAlertPresented = true
+            isSuccessSheetPresented = false
         }
     }
 }

@@ -13,26 +13,35 @@ import Factory
 final class TabBarViewModel {
     @ObservationIgnored @Injected(\.authenticationRepository) private var authenticationRepository: AuthenticationRepository
     
-    private(set) var isUserEmailVerified: Bool = false
-    
     var isVerifyAccountSheetPresented: Bool = false
+    
+    private(set) var isReloadUserInProgress: Bool = false
     
     private(set) var reloadUserError: ReloadUserError? = nil
     
+    var isReloadUserAlertPresented: Bool = false
+    
     func checkEmailVerificationStatus() async {
+        isReloadUserInProgress = true
         do {
             try await authenticationRepository.reloadUser()
+            isReloadUserInProgress = false
             if let userData = authenticationRepository.getUserData() {
-                isUserEmailVerified = userData.isEmailVerified
+                isVerifyAccountSheetPresented = !userData.isEmailVerified
+                reloadUserError = nil
+                isReloadUserAlertPresented = false
+            } else {
+                reloadUserError = .userNotFound
+                isReloadUserAlertPresented = true
             }
         } catch {
+            isReloadUserInProgress = false
             if let reloadUserError = error as? ReloadUserError {
-                print(reloadUserError.localizedDescription)
                 self.reloadUserError = reloadUserError
             } else {
-                print(error.localizedDescription)
+                reloadUserError = .unknownError
             }
+            isReloadUserAlertPresented = true
         }
-        isVerifyAccountSheetPresented = !isUserEmailVerified
     }
 }
