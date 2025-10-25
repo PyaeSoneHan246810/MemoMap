@@ -18,7 +18,15 @@ final class EditProfileViewModel {
     
     var newDisplayName: String = ""
     
+    private var trimmedNewDisplayName: String {
+        newDisplayName.trimmed()
+    }
+    
     var newBio: String = ""
+    
+    private var trimmedNewBio: String {
+        newBio.trimmed()
+    }
     
     var newBirthday: Date = .now
     
@@ -34,13 +42,11 @@ final class EditProfileViewModel {
     
     var existingCoverPhotoUrl: String? = nil
     
-    private var trimmedNewDisplayName: String {
-        newDisplayName.trimmed()
-    }
+    private(set) var isEditProfileInProgress: Bool = false
     
-    private var trimmedNewBio: String {
-        newBio.trimmed()
-    }
+    private(set) var updateUserProfileInfoError: UpdateUserProfileInfoError? = nil
+    
+    var isEditProfileAlertPresented: Bool = false
     
     func getInitialData(userProfile: UserProfileData) {
         newDisplayName = userProfile.displayname
@@ -51,6 +57,7 @@ final class EditProfileViewModel {
     }
     
     func editProfile(for userId: String, onSuccess: () -> Void) async {
+        isEditProfileInProgress = true
         let newProfilePhotoUrl = await uploadProfilePhoto(userId: userId) ?? existingProfilePhotoUrl
         let newCoverPhotoUrl = await uploadCoverPhoto(userId: userId) ?? existingCoverPhotoUrl
         let updateUserProfileData = UpdateUserProfileData(
@@ -62,13 +69,18 @@ final class EditProfileViewModel {
         )
         do {
             try await userProfileRepository.updateUserProfileInfo(userid: userId, updateUserProfileData: updateUserProfileData)
+            isEditProfileInProgress = false
+            updateUserProfileInfoError = nil
+            isEditProfileAlertPresented = false
             onSuccess()
         } catch {
+            isEditProfileInProgress = false
             if let updateUserProfileInfoError = error as? UpdateUserProfileInfoError {
-                print(updateUserProfileInfoError.localizedDescription)
+                self.updateUserProfileInfoError = updateUserProfileInfoError
             } else {
-                print(error.localizedDescription)
+                updateUserProfileInfoError = .unknownError
             }
+            isEditProfileAlertPresented = true
         }
     }
     
@@ -76,33 +88,15 @@ final class EditProfileViewModel {
         guard let newProfilePhotoImage, let data = newProfilePhotoImage.jpegData(compressionQuality: 1.0) else {
             return nil
         }
-        do {
-            let profilePhotoUrl = try await storageRepository.uploadProfilePhoto(data: data, userId: userId)
-            return profilePhotoUrl
-        } catch {
-            if let uploadProfilePhotoError = error as? UploadProfilePhotoError {
-                print(uploadProfilePhotoError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
-            return nil
-        }
+        let profilePhotoUrl = try? await storageRepository.uploadProfilePhoto(data: data, userId: userId)
+        return profilePhotoUrl
     }
     
     private func uploadCoverPhoto(userId: String) async -> String? {
         guard let newCoverPhotoImage, let data = newCoverPhotoImage.jpegData(compressionQuality: 1.0) else {
             return nil
         }
-        do {
-            let coverPhotoUrl = try await storageRepository.uploadCoverPhoto(data: data, userId: userId)
-            return coverPhotoUrl
-        } catch {
-            if let uploadCoverPhotoError = error as? UploadCoverPhotoError {
-                print(uploadCoverPhotoError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
-            return nil
-        }
+        let coverPhotoUrl = try? await storageRepository.uploadCoverPhoto(data: data, userId: userId)
+        return coverPhotoUrl
     }
 }
