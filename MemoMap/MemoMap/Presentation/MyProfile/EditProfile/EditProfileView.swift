@@ -11,8 +11,9 @@ import Kingfisher
 
 struct EditProfileView: View {
     @Environment(\.dismiss) private var dismiss
-    let userProfile: UserProfileData
     @State private var viewModel: EditProfileViewModel = .init()
+    let userProfile: UserProfileData
+    let onEdited: () -> Void
     var body: some View {
         ScrollView(.vertical) {
             LazyVStack(spacing: 16.0) {
@@ -41,6 +42,10 @@ struct EditProfileView: View {
         .onAppear {
             viewModel.getInitialData(userProfile: userProfile)
         }
+        .alert(
+            isPresented: $viewModel.isEditProfileAlertPresented,
+            error: viewModel.updateUserProfileInfoError
+        ) {}
     }
 }
 
@@ -158,8 +163,10 @@ private extension EditProfileView {
             localizedTitle: "Display name",
             localizedPlaceholder: "Enter your display name",
             text: $viewModel.newDisplayName,
-            axis: .horizontal,
-            lineLimit: 1
+            keyboardType: .namePhonePad,
+            textContentType: .username,
+            autoCorrectionDisabled: true,
+            submitLabel: .next
         )
     }
     var bioInputView: some View {
@@ -167,6 +174,8 @@ private extension EditProfileView {
             localizedTitle: "Bio",
             localizedPlaceholder: "Tell us a bit about yourself",
             text: $viewModel.newBio,
+            autoCorrectionDisabled: true,
+            submitLabel: .continue,
             axis: .vertical,
             lineLimit: 5
         )
@@ -190,19 +199,22 @@ private extension EditProfileView {
                 await viewModel.editProfile(
                     for: userProfile.id,
                     onSuccess: {
+                        onEdited()
                         dismiss()
                     }
                 )
             }
         }
         .primaryFilledLargeButtonStyle()
+        .progressButtonStyle(isInProgress: viewModel.isEditProfileInProgress)
     }
 }
 
 #Preview {
     NavigationStack {
         EditProfileView(
-            userProfile: UserProfileData.preview1
+            userProfile: UserProfileData.preview1,
+            onEdited: {}
         )
     }
 }

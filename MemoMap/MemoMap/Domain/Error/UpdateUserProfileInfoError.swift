@@ -7,6 +7,15 @@
 
 import Foundation
 
-enum UpdateUserProfileInfoError: Error {
+enum UpdateUserProfileInfoError: Error, LocalizedError {
     case updateFailed
+    case unknownError
+    var errorDescription: String? {
+        switch self {
+        case .updateFailed:
+            "Update Failed"
+        case .unknownError:
+            "Unknown Error"
+        }
+    }
 }

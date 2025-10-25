@@ -27,7 +27,7 @@ struct MyProfileScreenView: View {
     }
     var body: some View {
         ScrollView(.vertical) {
-            VStack(spacing: 0.0) {
+            LazyVStack(spacing: 0.0) {
                 VStack(spacing: 0.0) {
                     profilePhotosView
                     buttonSectionView
@@ -135,11 +135,17 @@ private extension MyProfileScreenView {
     func editProfileView(userProfile: UserProfileData) -> some View {
         NavigationStack {
             EditProfileView(
-                userProfile: userProfile
+                userProfile: userProfile,
+                onEdited: {
+                    Task {
+                        await myProfileViewModel.getUserPublicMemories()
+                    }
+                }
             )
         }
     }
 }
+
 
 #Preview {
     @Previewable @State var userViewModel: UserViewModel = .init()
