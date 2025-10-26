@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import TipKit
 
 struct MyProfileScreenView: View {
     @State private var myProfileViewModel: MyProfileViewModel = .init()
@@ -25,6 +26,7 @@ struct MyProfileScreenView: View {
     private var memories: [MemoryData] {
         myProfileViewModel.memories
     }
+    let editProfileTip: EditProfileTip = .init()
     var body: some View {
         ScrollView(.vertical) {
             LazyVStack(spacing: 0.0) {
@@ -71,7 +73,7 @@ private extension MyProfileScreenView {
             NavigationLink {
                 SettingsScreenView()
             } label: {
-                Label("Settings", systemImage: "gear")
+                Image(systemName: "gear")
             }
         }
     }
@@ -100,6 +102,7 @@ private extension MyProfileScreenView {
             myProfileViewModel.userProfileToEdit = userProfile
         }
         .primaryFilledSmallButtonStyle()
+        .popoverTip(editProfileTip, arrowEdge: .top)
     }
     var profileInfoView: some View {
         ProfileInfoView(

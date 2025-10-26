@@ -43,6 +43,9 @@
         }
       }
     },
+    "Add a new pin by tapping a location on the map." : {
+
+    },
     "Add a title for your memory..." : {
       "localizations" : {
         "my" : {
@@ -56,7 +59,13 @@
     "Add media" : {
 
     },
+    "Add Memory" : {
+
+    },
     "Add pin" : {
+
+    },
+    "Add Pin" : {
 
     },
     "Add tags" : {
@@ -68,6 +77,9 @@
           }
         }
       }
+    },
+    "Adjust your app preferences and account settings here." : {
+
     },
     "App language" : {
       "localizations" : {
@@ -141,6 +153,9 @@
     "Cancel" : {
 
     },
+    "Capture and share your favorite moments here." : {
+
+    },
     "Change password" : {
       "localizations" : {
         "my" : {
@@ -184,6 +199,21 @@
           }
         }
       }
+    },
+    "Click here to add a new memory." : {
+
+    },
+    "Click here to change the pin image." : {
+
+    },
+    "Click here to delete this pin." : {
+
+    },
+    "Click here to edit pin name and description," : {
+
+    },
+    "Click here to select this location." : {
+
     },
     "Color mode" : {
       "localizations" : {
@@ -287,6 +317,9 @@
     "Delete pin" : {
 
     },
+    "Delete Pin" : {
+
+    },
     "Describe your moments" : {
       "localizations" : {
         "my" : {
@@ -296,6 +329,9 @@
           }
         }
       }
+    },
+    "Discover public memories by searching a location here." : {
+
     },
     "Don't worry. Please enter the email address associated with your account." : {
       "localizations" : {
@@ -335,6 +371,9 @@
     "Edit Pin" : {
 
     },
+    "Edit Pin Image" : {
+
+    },
     "Edit profile" : {
       "localizations" : {
         "my" : {
@@ -346,6 +385,9 @@
       }
     },
     "Edit Profile" : {
+
+    },
+    "Edit Your Profile" : {
 
     },
     "Enter your current password" : {
@@ -492,6 +534,9 @@
     "Joined" : {
       "shouldTranslate" : false
     },
+    "Keep your profile information up to date here." : {
+
+    },
     "Languages" : {
       "localizations" : {
         "my" : {
@@ -501,6 +546,9 @@
           }
         }
       }
+    },
+    "Locate Me" : {
+
     },
     "Log in" : {
       "localizations" : {
@@ -708,6 +756,9 @@
         }
       }
     },
+    "Post Your Memory" : {
+
+    },
     "Post your memory here" : {
       "localizations" : {
         "my" : {
@@ -781,6 +832,9 @@
         }
       }
     },
+    "Search for other users by entering a username or display name here." : {
+
+    },
     "Search for saved locations" : {
 
     },
@@ -788,6 +842,9 @@
 
     },
     "Search Users" : {
+
+    },
+    "See your followers, followings, and mutual connections here." : {
 
     },
     "Select" : {
@@ -802,6 +859,9 @@
           }
         }
       }
+    },
+    "Select Pin" : {
+
     },
     "Send email" : {
       "localizations" : {
@@ -862,6 +922,15 @@
           }
         }
       }
+    },
+    "Tap here to find where you are on the map." : {
+
+    },
+    "Tap On Map" : {
+
+    },
+    "Tap on the map to save a location and memories." : {
+
     },
     "The link to reset your password was successfully sent to the email address." : {
       "localizations" : {

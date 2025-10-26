@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import TipKit
 
 struct FeedScreenView: View {
     @Environment(\.colorScheme) private var colorScheme
@@ -17,6 +18,11 @@ struct FeedScreenView: View {
     }
     private var followingIds: [String] {
         userViewModel.followingIds
+    }
+    @State private var tips = TipGroup(.ordered) {
+        PostMemoryTip()
+        SearchMemoriesTip()
+        CommunityTip()
     }
     var body: some View {
         memoriesFeedView
@@ -57,14 +63,15 @@ private extension FeedScreenView {
             NavigationLink {
                 CommunityScreenView()
             } label: {
-                Label("Community", systemImage: "person.3")
+                Image(systemName: "person.3")
             }
+            .popoverTip(tips.currentTip as? CommunityTip)
         }
         ToolbarItem(placement: .topBarTrailing) {
             NavigationLink {
                 SettingsScreenView()
             } label: {
-                Label("Settings", systemImage: "gear")
+                Image(systemName: "gear")
             }
         }
     }
@@ -88,6 +95,7 @@ private extension FeedScreenView {
         .frame(maxWidth: .infinity, alignment: .leading)
         .frame(height: 52.0)
         .background(Color(uiColor: .secondarySystemBackground), in: .capsule)
+        .popoverTip(tips.currentTip as? PostMemoryTip, arrowEdge: .top)
         .onTapGesture {
             feedViewModel.isPostMemorySheetPresented = true
         }
@@ -106,6 +114,7 @@ private extension FeedScreenView {
                 }
         }
         .buttonStyle(.plain)
+        .popoverTip(tips.currentTip as? SearchMemoriesTip, arrowEdge: .top)
     }
     @ViewBuilder
     var memoriesFeedView: some View {

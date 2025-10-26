@@ -7,10 +7,16 @@
 
 import SwiftUI
 import MapboxMaps
+import TipKit
 
 struct MemoriesScreenView: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var viewModel: MemoriesViewModel = .init()
+    @State private var tips = TipGroup(.ordered) {
+        TapOnMapTip()
+        LocateMeTip()
+        SettingsTip()
+    }
     var body: some View {
         mapView
         .ignoresSafeArea()
@@ -51,9 +57,15 @@ private extension MemoriesScreenView {
             userTapInteraction
         }
         .mapStyle(mapStyle)
-        .overlay(alignment: .trailing) {
+        .overlay(alignment: .center) {
+            TipView(tips.currentTip as? TapOnMapTip)
+                .padding(16.0)
+        }
+        .overlay(alignment: .bottomTrailing) {
             LocateMeButtonView(viewport: $viewModel.viewport)
                 .padding(8.0)
+                .popoverTip(tips.currentTip as? LocateMeTip, arrowEdge: .trailing)
+                .offset(y: -80.0)
         }
     }
     var pinsPointAnnotationGroup: some MapContent {
@@ -102,8 +114,9 @@ private extension MemoriesScreenView {
             NavigationLink {
                 SettingsScreenView()
             } label: {
-                Label("Settings", systemImage: "gear")
+                Image(systemName: "gear")
             }
+            .popoverTip(tips.currentTip as? SettingsTip)
         }
     }
     func addNewPinView(placeTapped: Place) -> some View {
