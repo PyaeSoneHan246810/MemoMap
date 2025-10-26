@@ -7,7 +7,12 @@
 
 import Foundation
 
-enum DeletePinError: Error {
+enum DeletePinError: Error, LocalizedError {
     case deleteFailed
-    case unknownError
+    var errorDescription: String? {
+        switch self {
+        case .deleteFailed:
+            "Delete Failed"
+        }
+    }
 }

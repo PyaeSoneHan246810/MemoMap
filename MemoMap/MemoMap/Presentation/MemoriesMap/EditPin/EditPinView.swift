@@ -11,6 +11,9 @@ struct EditPinView: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var newPinName: String
     @Binding var newPinDescription: String
+    @Binding var isErrorAlertPresented: Bool
+    let updatePinInfoError: UpdatePinInfoError?
+    let isEditInProgress: Bool
     let onSaveClick: () -> Void
     var body: some View {
         ScrollView(.vertical) {
@@ -19,18 +22,20 @@ struct EditPinView: View {
                     localizedTitle: "Location name",
                     localizedPlaceholder: "Enter name of a location",
                     text: $newPinName,
-                    axis: .horizontal,
-                    lineLimit: 1
+                    textContentType: .name,
+                    autoCorrectionDisabled: true,
+                    submitLabel: .next
                 )
                 InputTextFieldView(
                     localizedTitle: "Location description",
                     localizedPlaceholder: "Enter description for a location",
                     text: $newPinDescription,
                     axis: .vertical,
-                    lineLimit: 4
+                    lineLimit: 5
                 )
                 Button("Save", action: onSaveClick)
                     .primaryFilledLargeButtonStyle()
+                    .progressButtonStyle(isInProgress: isEditInProgress)
             }
         }
         .disableBouncesVertically()
@@ -44,6 +49,7 @@ struct EditPinView: View {
                 } 
             }
         }
+        .alert(isPresented: $isErrorAlertPresented, error: updatePinInfoError) {}
     }
 }
 
@@ -52,6 +58,9 @@ struct EditPinView: View {
         EditPinView(
             newPinName: .constant(""),
             newPinDescription: .constant(""),
+            isErrorAlertPresented: .constant(false),
+            updatePinInfoError: nil,
+            isEditInProgress: false,
             onSaveClick: {}
         )
     }

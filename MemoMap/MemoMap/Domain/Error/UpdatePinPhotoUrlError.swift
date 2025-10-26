@@ -7,6 +7,12 @@
 
 import Foundation
 
-enum UpdatePinPhotoUrlError: Error {
+enum UpdatePinPhotoUrlError: Error, LocalizedError {
     case updateFailed
+    var errorDescription: String? {
+        switch self {
+        case .updateFailed:
+            "Update Failed"
+        }
+    }
 }

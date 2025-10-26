@@ -7,6 +7,12 @@
 
 import Foundation
 
-enum DeleteMemoryError: Error {
+enum DeleteMemoryError: Error, LocalizedError {
     case deleteFailed
+    var errorDescription: String? {
+        switch self {
+        case .deleteFailed:
+            "Delete Failed"
+        }
+    }
 }

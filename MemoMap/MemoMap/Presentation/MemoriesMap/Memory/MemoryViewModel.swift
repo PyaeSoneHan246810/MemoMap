@@ -15,38 +15,42 @@ class MemoryViewModel {
     
     var updatedMemory: MemoryData? = nil
     
-    var isEditMemoryInfoViewPresented: Bool = false
-    
     var memoryToEdit: MemoryData? = nil
+    
+    var isEditMemoryInfoViewPresented: Bool = false
     
     var editMemoryInfo: EditMemoryInfo = .init(title: "", description: "", tags: [], dateTime: .now, publicStatus: true)
     
+    private(set) var isEditMemoryInfoInProgress: Bool = false
+    
+    private(set) var updateMemoryInfoError: UpdateMemoryInfoError? = nil
+    
+    var isEditMemoryInfoAlertPresented: Bool = false
+    
     func editMemoryInfo(for memoryId: String) async {
+        isEditMemoryInfoInProgress = true
         do {
             try await memoryRepository.updateMemoryInfo(
                 memoryId: memoryId, editMemoryInfo: editMemoryInfo
             )
-            await getUpdatedMemory(for: memoryId)
+            isEditMemoryInfoInProgress = false
+            updateMemoryInfoError = nil
+            isEditMemoryInfoAlertPresented = false
             isEditMemoryInfoViewPresented = false
+            await getUpdatedMemory(for: memoryId)
         } catch {
+            isEditMemoryInfoInProgress = false
             if let updateMemoryInfoError = error as? UpdateMemoryInfoError {
-                print(updateMemoryInfoError.localizedDescription)
+                self.updateMemoryInfoError = updateMemoryInfoError
             } else {
-                print(error.localizedDescription)
+                self.updateMemoryInfoError = .updateFailed
             }
+            isEditMemoryInfoAlertPresented = true
         }
     }
     
     func getUpdatedMemory(for memoryId: String) async {
-        do {
-            let memory = try await memoryRepository.getMemory(memoryId: memoryId)
-            updatedMemory = memory
-        } catch {
-            if let updateMemoryInfoError = error as? UpdateMemoryInfoError {
-                print(updateMemoryInfoError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
-        }
+        let memory = try? await memoryRepository.getMemory(memoryId: memoryId)
+        updatedMemory = memory
     }
 }

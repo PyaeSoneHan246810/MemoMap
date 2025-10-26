@@ -29,14 +29,24 @@ private extension EditMemoryInfoView {
         VStack(alignment: .leading, spacing: 12.0) {
             TextField(
                 text: $memoryTitle,
-                prompt: Text("Add a title for your memory...").font(.headline).foregroundStyle(.gray)
+                prompt: Text("Add a title for your memory...")
+                    .font(.headline)
+                    .foregroundStyle(.gray),
+                axis: .vertical
             ) { }
             .font(.headline)
+            .textInputAutocapitalization(.never)
+            .submitLabel(.done)
             TextField(
                 text: $memoryDescription,
-                prompt: Text("Describe your moments").font(.subheadline).foregroundStyle(.gray)
+                prompt: Text("Describe your moments")
+                    .font(.subheadline)
+                    .foregroundStyle(.gray),
+                axis: .vertical
             ) { }
             .font(.subheadline)
+            .textInputAutocapitalization(.never)
+            .submitLabel(.done)
         }
     }
     var addTagsView: some View {

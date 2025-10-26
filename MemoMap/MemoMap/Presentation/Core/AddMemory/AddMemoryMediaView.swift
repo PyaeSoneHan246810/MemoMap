@@ -9,8 +9,8 @@ import SwiftUI
 import PhotosUI
 
 struct AddMemoryMediaView: View {
-    @State var memoryPhotoPickerItems: [PhotosPickerItem] = []
     @Binding var memoryMediaItems: [MemoryMediaItem]
+    @State var memoryPhotoPickerItems: [PhotosPickerItem] = []
     var body: some View {
         VStack(alignment: .leading, spacing: 12.0) {
             if !memoryMediaItems.isEmpty {
@@ -25,7 +25,7 @@ struct AddMemoryMediaView: View {
 private extension AddMemoryMediaView {
     var mediaItemsView: some View {
         ScrollView(.horizontal) {
-            HStack {
+            HStack(spacing: 8.0) {
                 ForEach(memoryMediaItems) { memoryMediaItem in
                     mediaItemView(memoryMediaItem)
                 }
@@ -59,7 +59,6 @@ private extension AddMemoryMediaView {
             }
             .buttonStyle(.glass)
             .buttonBorderShape(.circle)
-            .contentShape(.circle)
             .padding(12.0)
         }
     }

@@ -79,6 +79,7 @@ extension View {
             if isInProgress {
                 ProgressView()
                     .controlSize(.large)
+                    .frame(maxWidth: .infinity, alignment: .center)
             } else {
                 self
             }

@@ -24,7 +24,7 @@ struct SavedPinDetailsView: View {
     }
     var body: some View {
         ScrollView(.vertical) {
-            VStack(spacing: 0.0) {
+            LazyVStack(spacing: 0.0) {
                 locationImageView
                 locationInfoView
                 memoriesSectionView
@@ -40,6 +40,11 @@ struct SavedPinDetailsView: View {
         .navigationDestination(item: $addNewMemoryScreenModel) {
             AddNewMemoryView(addNewMemoryScreenModel: $0)
         }
+        .overlay {
+            if viewModel.isDeletePinInProgress || viewModel.isDeleteMemoryInProgress {
+                LoadingOverlayView()
+            }
+        }
         .sheet(isPresented: $viewModel.isEditPinSheetPresented) {
             editPinSheetView
                 .presentationDetents([.fraction(0.70)])
@@ -54,6 +59,21 @@ struct SavedPinDetailsView: View {
         .task {
             await viewModel.getPin(for: pinId)
             await viewModel.getMemories(for: pinId)
+        }
+        .alert(
+            isPresented: $viewModel.isEditPinPhotoAlertPresented,
+            error: viewModel.editPinPhotoError
+        ){
+        }
+        .alert(
+            isPresented: $viewModel.isDeletePinAlertPresented,
+            error: viewModel.deletePinError
+        ){
+        }
+        .alert(
+            isPresented: $viewModel.isDeleteMemoryAlertPresented,
+            error: viewModel.deleteMemoryError
+        ){
         }
     }
 }
@@ -82,13 +102,20 @@ private extension SavedPinDetailsView {
             } else {
                 LocationImagePlaceholderView()
             }
-            LocationImagePickerView(
-                selection: $viewModel.newPinPhotoPickerItem,
-                uiImage: $viewModel.newPinPhoto
-            )
-            .onChange(of: viewModel.newPinPhoto) {
-                Task { await viewModel.updatePinPhoto(for: pinId) }
+            ZStack {
+                if viewModel.isEditPinPhotoInProgress {
+                    ProgressView().controlSize(.large)
+                } else {
+                    LocationImagePickerView(
+                        selection: $viewModel.newPinPhotoPickerItem,
+                        uiImage: $viewModel.newPinPhoto
+                    )
+                    .onChange(of: viewModel.newPinPhoto) {
+                        Task { await viewModel.editPinPhoto(for: pinId) }
+                    }
+                }
             }
+            .animation(.easeInOut, value: viewModel.isEditPinPhotoInProgress)
             .padding(.bottom, 16.0)
             .padding(.trailing, 16.0)
         }
@@ -177,6 +204,9 @@ private extension SavedPinDetailsView {
             EditPinView(
                 newPinName: $viewModel.newPinName,
                 newPinDescription: $viewModel.newPinDescription,
+                isErrorAlertPresented: $viewModel.isEditPinInfoAlertPresented,
+                updatePinInfoError: viewModel.updatePinInfoError,
+                isEditInProgress: viewModel.isEditPinInfoInProgress,
                 onSaveClick: {
                     Task {
                         await viewModel.editPinInfo(for: pinId)

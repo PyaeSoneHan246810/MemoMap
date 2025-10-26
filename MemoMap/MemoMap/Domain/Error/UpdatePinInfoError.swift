@@ -7,6 +7,12 @@
 
 import Foundation
 
-enum UpdatePinInfoError: Error {
+enum UpdatePinInfoError: Error, LocalizedError {
     case updateFailed
+    var errorDescription: String? {
+        switch self {
+        case .updateFailed:
+            "Update Failed"
+        }
+    }
 }

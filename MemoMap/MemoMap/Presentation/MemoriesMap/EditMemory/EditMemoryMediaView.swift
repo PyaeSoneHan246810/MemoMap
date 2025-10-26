@@ -27,8 +27,28 @@ struct EditMemoryMediaView: View {
         .toolbar {
             toolbarContentView
         }
+        .overlay {
+            if viewModel.isDeleteAllItemsInProgress || viewModel.isDeleteItemInProgress {
+                LoadingOverlayView()
+            }
+        }
         .onAppear {
             viewModel.getMediaList(from: mediaUrlStrings)
+        }
+        .alert(
+            isPresented: $viewModel.isAddingNewItemsAlertPresented,
+            error: viewModel.updateMemoryMediaError
+        ){
+        }
+        .alert(
+            isPresented: $viewModel.isAddingNewItemAlertPresented,
+            error: viewModel.addMemoryMediaError
+        ){
+        }
+        .alert(
+            isPresented: $viewModel.isDeleteAllItemsAlertPresented,
+            error: viewModel.removeAllMemoryMediaError
+        ){
         }
     }
 }
@@ -48,16 +68,15 @@ private extension EditMemoryMediaView {
                 memoryMediaItems: $viewModel.newMemoryMediaItems
             )
             saveButtonView
-            Spacer()
         }
-        .padding(.vertical, 16.0)
+        .frame(maxHeight: .infinity, alignment: .top)
     }
     var saveButtonView: some View {
         Button("Save") {
             Task {
                 await viewModel.addNewMemoryMediaItems(
                     for: memoryId,
-                    onComplete: {
+                    onSuccess: {
                         dismiss()
                         onEdited()
                     }
@@ -65,20 +84,24 @@ private extension EditMemoryMediaView {
             }
         }
         .primaryFilledLargeButtonStyle()
+        .progressButtonStyle(isInProgress: viewModel.isAddingNewItemsInProgress)
         .padding(.horizontal, 16.0)
     }
     var editExistingMediaView: some View {
         VStack(spacing: 16.0) {
             existingMediaView
             HStack(spacing: 8.0) {
-                addMediaPhotoPickerView
+                if viewModel.isAddingNewItemInProgress {
+                    ProgressView().controlSize(.large)
+                } else {
+                    addMediaPhotoPickerView
+                }
                 deleteAllButtonView
                 Spacer()
             }
             .padding(.horizontal, 16.0)
-            Spacer()
         }
-        .padding(.vertical, 16.0)
+        .frame(maxHeight: .infinity, alignment: .top)
     }
     var addMediaPhotoPickerView: some View {
         PhotosPicker(
@@ -110,7 +133,7 @@ private extension EditMemoryMediaView {
             Task {
                 await viewModel.addNewMemoryMediaItem(
                     for: memoryId,
-                    completion: {
+                    onSuccess: {
                         onEdited()
                     }
                 )
@@ -122,13 +145,14 @@ private extension EditMemoryMediaView {
             Task {
                 await viewModel.deleteAllMemoryMedia(
                     memoryId: memoryId,
-                    onComplete: {
+                    onSuccess: {
                         onEdited()
                     }
                 )
             }
         }
         .destructiveButtonStyle(controlSize: .small)
+        .disabled(viewModel.isDeleteAllItemsInProgress)
     }
     @ViewBuilder
     var existingMediaView: some View {
@@ -143,29 +167,23 @@ private extension EditMemoryMediaView {
         }
     }
     func singleMediaView(_ media: Media) -> some View {
-        Group {
+        ZStack(alignment: .bottomTrailing) {
             switch media.type {
             case .image:
                 singleMediaImageView(url: media.urlString)
-                    .overlay(alignment: .bottomTrailing) {
-                        deleteIconButtonView {
-                            deleteMemoryMedia(media)
-                        }
-                    }
             case .video:
                 if let url = URL(string: media.urlString) {
                     singleMediaVideoView(url: url)
-                        .overlay(alignment: .bottomTrailing) {
-                            deleteIconButtonView {
-                                deleteMemoryMedia(media)
-                            }
-                        }
                 } else {
                     EmptyView()
                 }
             }
+            deleteIconButtonView {
+                deleteMemoryMedia(media)
+            }
         }
         .padding(.horizontal, 16.0)
+        
     }
     func singleMediaImageView(url: String) -> some View {
         RoundedRectangle(cornerRadius: 12.0)
@@ -185,26 +203,21 @@ private extension EditMemoryMediaView {
     }
     var multiMediaScrollView: some View {
         ScrollView(.horizontal) {
-            HStack {
+            HStack(spacing: 8.0) {
                 ForEach(viewModel.mediaList) { media in
-                    switch media.type {
-                    case .image:
-                        multiMediaImageView(url: media.urlString)
-                            .overlay(alignment: .bottomTrailing) {
-                                deleteIconButtonView {
-                                    deleteMemoryMedia(media)
-                                }
+                    ZStack(alignment: .bottomTrailing) {
+                        switch media.type {
+                        case .image:
+                            multiMediaImageView(url: media.urlString)
+                        case .video:
+                            if let url = URL(string: media.urlString) {
+                                multiMediaVideoView(url: url)
+                            } else {
+                                EmptyView()
                             }
-                    case .video:
-                        if let url = URL(string: media.urlString) {
-                            multiMediaVideoView(url: url)
-                                .overlay(alignment: .bottomTrailing) {
-                                    deleteIconButtonView {
-                                        deleteMemoryMedia(media)
-                                    }
-                                }
-                        } else {
-                            EmptyView()
+                        }
+                        deleteIconButtonView {
+                            deleteMemoryMedia(media)
                         }
                     }
                 }
@@ -217,7 +230,7 @@ private extension EditMemoryMediaView {
     func multiMediaImageView(url: String) -> some View {
         RoundedRectangle(cornerRadius: 12.0)
             .foregroundStyle(Color(uiColor: .secondarySystemBackground))
-            .frame(width: 320.0, height: 320.0)
+            .frame(width: 200.0, height: 200.0)
             .overlay {
                 KFImage(URL(string: url))
                     .resizable()
@@ -227,7 +240,7 @@ private extension EditMemoryMediaView {
     }
     func multiMediaVideoView(url: URL) -> some View {
         MemoryVideoView(url: url)
-        .frame(width: 320.0, height: 320.0)
+        .frame(width: 200.0, height: 200.0)
         .clipShape(RoundedRectangle(cornerRadius: 12.0))
     }
     func deleteIconButtonView(onClick: @escaping () -> Void) -> some View {
@@ -239,7 +252,6 @@ private extension EditMemoryMediaView {
         }
         .buttonStyle(.glass)
         .buttonBorderShape(.circle)
-        .contentShape(.circle)
         .padding(12.0)
     }
 }
@@ -250,7 +262,7 @@ private extension EditMemoryMediaView {
             await viewModel.deleteMemoryMedia(
                 memoryId: memoryId,
                 media: media,
-                onComplete: {
+                onSuccess: {
                     onEdited()
                 }
             )
