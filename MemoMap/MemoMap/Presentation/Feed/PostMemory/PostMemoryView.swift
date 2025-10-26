@@ -13,7 +13,7 @@ struct PostMemoryView: View {
     @State private var viewModel: PostMemoryViewModel = .init()
     var body: some View {
         ScrollView(.vertical) {
-            VStack(spacing: 16.0) {
+            LazyVStack(spacing: 16.0) {
                 AddMemoryView(
                     memoryMediaItems: $viewModel.memoryMediaItems,
                     memoryTitle: $viewModel.memoryTitle,
@@ -38,6 +38,11 @@ struct PostMemoryView: View {
         }
         .toolbar {
             toolbarContentView
+        }
+        .alert(
+            isPresented: $viewModel.isSaveMemoryAlertPresented,
+            error: viewModel.saveMemoryError
+        ){
         }
     }
 }
@@ -68,7 +73,7 @@ private extension PostMemoryView {
         Button {
             Task {
                 await viewModel.postMemory(
-                    onComplete: {
+                    onSuccess: {
                         dismiss()
                     }
                 )
@@ -77,6 +82,7 @@ private extension PostMemoryView {
             Text("Post")
         }
         .primaryFilledLargeButtonStyle()
+        .progressButtonStyle(isInProgress: viewModel.isPostMemoryInProgress)
     }
 }
 

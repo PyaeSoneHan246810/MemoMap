@@ -163,6 +163,8 @@ final class SavedPinDetailsViewModel {
     
     var isDeletePinAlertPresented: Bool = false
     
+    var isDeletePinConfirmationPresented: Bool = false
+    
     func deletePin(for pinId: String, onSuccess: () -> Void) async {
         isDeletePinInProgress = true
         do {

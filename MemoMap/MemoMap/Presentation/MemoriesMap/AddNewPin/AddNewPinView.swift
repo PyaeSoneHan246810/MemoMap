@@ -14,7 +14,7 @@ struct AddNewPinView: View {
     let place: Place
     var body: some View {
         ScrollView(.vertical) {
-            VStack(spacing: 0.0) {
+            LazyVStack(spacing: 0.0) {
                 locationImagePickerView
                 VStack(spacing: 20.0) {
                     locationInfoTextFieldsView
@@ -43,6 +43,11 @@ struct AddNewPinView: View {
         .ignoresSafeArea(edges: .top)
         .toolbar {
             toolbarContentView
+        }
+        .alert(
+            isPresented: $viewModel.isSaveNewPinAlertPresented,
+            error: viewModel.saveNewPinError
+        ){
         }
     }
 }
@@ -85,15 +90,17 @@ private extension AddNewPinView {
             localizedTitle: "Location name",
             localizedPlaceholder: "Enter name of a location",
             text: $viewModel.locationName,
-            axis: .horizontal,
-            lineLimit: 1
+            textContentType: .name,
+            autoCorrectionDisabled: true,
+            submitLabel: .next
         )
         InputTextFieldView(
             localizedTitle: "Location description",
             localizedPlaceholder: "Enter description for a location",
             text: $viewModel.locationDescription,
+            submitLabel: .next,
             axis: .vertical,
-            lineLimit: 4
+            lineLimit: 5
         )
     }
     var saveButtonView: some View {
@@ -103,18 +110,19 @@ private extension AddNewPinView {
             Text("Save")
         }
         .primaryFilledLargeButtonStyle()
+        .progressButtonStyle(isInProgress: viewModel.isSaveNewPinInProgress)
     }
 }
 
 private extension AddNewPinView {
     func saveNewPin() async {
-        let result = await viewModel.saveNewPin(
+        await viewModel.saveNewPin(
             latitude: place.latitude,
-            longitude: place.longitude
+            longitude: place.longitude,
+            onSuccess: {
+                dismiss()
+            }
         )
-        if case .success = result {
-            dismiss()
-        }
     }
 }
 

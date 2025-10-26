@@ -21,7 +21,7 @@ struct AddNewMemoryView: View {
     }
     var body: some View {
         ScrollView(.vertical) {
-            VStack(spacing: 0.0) {
+            LazyVStack(spacing: 0.0) {
                 locationImageView
                 locationInfoView
                 VStack(alignment: .leading, spacing: 16.0) {
@@ -49,6 +49,11 @@ struct AddNewMemoryView: View {
             toolbarContentView
         }
         .navigationBarBackButtonHidden()
+        .alert(
+            isPresented: $viewModel.isSaveMemoryAlertPresented,
+            error: viewModel.saveMemoryError
+        ){
+        }
     }
 }
 
@@ -100,15 +105,18 @@ private extension AddNewMemoryView {
             Text("Save")
         }
         .primaryFilledLargeButtonStyle()
+        .progressButtonStyle(isInProgress: viewModel.isSaveMemoryInProgress)
     }
 }
 
 private extension AddNewMemoryView {
     func saveMemory() async {
-        let result = await viewModel.saveMemory(pin: pin)
-        if case .success = result {
-            dismiss()
-        }
+        await viewModel.saveMemory(
+            pin: pin,
+            onSuccess: {
+                dismiss()
+            }
+        )
     }
 }
 

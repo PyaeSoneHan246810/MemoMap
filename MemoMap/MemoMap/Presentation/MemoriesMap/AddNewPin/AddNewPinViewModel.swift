@@ -20,19 +20,39 @@ final class AddNewPinViewModel {
     
     @ObservationIgnored @Injected(\.storageRepository) private var storageRepository: StorageRepository
     
+    var userData: UserData? {
+        authenticationRepository.getUserData()
+    }
+    
     var locationPhotoPickerItem: PhotosPickerItem? = nil
     
     var locationPhotoImage: UIImage? = nil
     
     var locationName: String = ""
     
+    private var trimmedLocationName: String {
+        locationName.trimmed()
+    }
+    
     var locationDescription: String = ""
+    
+    private var trimmedLocationDescription: String {
+        locationDescription.trimmed()
+    }
     
     var memoryMediaItems: [MemoryMediaItem] = []
     
     var memoryTitle: String = ""
     
+    private var trimmedMemoryTitle: String {
+        memoryTitle.trimmed()
+    }
+    
     var memoryDescription: String = ""
+    
+    private var trimmedMemoryDescription: String {
+        memoryDescription.trimmed()
+    }
     
     var memoryTags: [String] = []
     
@@ -40,27 +60,30 @@ final class AddNewPinViewModel {
     
     var isMemoryPublic: Bool = true
     
-    private var trimmedLocationName: String {
-        locationName.trimmed()
+    private(set) var isSaveNewPinInProgress: Bool = false
+    
+    enum SaveNewPinError: Error, LocalizedError {
+        case savePinError(SavePinError)
+        case saveMemoryError(SaveMemoryError)
+        case unknownError
+        var errorDescription: String? {
+            switch self {
+            case .savePinError(let savePinError):
+                savePinError.localizedDescription
+            case .saveMemoryError(let saveMemoryError):
+                saveMemoryError.localizedDescription
+            case .unknownError:
+                "Unknown Error"
+            }
+        }
     }
     
-    private var trimmedLocationDescription: String {
-        locationDescription.trimmed()
-    }
+    private(set) var saveNewPinError: SaveNewPinError? = nil
     
-    private var trimmedMemoryTitle: String {
-        memoryTitle.trimmed()
-    }
+    var isSaveNewPinAlertPresented: Bool = false
     
-    private var trimmedMemoryDescription: String {
-        memoryDescription.trimmed()
-    }
-    
-    private(set) var savePinError: SavePinError? = nil
-    
-    private(set) var saveMemoryError: SaveMemoryError? = nil
-    
-    func saveNewPin(latitude: Double, longitude: Double) async -> Result<Void, Error> {
+    func saveNewPin(latitude: Double, longitude: Double, onSuccess: () -> Void) async {
+        isSaveNewPinInProgress = true
         let pinData = PinData(
             id: "",
             name: trimmedLocationName,
@@ -70,7 +93,6 @@ final class AddNewPinViewModel {
             longitude: longitude,
             createdAt: .now
         )
-        let userData = authenticationRepository.getUserData()
         var savedPinId: String? = nil
         do {
             savedPinId = try await pinRepository.savePin(pinData: pinData, userData: userData)
@@ -90,23 +112,22 @@ final class AddNewPinViewModel {
                     await updateMemoryMedia(memoryId: savedMemoryId, media: uploadedMemoryMedia)
                 }
             }
-            return .success(())
+            isSaveNewPinInProgress = false
+            saveNewPinError = nil
+            isSaveNewPinAlertPresented = false
+            onSuccess()
         } catch {
+            isSaveNewPinInProgress = false
             if let savePinError = error as? SavePinError {
-                print(savePinError.localizedDescription)
-                self.savePinError = savePinError
-                return .failure(savePinError)
+                saveNewPinError = .savePinError(savePinError)
             } else if let saveMemeoryError = error as? SaveMemoryError {
-                print(saveMemeoryError.localizedDescription)
-                self.saveMemoryError = saveMemeoryError
                 if let savedPinId {
                     await deletePin(pinId: savedPinId)
                     await deletePinPhoto(pinId: savedPinId)
                 }
-                return .failure(saveMemeoryError)
+                saveNewPinError = .saveMemoryError(saveMemeoryError)
             } else {
-                print(error.localizedDescription)
-                return .failure(error)
+                saveNewPinError = .unknownError
             }
         }
     }
@@ -115,29 +136,12 @@ final class AddNewPinViewModel {
         guard let locationPhotoImage, let data = locationPhotoImage.jpegData(compressionQuality: 1.0) else {
             return nil
         }
-        do {
-            let pinPhotoUrlString = try await storageRepository.uploadPinPhoto(data: data, pinId: pinId)
-            return pinPhotoUrlString
-        } catch {
-            if let uploadPinPhotoError = error as? UploadPinPhotoError {
-                print(uploadPinPhotoError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
-            return nil
-        }
+        let pinPhotoUrlString = try? await storageRepository.uploadPinPhoto(data: data, pinId: pinId)
+        return pinPhotoUrlString
     }
     
     private func updatePinPhotoUrl(pinId: String, pinPhotoUrlString: String) async {
-        do {
-            try await pinRepository.updatePinPhotoUrl(pinId: pinId, pinPhotoUrlString: pinPhotoUrlString)
-        } catch {
-            if let updatePinPhotoUrlError = error as? UpdatePinPhotoUrlError {
-                print(updatePinPhotoUrlError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
-        }
+        try? await pinRepository.updatePinPhotoUrl(pinId: pinId, pinPhotoUrlString: pinPhotoUrlString)
     }
     
     private func saveMemory(pinId: String, locationName: String, latitude: Double, longitude: Double, userData: UserData?) async throws -> String {
@@ -162,66 +166,34 @@ final class AddNewPinViewModel {
     
     private func uploadMemoryMedia(memoryId: String) async -> [String] {
         var uploadedMemoryMedia: [String] = []
-        do {
-            for memoryMediaItem in memoryMediaItems {
-                let fileName = memoryMediaItem.id.uuidString
-                switch memoryMediaItem.media {
-                case .image(let uiImage):
-                    if let data = uiImage.jpegData(compressionQuality: 1.0) {
-                        let memoryPhotoUrlString = try await storageRepository.uploadMemoryPhoto(data: data, fileName: fileName, memoryId: memoryId)
+        for memoryMediaItem in memoryMediaItems {
+            let fileName = memoryMediaItem.id.uuidString
+            switch memoryMediaItem.media {
+            case .image(let uiImage):
+                if let data = uiImage.jpegData(compressionQuality: 1.0) {
+                    if let memoryPhotoUrlString = try? await storageRepository.uploadMemoryPhoto(data: data, fileName: fileName, memoryId: memoryId) {
                         uploadedMemoryMedia.append(memoryPhotoUrlString)
                     }
-                case .video(let movie):
-                    let url = movie.url
-                    let memoryVideoUrlString = try await storageRepository.uploadMemoryVideo(url: url, fileName: fileName, memoryId: memoryId)
+                }
+            case .video(let movie):
+                let url = movie.url
+                if let memoryVideoUrlString = try? await storageRepository.uploadMemoryVideo(url: url, fileName: fileName, memoryId: memoryId) {
                     uploadedMemoryMedia.append(memoryVideoUrlString)
                 }
-            }
-        } catch {
-            if let uploadMemoryPhotoError = error as? UploadMemoryPhotoError {
-                print(uploadMemoryPhotoError.localizedDescription)
-            } else if let uploadMemoryVideoError = error as? UploadMemoryVideoError {
-                print(uploadMemoryVideoError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
             }
         }
         return uploadedMemoryMedia
     }
     
     private func updateMemoryMedia(memoryId: String, media: [String]) async {
-        do {
-            try await memoryRepository.updateMemoryMedia(memoryId: memoryId, media: media)
-        } catch {
-            if let updateMemoryMediaError = error as? UpdateMemoryMediaError {
-                print(updateMemoryMediaError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
-        }
+        try? await memoryRepository.updateMemoryMedia(memoryId: memoryId, media: media)
     }
     
     private func deletePin(pinId: String) async {
-        do {
-            try await pinRepository.deletePin(pinId: pinId)
-        } catch {
-            if let deletePinError = error as? DeletePinError {
-                print(deletePinError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
-        }
+        try? await pinRepository.deletePin(pinId: pinId)
     }
     
     private func deletePinPhoto(pinId: String) async {
-        do {
-            try await storageRepository.deletePinPhoto(pinId: pinId)
-        } catch {
-            if let deletePinPhotoError = error as? DeletePinPhotoError {
-                print(deletePinPhotoError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
-        }
+        try? await storageRepository.deletePinPhoto(pinId: pinId)
     }
 }
