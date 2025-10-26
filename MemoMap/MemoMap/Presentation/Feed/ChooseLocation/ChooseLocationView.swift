@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import TipKit
 
 struct ChooseLocationView: View {
     @Binding var isPresented: Bool
     @Binding var selectedPin: PinData?
     @State private var viewModel: ChooseLocationViewModel = .init()
+    let addPinTip: AddPinTip = .init()
     var body: some View {
         Group {
             if viewModel.filteredPins.isEmpty && viewModel.trimmedSearchText.isEmpty {
@@ -87,6 +89,7 @@ private extension ChooseLocationView {
             viewModel.isAddPinSheetViewPresented = true
         }
         .primaryFilledButtonStyle(controlSize: .regular)
+        .popoverTip(addPinTip, arrowEdge: .bottom)
     }
     func pinMapView(pin: PinData) -> some View {
         PinSelectionView(

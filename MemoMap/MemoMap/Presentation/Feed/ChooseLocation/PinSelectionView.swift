@@ -7,12 +7,14 @@
 
 import SwiftUI
 import Kingfisher
+import TipKit
 
 struct PinSelectionView: View {
     @Environment(\.colorScheme) private var colorScheme: ColorScheme
     @Binding var selectedPin: PinData?
     let pin: PinData
     let onSelected: () -> Void
+    let selectPinTip: SelectPinTip = .init()
     var body: some View {
         PinOnMapView(
             latitude: pin.latitude,
@@ -59,6 +61,7 @@ private extension PinSelectionView {
             onSelected()
         }
         .primaryFilledButtonStyle(controlSize: .regular)
+        .popoverTip(selectPinTip, arrowEdge: .bottom)
     }
 }
 

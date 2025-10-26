@@ -7,11 +7,18 @@
 
 import SwiftUI
 import Kingfisher
+import TipKit
 
 struct SavedPinDetailsView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: SavedPinDetailsViewModel = .init()
     @State private var addNewMemoryScreenModel: AddNewMemoryScreenModel? = nil
+    @State private var tips = TipGroup(.ordered) {
+        EditPinImageTip()
+        EditPinTip()
+        DeletePinTip()
+        AddMemoryTip()
+    }
     let pinId: String
     private var pin: PinData? {
         viewModel.pin
@@ -130,6 +137,7 @@ private extension SavedPinDetailsView {
                         selection: $viewModel.newPinPhotoPickerItem,
                         uiImage: $viewModel.newPinPhoto
                     )
+                    .popoverTip(tips.currentTip as? EditPinImageTip, arrowEdge: .trailing)
                     .onChange(of: viewModel.newPinPhoto) {
                         Task { await viewModel.editPinPhoto(for: pinId) }
                     }
@@ -153,10 +161,12 @@ private extension SavedPinDetailsView {
                         viewModel.isEditPinSheetPresented = true
                     }
                     .secondaryFilledSmallButtonStyle()
+                    .popoverTip(tips.currentTip as? EditPinTip, arrowEdge: .top)
                     Button("Delete", systemImage: "trash") {
                         viewModel.isDeletePinConfirmationPresented = true
                     }
                     .destructiveButtonStyle(controlSize: .small)
+                    .popoverTip(tips.currentTip as? DeletePinTip, arrowEdge: .top)
                 }
             }
         }
@@ -188,6 +198,7 @@ private extension SavedPinDetailsView {
             }
         }
         .primaryFilledSmallButtonStyle()
+        .popoverTip(tips.currentTip as? AddMemoryTip, arrowEdge: .top)
     }
     @ViewBuilder
     var memoriesView: some View {

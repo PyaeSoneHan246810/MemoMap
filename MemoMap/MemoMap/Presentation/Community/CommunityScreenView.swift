@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import TipKit
 
 struct CommunityScreenView: View {
     @Environment(UserViewModel.self) private var userViewModel: UserViewModel
     @State private var communityViewModel: CommunityViewModel = .init()
     @State private var userProfileScreenModel: UserProfileScreenModel? = nil
     var selectedConnectionType: ConnectionType?
+    let searchUsersTip: SearchUsersTip = .init()
     var body: some View {
         VStack(spacing: 0.0) {
             connectionTypePickerView
@@ -51,8 +53,9 @@ private extension CommunityScreenView {
             NavigationLink {
                 SearchUsersScreenView()
             } label: {
-                Label("Search", systemImage: "person.badge.plus")
+                Image(systemName: "person.badge.plus")
             }
+            .popoverTip(searchUsersTip)
         }
     }
     var connectionTypePickerView: some View {

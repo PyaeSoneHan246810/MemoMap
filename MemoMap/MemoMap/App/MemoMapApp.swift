@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseCore
+import TipKit
 
 class AppDelegate: NSObject, UIApplicationDelegate {
   func application(_ application: UIApplication,
@@ -31,6 +32,9 @@ struct MemoMapApp: App {
         case .dark:
             ColorScheme.dark
         }
+    }
+    init() {
+        try? Tips.configure()
     }
     var body: some Scene {
         WindowGroup {
