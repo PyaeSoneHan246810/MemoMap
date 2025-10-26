@@ -160,7 +160,7 @@ private extension SearchUsersScreenView {
     }
     var searchLoadingView: some View {
         ZStack {
-            ProgressView()
+            ProgressView().controlSize(.large)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

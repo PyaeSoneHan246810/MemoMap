@@ -24,6 +24,26 @@ class EditMemoryMediaViewModel {
     
     var newMemoryMediaPhotoPickerItem: PhotosPickerItem? = nil
     
+    private(set) var isAddingNewItemsInProgress: Bool = false
+    
+    private(set) var isAddingNewItemInProgress: Bool = false
+    
+    private(set) var isDeleteItemInProgress: Bool = false
+    
+    private(set) var isDeleteAllItemsInProgress: Bool = false
+    
+    private(set) var updateMemoryMediaError: UpdateMemoryMediaError? = nil
+    
+    private(set) var addMemoryMediaError: AddMemoryMediaError? = nil
+    
+    private(set) var removeAllMemoryMediaError: RemoveAllMemoryMediaError? = nil
+    
+    var isAddingNewItemsAlertPresented: Bool = false
+    
+    var isAddingNewItemAlertPresented: Bool = false
+    
+    var isDeleteAllItemsAlertPresented: Bool = false
+    
     func getMediaList(from mediaUrlStrings: [String]) {
         mediaList = mediaUrlStrings.map { mediaUrlString in
             let mediaType: MediaType = mediaUrlString.contains(".jpeg") ? .image : .video
@@ -34,114 +54,102 @@ class EditMemoryMediaViewModel {
         }
     }
     
-    func addNewMemoryMediaItems(for memoryId: String, onComplete: () -> Void) async {
+    func addNewMemoryMediaItems(for memoryId: String, onSuccess: () -> Void) async {
+        isAddingNewItemsInProgress = true
         var uploadedMemoryMediaUrlStrings: [String] = []
         do {
             uploadedMemoryMediaUrlStrings = await uploadNewMemoryMediaItems(memoryId: memoryId)
             if !uploadedMemoryMediaUrlStrings.isEmpty {
                 try await memoryRepository.updateMemoryMedia(memoryId: memoryId, media: uploadedMemoryMediaUrlStrings)
             }
-            onComplete()
+            isAddingNewItemsInProgress = false
+            updateMemoryMediaError = nil
+            isAddingNewItemsAlertPresented = false
+            onSuccess()
         } catch {
+            isAddingNewItemsInProgress = false
             if let updateMemoryMediaError = error as? UpdateMemoryMediaError {
-                print(updateMemoryMediaError.localizedDescription)
                 if case .updateFailed = updateMemoryMediaError {
                     for urlString in uploadedMemoryMediaUrlStrings {
                         await deleteMemoryMediaStorageItem(urlString: urlString)
                     }
                 }
+                self.updateMemoryMediaError = updateMemoryMediaError
             } else {
-                print(error.localizedDescription)
+                updateMemoryMediaError = .updateFailed
             }
+            isAddingNewItemsAlertPresented = true
         }
     }
     
     private func uploadNewMemoryMediaItems(memoryId: String) async -> [String] {
         var uploadedMemoryMediaUrlStrings: [String] = []
-        do {
-            for memoryMediaItem in newMemoryMediaItems {
-                let fileName = memoryMediaItem.id.uuidString
-                switch memoryMediaItem.media {
-                case .image(let uiImage):
-                    if let data = uiImage.jpegData(compressionQuality: 1.0) {
-                        let memoryPhotoUrlString = try await storageRepository.uploadMemoryPhoto(data: data, fileName: fileName, memoryId: memoryId)
+        for memoryMediaItem in newMemoryMediaItems {
+            let fileName = memoryMediaItem.id.uuidString
+            switch memoryMediaItem.media {
+            case .image(let uiImage):
+                if let data = uiImage.jpegData(compressionQuality: 1.0) {
+                    if let memoryPhotoUrlString = try? await storageRepository.uploadMemoryPhoto(data: data, fileName: fileName, memoryId: memoryId) {
                         uploadedMemoryMediaUrlStrings.append(memoryPhotoUrlString)
                     }
-                case .video(let movie):
-                    let url = movie.url
-                    let memoryVideoUrlString = try await storageRepository.uploadMemoryVideo(url: url, fileName: fileName, memoryId: memoryId)
+                }
+            case .video(let movie):
+                let url = movie.url
+                if let memoryVideoUrlString = try? await storageRepository.uploadMemoryVideo(url: url, fileName: fileName, memoryId: memoryId) {
                     uploadedMemoryMediaUrlStrings.append(memoryVideoUrlString)
                 }
-            }
-        } catch {
-            if let uploadMemoryPhotoError = error as? UploadMemoryPhotoError {
-                print(uploadMemoryPhotoError.localizedDescription)
-            } else if let uploadMemoryVideoError = error as? UploadMemoryVideoError {
-                print(uploadMemoryVideoError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
             }
         }
         return uploadedMemoryMediaUrlStrings
     }
     
-    func deleteMemoryMedia(memoryId: String, media: Media, onComplete: () -> Void) async {
+    private func deleteMemoryMediaStorageItem(urlString: String) async {
+        try? await storageRepository.deleteMemoryMediaItem(with: urlString)
+    }
+    
+    func deleteMemoryMedia(memoryId: String, media: Media, onSuccess: () -> Void) async {
+        isDeleteItemInProgress = true
         do {
             try await memoryRepository.removeMemoryMedia(memoryId: memoryId, mediaToRemove: media.urlString)
             await deleteMemoryMediaStorageItem(urlString: media.urlString)
-            self.mediaList.removeAll {
+            mediaList.removeAll {
                 $0.urlString == media.urlString
             }
-            onComplete()
+            isDeleteItemInProgress = false
+            onSuccess()
         } catch {
-            if let removeMemoryMediaError = error as? RemoveMemoryMediaError {
-                print(removeMemoryMediaError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
+            print(error.localizedDescription)
+            isDeleteItemInProgress = false
         }
     }
     
-    private func deleteMemoryMediaStorageItem(urlString: String) async {
-        do {
-            try await storageRepository.deleteMemoryMediaItem(with: urlString)
-        } catch {
-            if let deleteMemoryMediaItemError = error as? DeleteMemoryMediaItemError {
-                print(deleteMemoryMediaItemError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
-        }
-    }
-    
-    func deleteAllMemoryMedia(memoryId: String, onComplete: () -> Void) async {
+    func deleteAllMemoryMedia(memoryId: String, onSuccess: () -> Void) async {
+        isDeleteAllItemsInProgress = true
         do {
             try await memoryRepository.removeAllMemoryMedia(memoryId: memoryId)
             await deleteAllMemoryMediaStorageItems(for: memoryId)
-            self.mediaList.removeAll()
-            onComplete()
+            mediaList.removeAll()
+            isDeleteAllItemsInProgress = false
+            removeAllMemoryMediaError = nil
+            isDeleteAllItemsAlertPresented = false
+            onSuccess()
         } catch {
+            isDeleteAllItemsInProgress = false
             if let removeAllMemoryMediaError = error as? RemoveAllMemoryMediaError {
-                print(removeAllMemoryMediaError.localizedDescription)
+                self.removeAllMemoryMediaError = removeAllMemoryMediaError
             } else {
-                print(error.localizedDescription)
+                removeAllMemoryMediaError = .removeFailed
             }
+            isDeleteAllItemsAlertPresented = true
         }
     }
     
     private func deleteAllMemoryMediaStorageItems(for memoryId: String) async {
-        do {
-            try await storageRepository.deleteMemoryMedia(memoryId: memoryId)
-        } catch {
-            if let deleteMemoryMediaError = error as? DeleteMemoryMediaError {
-                print(deleteMemoryMediaError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
-        }
+        try? await storageRepository.deleteMemoryMedia(memoryId: memoryId)
     }
     
-    func addNewMemoryMediaItem(for memoryId: String, completion: () -> Void) async {
+    func addNewMemoryMediaItem(for memoryId: String, onSuccess: () -> Void) async {
+        isAddingNewItemInProgress = true
         var uploadedMemoryMediaUrlString: String? = nil
         do {
             uploadedMemoryMediaUrlString = await uploadNewMemoryMediaItem(memoryId: memoryId)
@@ -156,16 +164,21 @@ class EditMemoryMediaViewModel {
                     mediaList.append(newMediaAdded)
                 }
             }
-            completion()
+            isAddingNewItemInProgress = false
+            addMemoryMediaError = nil
+            isAddingNewItemAlertPresented = false
+            onSuccess()
         } catch {
+            isAddingNewItemInProgress = false
             if let addMemoryMediaError = error as? AddMemoryMediaError {
-                print(addMemoryMediaError.localizedDescription)
                 if case .addFailed = addMemoryMediaError, let urlString = uploadedMemoryMediaUrlString {
                     await deleteMemoryMediaStorageItem(urlString: urlString)
                 }
+                self.addMemoryMediaError = addMemoryMediaError
             } else {
-                print(error.localizedDescription)
+                addMemoryMediaError = .addFailed
             }
+            isAddingNewItemAlertPresented = true
         }
     }
     
@@ -174,26 +187,18 @@ class EditMemoryMediaViewModel {
             return nil
         }
         var uploadedMemoryMediaUrlString: String? = nil
-        do {
-            let fileName = memoryMediaItem.id.uuidString
-            switch memoryMediaItem.media {
-            case .image(let uiImage):
-                if let data = uiImage.jpegData(compressionQuality: 1.0) {
-                    let memoryPhotoUrlString = try await storageRepository.uploadMemoryPhoto(data: data, fileName: fileName, memoryId: memoryId)
+        let fileName = memoryMediaItem.id.uuidString
+        switch memoryMediaItem.media {
+        case .image(let uiImage):
+            if let data = uiImage.jpegData(compressionQuality: 1.0) {
+                if let memoryPhotoUrlString = try? await storageRepository.uploadMemoryPhoto(data: data, fileName: fileName, memoryId: memoryId) {
                     uploadedMemoryMediaUrlString = memoryPhotoUrlString
                 }
-            case .video(let movie):
-                let url = movie.url
-                let memoryVideoUrlString = try await storageRepository.uploadMemoryVideo(url: url, fileName: fileName, memoryId: memoryId)
-                uploadedMemoryMediaUrlString = memoryVideoUrlString
             }
-        } catch {
-            if let uploadMemoryPhotoError = error as? UploadMemoryPhotoError {
-                print(uploadMemoryPhotoError.localizedDescription)
-            } else if let uploadMemoryVideoError = error as? UploadMemoryVideoError {
-                print(uploadMemoryVideoError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
+        case .video(let movie):
+            let url = movie.url
+            if let memoryVideoUrlString = try? await storageRepository.uploadMemoryVideo(url: url, fileName: fileName, memoryId: memoryId) {
+                uploadedMemoryMediaUrlString = memoryVideoUrlString
             }
         }
         return uploadedMemoryMediaUrlString

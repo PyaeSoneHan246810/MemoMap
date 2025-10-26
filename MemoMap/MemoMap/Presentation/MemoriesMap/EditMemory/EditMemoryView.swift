@@ -18,6 +18,9 @@ struct EditMemoryInfo {
 struct EditMemoryView: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var editMemoryInfo: EditMemoryInfo
+    @Binding var isErrorAlertPresented: Bool
+    let updateMemoryInfoError: UpdateMemoryInfoError?
+    let isEditInProgress: Bool
     let onSaveClick: () -> Void
     var body: some View {
         ScrollView(.vertical) {
@@ -31,6 +34,7 @@ struct EditMemoryView: View {
                 )
                 Button("Save", action: onSaveClick)
                     .primaryFilledLargeButtonStyle()
+                    .progressButtonStyle(isInProgress: isEditInProgress)
             }
         }
         .disableBouncesVertically()
@@ -40,6 +44,7 @@ struct EditMemoryView: View {
         .toolbar {
             toolbarContentView
         }
+        .alert(isPresented: $isErrorAlertPresented, error: updateMemoryInfoError) {}
     }
 }
 
@@ -59,6 +64,9 @@ private extension EditMemoryView {
     NavigationStack {
         EditMemoryView(
             editMemoryInfo: $editMemoryInfo,
+            isErrorAlertPresented: .constant(false),
+            updateMemoryInfoError: nil,
+            isEditInProgress: false,
             onSaveClick: {}
         )
     }

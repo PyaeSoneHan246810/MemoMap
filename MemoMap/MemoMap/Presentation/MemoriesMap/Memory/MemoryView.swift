@@ -112,6 +112,9 @@ private extension MemoryView {
         NavigationStack {
             EditMemoryView(
                 editMemoryInfo: $viewModel.editMemoryInfo,
+                isErrorAlertPresented: $viewModel.isEditMemoryInfoAlertPresented,
+                updateMemoryInfoError: viewModel.updateMemoryInfoError,
+                isEditInProgress: viewModel.isEditMemoryInfoInProgress,
                 onSaveClick: {
                     if let memory = viewModel.updatedMemory {
                         Task {

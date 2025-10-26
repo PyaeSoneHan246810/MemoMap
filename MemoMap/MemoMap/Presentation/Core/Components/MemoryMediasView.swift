@@ -67,7 +67,7 @@ private extension MemoryMediasView {
     }
     var multiMediaScrollView: some View {
         ScrollView(.horizontal) {
-            HStack {
+            LazyHStack(spacing: 12.0) {
                 ForEach(medias) { media in
                     switch media.type {
                     case .image:

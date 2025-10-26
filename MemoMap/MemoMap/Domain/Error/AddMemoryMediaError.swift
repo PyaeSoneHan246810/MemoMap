@@ -7,7 +7,15 @@
 
 import Foundation
 
-enum AddMemoryMediaError: Error {
+enum AddMemoryMediaError: Error, LocalizedError {
     case mediaNotExist
     case addFailed
+    var errorDescription: String? {
+        switch self {
+        case .mediaNotExist:
+            "Media Not Exist"
+        case .addFailed:
+            "Add Failed"
+        }
+    }
 }

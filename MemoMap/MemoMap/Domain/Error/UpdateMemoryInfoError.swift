@@ -7,6 +7,12 @@
 
 import Foundation
 
-enum UpdateMemoryInfoError: Error {
+enum UpdateMemoryInfoError: Error, LocalizedError {
     case updateFailed
+    var errorDescription: String? {
+        switch self {
+        case .updateFailed:
+            "Update Failed"
+        }
+    }
 }

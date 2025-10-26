@@ -7,6 +7,12 @@
 
 import Foundation
 
-enum UploadPinPhotoError: Error {
+enum UploadPinPhotoError: Error, LocalizedError {
     case uploadFailed
+    var errorDescription: String? {
+        switch self {
+        case .uploadFailed:
+            "Upload Failed"
+        }
+    }
 }

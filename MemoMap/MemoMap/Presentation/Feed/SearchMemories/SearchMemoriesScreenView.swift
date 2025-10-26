@@ -157,7 +157,7 @@ private extension SearchMemoriesScreenView {
     }
     var searchLoadingView: some View {
         ZStack {
-            ProgressView()
+            ProgressView().controlSize(.large)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

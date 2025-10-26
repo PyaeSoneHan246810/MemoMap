@@ -107,7 +107,7 @@ final class FirebaseStorageRepository: StorageRepository {
                 try await item.delete()
             }
         } catch {
-            throw DeleteMemoryMediaError.deleteFailed
+            throw DeleteMemoryError.deleteFailed
         }
     }
     

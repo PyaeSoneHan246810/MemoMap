@@ -13,8 +13,7 @@ struct LoadingOverlayView: View {
             .ignoresSafeArea()
             .foregroundStyle(.black.opacity(0.3))
             .overlay {
-                ProgressView()
-                    .controlSize(.large)
+                ProgressView().controlSize(.large)
             }
     }
 }

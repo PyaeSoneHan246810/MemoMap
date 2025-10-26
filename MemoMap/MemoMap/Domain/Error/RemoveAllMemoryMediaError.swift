@@ -7,6 +7,12 @@
 
 import Foundation
 
-enum RemoveAllMemoryMediaError: Error {
+enum RemoveAllMemoryMediaError: Error, LocalizedError {
     case removeFailed
+    var errorDescription: String? {
+        switch self {
+        case .removeFailed:
+            "Remove Failed"
+        }
+    }
 }
