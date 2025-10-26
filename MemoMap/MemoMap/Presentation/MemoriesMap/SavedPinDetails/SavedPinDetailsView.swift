@@ -61,6 +61,26 @@ struct SavedPinDetailsView: View {
             await viewModel.getMemories(for: pinId)
         }
         .alert(
+            "Delete pin",
+            isPresented: $viewModel.isDeletePinConfirmationPresented,
+            actions: {
+                Button("Cancel", role: .cancel) {}
+                Button("Delete", role: .destructive) {
+                    Task {
+                        await viewModel.deletePin(
+                            for: pinId,
+                            onSuccess: {
+                                dismiss()
+                            }
+                        )
+                    }
+                }
+            },
+            message: {
+                Text("Are you sure to delete this location and all of the memories?")
+            }
+        )
+        .alert(
             isPresented: $viewModel.isEditPinPhotoAlertPresented,
             error: viewModel.editPinPhotoError
         ){
@@ -134,14 +154,7 @@ private extension SavedPinDetailsView {
                     }
                     .secondaryFilledSmallButtonStyle()
                     Button("Delete", systemImage: "trash") {
-                        Task {
-                            await viewModel.deletePin(
-                                for: pinId,
-                                onSuccess: {
-                                    dismiss()
-                                }
-                            )
-                        }
+                        viewModel.isDeletePinConfirmationPresented = true
                     }
                     .destructiveButtonStyle(controlSize: .small)
                 }

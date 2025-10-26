@@ -7,7 +7,15 @@
 
 import Foundation
 
-enum SaveMemoryError: Error {
+enum SaveMemoryError: Error, LocalizedError {
     case userNotFound
     case saveFailed
+    var errorDescription: String? {
+        switch self {
+        case .userNotFound:
+            "User Not Found"
+        case .saveFailed:
+            "Save Failed"
+        }
+    }
 }

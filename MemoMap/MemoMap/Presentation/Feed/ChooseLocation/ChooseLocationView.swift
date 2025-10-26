@@ -104,6 +104,9 @@ private extension ChooseLocationView {
                 locationName: $viewModel.locationName,
                 locationDescription: $viewModel.locationDescription,
                 locationPlace: $viewModel.locationPlace,
+                isSavePinInProgress: viewModel.isSavePinInProgress,
+                savePinError: viewModel.savePinError,
+                isSavePinAlertPresented: $viewModel.isSavePinAlertPresented,
                 onSave: {
                     Task {
                         await viewModel.saveNewPin()

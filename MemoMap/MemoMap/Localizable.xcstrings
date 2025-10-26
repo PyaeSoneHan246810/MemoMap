@@ -92,6 +92,9 @@
     "Are you sure to delete this account?" : {
 
     },
+    "Are you sure to delete this location and all of the memories?" : {
+
+    },
     "Are you sure to log out from the account?" : {
 
     },
@@ -279,6 +282,9 @@
       }
     },
     "Delete all" : {
+
+    },
+    "Delete pin" : {
 
     },
     "Describe your moments" : {

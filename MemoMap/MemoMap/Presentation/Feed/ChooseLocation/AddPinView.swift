@@ -16,10 +16,13 @@ struct AddPinView: View {
     @Binding var locationName: String
     @Binding var locationDescription: String
     @Binding var locationPlace: Place?
+    let isSavePinInProgress: Bool
+    let savePinError: SavePinError?
+    @Binding var isSavePinAlertPresented: Bool
+    let onSave: () -> Void
     @State private var locationPhotoPickerItem: PhotosPickerItem? = nil
     @State private var viewport: Viewport = .followPuck(zoom: 12.0, bearing: .constant(0.0), pitch: 0.0)
     var clusterOptions: ClusterOptions = .init()
-    let onSave: () -> Void
     var body: some View {
         mapView
         .ignoresSafeArea()
@@ -40,6 +43,11 @@ struct AddPinView: View {
         ) { _ in
             locationInfoSheetView
                 .interactiveDismissDisabled()
+        }
+        .alert(
+            isPresented: $isSavePinAlertPresented,
+            error: savePinError
+        ){
         }
     }
 }
@@ -131,15 +139,17 @@ private extension AddPinView {
             localizedTitle: "Location name",
             localizedPlaceholder: "Enter name of a location",
             text: $locationName,
-            axis: .horizontal,
-            lineLimit: 1
+            textContentType: .name,
+            autoCorrectionDisabled: true,
+            submitLabel: .next
         )
         InputTextFieldView(
             localizedTitle: "Location description",
             localizedPlaceholder: "Enter description for a location",
             text: $locationDescription,
+            submitLabel: .done,
             axis: .vertical,
-            lineLimit: 4
+            lineLimit: 5
         )
     }
     var saveButtonView: some View {
@@ -147,6 +157,7 @@ private extension AddPinView {
             onSave()
         }
         .primaryFilledLargeButtonStyle()
+        .progressButtonStyle(isInProgress: isSavePinInProgress)
     }
 }
 
@@ -157,6 +168,9 @@ private extension AddPinView {
             locationName: .constant(""),
             locationDescription: .constant(""),
             locationPlace: .constant(nil),
+            isSavePinInProgress: false,
+            savePinError: nil,
+            isSavePinAlertPresented: .constant(false),
             onSave: {}
         )
     }

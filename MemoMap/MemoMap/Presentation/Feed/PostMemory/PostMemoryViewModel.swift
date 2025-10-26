@@ -17,13 +17,25 @@ class PostMemoryViewModel {
     
     @ObservationIgnored @Injected(\.storageRepository) private var storageRepository: StorageRepository
     
+    private var userData: UserData? {
+        authenticationRepository.getUserData()
+    }
+    
     var isChooseLocationViewPresented: Bool = false
     
     var memoryMediaItems: [MemoryMediaItem] = []
     
     var memoryTitle: String = ""
     
+    private var trimmedMemoryTitle: String {
+        memoryTitle.trimmed()
+    }
+    
     var memoryDescription: String = ""
+    
+    private var trimmedMemoryDescription: String {
+        memoryDescription.trimmed()
+    }
     
     var memoryTags: [String] = []
     
@@ -31,17 +43,15 @@ class PostMemoryViewModel {
     
     var selectedPin: PinData? = nil
     
-    var trimmedMemoryTitle: String {
-        memoryTitle.trimmed()
-    }
+    private(set) var isPostMemoryInProgress: Bool = false
     
-    var trimmedMemoryDescription: String {
-        memoryDescription.trimmed()
-    }
+    private(set) var saveMemoryError: SaveMemoryError? = nil
     
-    func postMemory(onComplete: () -> Void) async {
+    var isSaveMemoryAlertPresented: Bool = false
+    
+    func postMemory(onSuccess: () -> Void) async {
         guard let pin = selectedPin else { return }
-        let userData = authenticationRepository.getUserData()
+        isPostMemoryInProgress = true
         let memoryData: MemoryData = .init(
             id: "",
             pinId: "",
@@ -63,54 +73,45 @@ class PostMemoryViewModel {
             if !uploadedMemoryMedia.isEmpty {
                 await updateMemoryMedia(memoryId: savedMemoryId, media: uploadedMemoryMedia)
             }
-            onComplete()
+            isPostMemoryInProgress = false
+            saveMemoryError = nil
+            isSaveMemoryAlertPresented = false
+            onSuccess()
         } catch {
+            isPostMemoryInProgress = false
             if let saveMemeoryError = error as? SaveMemoryError {
-                print(saveMemeoryError.localizedDescription)
+                self.saveMemoryError = saveMemeoryError
             } else {
-                print(error.localizedDescription)
+                saveMemoryError = .saveFailed
             }
+            isSaveMemoryAlertPresented = true
         }
     }
     
     private func uploadMemoryMedia(memoryId: String) async -> [String] {
         var uploadedMemoryMedia: [String] = []
-        do {
-            for memoryMediaItem in memoryMediaItems {
-                let fileName = memoryMediaItem.id.uuidString
-                switch memoryMediaItem.media {
-                case .image(let uiImage):
-                    if let data = uiImage.jpegData(compressionQuality: 1.0) {
-                        let memoryPhotoUrlString = try await storageRepository.uploadMemoryPhoto(data: data, fileName: fileName, memoryId: memoryId)
+        for memoryMediaItem in memoryMediaItems {
+            let fileName = memoryMediaItem.id.uuidString
+            switch memoryMediaItem.media {
+            case .image(let uiImage):
+                if let data = uiImage.jpegData(compressionQuality: 1.0) {
+                    if let memoryPhotoUrlString = try? await storageRepository.uploadMemoryPhoto(data: data, fileName: fileName, memoryId: memoryId) {
                         uploadedMemoryMedia.append(memoryPhotoUrlString)
                     }
-                case .video(let movie):
-                    let url = movie.url
-                    let memoryVideoUrlString = try await storageRepository.uploadMemoryVideo(url: url, fileName: fileName, memoryId: memoryId)
+                    
+                }
+            case .video(let movie):
+                let url = movie.url
+                if let memoryVideoUrlString = try? await storageRepository.uploadMemoryVideo(url: url, fileName: fileName, memoryId: memoryId) {
                     uploadedMemoryMedia.append(memoryVideoUrlString)
                 }
-            }
-        } catch {
-            if let uploadMemoryPhotoError = error as? UploadMemoryPhotoError {
-                print(uploadMemoryPhotoError.localizedDescription)
-            } else if let uploadMemoryVideoError = error as? UploadMemoryVideoError {
-                print(uploadMemoryVideoError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
+                
             }
         }
         return uploadedMemoryMedia
     }
     
     private func updateMemoryMedia(memoryId: String, media: [String]) async {
-        do {
-            try await memoryRepository.updateMemoryMedia(memoryId: memoryId, media: media)
-        } catch {
-            if let updateMemoryMediaError = error as? UpdateMemoryMediaError {
-                print(updateMemoryMediaError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
-        }
+        try? await memoryRepository.updateMemoryMedia(memoryId: memoryId, media: media)
     }
 }

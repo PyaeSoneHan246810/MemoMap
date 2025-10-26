@@ -18,9 +18,11 @@ class ChooseLocationViewModel {
     
     @ObservationIgnored @Injected(\.storageRepository) private var storageRepository: StorageRepository
     
-    var isAddPinSheetViewPresented: Bool = false
+    var userData: UserData? {
+        authenticationRepository.getUserData()
+    }
     
-    private(set) var pins: [PinData] = []
+    var isAddPinSheetViewPresented: Bool = false
     
     var searchText: String = ""
     
@@ -32,9 +34,19 @@ class ChooseLocationViewModel {
     
     var locationName: String = ""
     
+    private var trimmedLocationName: String {
+        locationName.trimmed()
+    }
+    
     var locationDescription: String = ""
     
+    private var trimmedLocationDescription: String {
+        locationDescription.trimmed()
+    }
+    
     var locationPlace: Place? = nil
+    
+    private(set) var pins: [PinData] = []
     
     var filteredPins: [PinData] {
         if trimmedSearchText.isEmpty {
@@ -44,14 +56,6 @@ class ChooseLocationViewModel {
                 pin.name.contains(trimmedSearchText)
             }
         }
-    }
-    
-    var trimmedLocationName: String {
-        locationName.trimmed()
-    }
-    
-    var trimmedLocationDescription: String {
-        locationDescription.trimmed()
     }
     
     func getPins() async {
@@ -68,10 +72,17 @@ class ChooseLocationViewModel {
         }
     }
     
+    private(set) var isSavePinInProgress: Bool = false
+    
+    private(set) var savePinError: SavePinError? = nil
+    
+    var isSavePinAlertPresented: Bool = false
+    
     func saveNewPin() async {
         guard let place = locationPlace else {
             return
         }
+        isSavePinInProgress = true
         let pinData = PinData(
             id: "",
             name: trimmedLocationName,
@@ -81,20 +92,24 @@ class ChooseLocationViewModel {
             longitude: place.longitude,
             createdAt: .now
         )
-        let userData = authenticationRepository.getUserData()
         do {
             let savedPinId = try await pinRepository.savePin(pinData: pinData, userData: userData)
             if let pinPhotoUrlString = await uploadPinPhoto(pinId: savedPinId) {
                 await updatePinPhotoUrl(pinId: savedPinId, pinPhotoUrlString: pinPhotoUrlString)
             }
+            isSavePinInProgress = false
+            savePinError = nil
+            isSavePinAlertPresented = false
             isAddPinSheetViewPresented = false
             await getPins()
         } catch {
+            isSavePinInProgress = false
             if let savePinError = error as? SavePinError {
-                print(savePinError.localizedDescription)
+                self.savePinError = savePinError
             } else {
-                print(error.localizedDescription)
+                savePinError = .saveFailed
             }
+            isSavePinAlertPresented = true
         }
     }
     
@@ -102,28 +117,11 @@ class ChooseLocationViewModel {
         guard let locationPhotoImage, let data = locationPhotoImage.jpegData(compressionQuality: 1.0) else {
             return nil
         }
-        do {
-            let pinPhotoUrlString = try await storageRepository.uploadPinPhoto(data: data, pinId: pinId)
-            return pinPhotoUrlString
-        } catch {
-            if let uploadPinPhotoError = error as? UploadPinPhotoError {
-                print(uploadPinPhotoError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
-            return nil
-        }
+        let pinPhotoUrlString = try? await storageRepository.uploadPinPhoto(data: data, pinId: pinId)
+        return pinPhotoUrlString
     }
     
     private func updatePinPhotoUrl(pinId: String, pinPhotoUrlString: String) async {
-        do {
-            try await pinRepository.updatePinPhotoUrl(pinId: pinId, pinPhotoUrlString: pinPhotoUrlString)
-        } catch {
-            if let updatePinPhotoUrlError = error as? UpdatePinPhotoUrlError {
-                print(updatePinPhotoUrlError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
-        }
+        try? await pinRepository.updatePinPhotoUrl(pinId: pinId, pinPhotoUrlString: pinPhotoUrlString)
     }
 }
