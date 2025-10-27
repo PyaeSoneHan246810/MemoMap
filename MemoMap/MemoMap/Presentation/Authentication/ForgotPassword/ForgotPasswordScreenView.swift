@@ -61,6 +61,7 @@ private extension ForgotPasswordScreenView {
         }
         .primaryFilledLargeButtonStyle()
         .progressButtonStyle(isInProgress: viewModel.isPasswordResetInProgress)
+        .disabled(!viewModel.isPasswordResetValid)
     }
     var successSheetView: some View {
         VStack {

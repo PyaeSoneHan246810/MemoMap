@@ -10,18 +10,15 @@ import Foundation
 enum SendPasswordResetError: Error, LocalizedError {
     case invalidEmail
     case networkError
-    case sendFailed
     case unknownError
     var errorDescription: String? {
         switch self {
         case .invalidEmail:
-            "Invalid Email"
+            "Please enter a valid email address and try again."
         case .networkError:
-            "Network Error"
-        case .sendFailed:
-            "Send Failed"
+            "You’re offline. Check your internet connection and try again."
         case .unknownError:
-            "Unknown Error"
+            "Something went wrong. Please try again later."
         }
     }
 }

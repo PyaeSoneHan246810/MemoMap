@@ -166,7 +166,7 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
                 case .networkError:
                     throw SendPasswordResetError.networkError
                 default:
-                    throw SendPasswordResetError.sendFailed
+                    throw SendPasswordResetError.unknownError
                 }
             } else {
                 throw SendPasswordResetError.unknownError
