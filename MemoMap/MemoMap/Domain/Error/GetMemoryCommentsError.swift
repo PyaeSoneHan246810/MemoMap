@@ -7,6 +7,12 @@
 
 import Foundation
 
-enum GetMemoryCommentsError: Error {
+enum GetMemoryCommentsError: Error, LocalizedError {
     case failedToGet
+    var errorDescription: String? {
+        switch self {
+        case .failedToGet:
+            "Failed To Get"
+        }
+    }
 }

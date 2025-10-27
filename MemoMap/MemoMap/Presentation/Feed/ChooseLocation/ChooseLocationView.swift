@@ -15,10 +15,13 @@ struct ChooseLocationView: View {
     let addPinTip: AddPinTip = .init()
     var body: some View {
         Group {
-            if viewModel.filteredPins.isEmpty && viewModel.trimmedSearchText.isEmpty {
-                emptyPinsView
-            } else {
+            switch viewModel.pinsDataState {
+            case .initial, .loading:
+                loadingProgressView
+            case .success(_):
                 pinsListView
+            case .failure(let errorDescription):
+                ErrorView(errorDescription: errorDescription)
             }
         }
         .navigationTitle("Choose saved location")
@@ -34,37 +37,45 @@ struct ChooseLocationView: View {
 }
 
 private extension ChooseLocationView {
-    var emptyPinsView: some View {
-        EmptyContentView(
-            image: .emptyData,
-            title: "No Pins Yet",
-            description: "You haven’t saved any locations yet."
-        )
-        .safeAreaInset(edge: .bottom) {
-            addPinButtonView
+    var loadingProgressView: some View {
+        ZStack {
+            ProgressView().controlSize(.large)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+    @ViewBuilder
     var pinsListView: some View {
-        List {
-            if viewModel.filteredPins.isEmpty {
-                emptySearchPinsView
-            } else {
-                ForEach(viewModel.filteredPins) { pin in
-                    NavigationLink {
-                        pinMapView(
-                            pin: pin
-                        )
-                    } label: {
-                        pinItemView(pin: pin)
+        if viewModel.filteredPins.isEmpty && viewModel.trimmedSearchText.isEmpty {
+            EmptyContentView(
+                image: .emptyData,
+                title: "No Pins Yet",
+                description: "You haven’t saved any locations yet."
+            )
+            .safeAreaInset(edge: .bottom) {
+                addPinButtonView
+            }
+        } else {
+            List {
+                if viewModel.filteredPins.isEmpty {
+                    emptySearchPinsView
+                } else {
+                    ForEach(viewModel.filteredPins) { pin in
+                        NavigationLink {
+                            pinMapView(
+                                pin: pin
+                            )
+                        } label: {
+                            pinItemView(pin: pin)
+                        }
+                        .navigationLinkIndicatorVisibility(.hidden)
                     }
-                    .navigationLinkIndicatorVisibility(.hidden)
                 }
             }
+            .searchable(
+                text: $viewModel.searchText,
+                prompt: Text("Search for saved locations")
+            )
         }
-        .searchable(
-            text: $viewModel.searchText,
-            prompt: Text("Search for saved locations")
-        )
     }
     var emptySearchPinsView: some View {
         EmptyContentView(

@@ -86,7 +86,10 @@ final class FirebasePinRepository: PinRepository {
             throw GetPinsError.userNotFound
         }
         do {
-            let pinModels = try await pinCollectionReference.whereField(PinModel.CodingKeys.ownerId.rawValue, isEqualTo: userId).getDocumentModels(as: PinModel.self)
+            let pinModels = try await pinCollectionReference
+                .whereField(PinModel.CodingKeys.ownerId.rawValue, isEqualTo: userId)
+                .order(by: PinModel.CodingKeys.name.rawValue)
+                .getDocumentModels(as: PinModel.self)
             let pins = pinModels.map { pinModel in
                 getPinData(from: pinModel)
             }

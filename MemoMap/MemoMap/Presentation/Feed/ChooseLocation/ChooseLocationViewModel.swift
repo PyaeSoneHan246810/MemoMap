@@ -46,7 +46,16 @@ class ChooseLocationViewModel {
     
     var locationPlace: Place? = nil
     
-    private(set) var pins: [PinData] = []
+    private(set) var pinsDataState: DataState<[PinData]> = .initial
+    
+    
+    private var pins: [PinData] {
+        if case .success(let data) = pinsDataState {
+            data
+        } else {
+            []
+        }
+    }
     
     var filteredPins: [PinData] {
         if trimmedSearchText.isEmpty {
@@ -59,15 +68,18 @@ class ChooseLocationViewModel {
     }
     
     func getPins() async {
+        pinsDataState = .loading
         let userData = authenticationRepository.getUserData()
         do {
             let pins = try await pinRepository.getPins(userData: userData)
-            self.pins = pins
+            pinsDataState = .success(pins)
         } catch {
             if let getPinsError = error as? GetPinsError {
-                print(getPinsError.localizedDescription)
+                let errorDescription = getPinsError.localizedDescription
+                pinsDataState = .failure(errorDescription)
             } else {
-                print(error.localizedDescription)
+                let errorDescription = error.localizedDescription
+                pinsDataState = .failure(errorDescription)
             }
         }
     }

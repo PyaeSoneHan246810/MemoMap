@@ -17,14 +17,6 @@ final class HeartsViewModel {
     
     private(set) var userHeartsDataState: DataState<[UserHeart]> = .initial
     
-    var userHearts: [UserHeart] {
-        if case .success(let data) = userHeartsDataState {
-            return data
-        } else {
-            return []
-        }
-    }
-    
     func getUserHearts(memoryId: String) async {
         userHeartsDataState = .loading
         do {
@@ -35,16 +27,16 @@ final class HeartsViewModel {
                 let userHeart = UserHeart(heart: heart, userProfile: userProfile)
                 userHearts.append(userHeart)
             }
-            print(userHearts)
-            userHeartsDataState = .success(userHearts)
+            let sortedUserHearts = userHearts.sorted { lhs, rhs in
+                lhs.heart.createdAt > rhs.heart.createdAt
+            }
+            userHeartsDataState = .success(sortedUserHearts)
         } catch {
             if let getMemoryHeartsError = error as? GetMemoryHeartsError {
                 let errorDescription = getMemoryHeartsError.localizedDescription
-                print(errorDescription)
                 userHeartsDataState = .failure(errorDescription)
             } else {
                 let errorDescription = error.localizedDescription
-                print(errorDescription)
                 userHeartsDataState = .failure(errorDescription)
             }
         }

@@ -14,19 +14,10 @@ struct MyProfileScreenView: View {
     private var userProfile: UserProfileData? {
         userViewModel.userProfile
     }
-    private var followersCount: Int {
-        userViewModel.followersCount
-    }
-    private var followingsCount: Int {
-        userViewModel.followingsCount
-    }
-    private var totalHeartsCount: Int {
-        myProfileViewModel.totalHeartsCount
-    }
-    private var memories: [MemoryData] {
-        myProfileViewModel.memories
-    }
     let editProfileTip: EditProfileTip = .init()
+    var scrollViewBackgroundColor: Color {
+        myProfileViewModel.memories.isEmpty ? Color(uiColor: .systemBackground) : Color(uiColor: .secondarySystemBackground)
+    }
     var body: some View {
         ScrollView(.vertical) {
             LazyVStack(spacing: 0.0) {
@@ -36,10 +27,13 @@ struct MyProfileScreenView: View {
                     profileInfoView
                 }
                 .background(Color(uiColor: .systemBackground))
-                if !memories.isEmpty {
-                    memoriesView
-                } else {
-                    emptyPublicMemoriesView
+                switch myProfileViewModel.memoriesDataState {
+                case .initial, .loading:
+                    ProgressView().controlSize(.large)
+                case .success(let memories):
+                    memoriesView(memories)
+                case .failure(let errorDescription):
+                    ErrorView(errorDescription: errorDescription)
                 }
             }
         }
@@ -64,9 +58,6 @@ struct MyProfileScreenView: View {
 }
 
 private extension MyProfileScreenView {
-    var scrollViewBackgroundColor: Color {
-        memories.isEmpty ? Color(uiColor: .systemBackground) : Color(uiColor: .secondarySystemBackground)
-    }
     @ToolbarContentBuilder
     var toolbarContentView: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
@@ -113,27 +104,29 @@ private extension MyProfileScreenView {
             bio: userProfile?.bio ?? "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
             birthday: userProfile?.birthday.formatted(date: .abbreviated, time: .omitted) ?? "placeholder",
             joined: userProfile?.createdAt.formatted(date: .abbreviated, time: .omitted) ?? "placeholder",
-            followersCount: followersCount,
-            followingCount: followingsCount,
-            heartsCount: totalHeartsCount,
+            followersCount: userViewModel.followersCount,
+            followingCount: userViewModel.followingsCount,
+            heartsCount: myProfileViewModel.totalHeartsCount,
             profileInfoType: .ownUser
         )
         .padding(16)
         .redacted(reason: userProfile == nil ? .placeholder : [])
     }
-    var memoriesView: some View {
-        MemoryPostsView(
-            memories: memories,
-            userProfileScreenModel: .constant(nil)
-        )
-        .padding(.vertical, 16.0)
-    }
-    var emptyPublicMemoriesView: some View {
-        EmptyContentView(
-            image: .emptyData,
-            title: "There is no public memories yet!",
-            description: "Share your favorite moments to let others discover them!"
-        )
+    @ViewBuilder
+    func memoriesView(_ memories: [MemoryData]) -> some View {
+        if memories.isEmpty {
+            EmptyContentView(
+                image: .emptyData,
+                title: "There is no public memories yet!",
+                description: "Share your favorite moments to let others discover them!"
+            )
+        } else {
+            MemoryPostsView(
+                memories: myProfileViewModel.memories,
+                userProfileScreenModel: .constant(nil)
+            )
+            .padding(.vertical, 16.0)
+        }
     }
     func editProfileView(userProfile: UserProfileData) -> some View {
         NavigationStack {

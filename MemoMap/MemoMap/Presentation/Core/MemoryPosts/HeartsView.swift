@@ -13,7 +13,7 @@ struct HeartsView: View {
     @State private var viewModel: HeartsViewModel = .init()
     let memoryId: String
     var body: some View {
-        heartsScrollView
+        mainContentView
         .navigationTitle("Hearts")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -37,10 +37,27 @@ private extension HeartsView {
             }
         }
     }
-    var heartsScrollView: some View {
+    @ViewBuilder
+    var mainContentView: some View {
+        switch viewModel.userHeartsDataState {
+        case .initial, .loading:
+            loadingProgressView
+        case .success(let userHearts):
+            userHeartsView(userHearts)
+        case .failure(let errorDescription):
+            ErrorView(errorDescription: errorDescription)
+        }
+    }
+    var loadingProgressView: some View {
+        ZStack {
+            ProgressView().controlSize(.large)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    func userHeartsView(_ userHearts: [UserHeart]) -> some View {
         ScrollView(.vertical) {
             LazyVStack(spacing: 16.0) {
-                ForEach(viewModel.userHearts) { userHeart in
+                ForEach(userHearts) { userHeart in
                     UserRowView(
                         userProfile: userHeart.userProfile,
                         userProfileScreenModel: $userProfileScreenModel

@@ -20,14 +20,8 @@ struct SavedPinDetailsView: View {
         AddMemoryTip()
     }
     let pinId: String
-    private var pin: PinData? {
-        viewModel.pin
-    }
-    private var memories: [MemoryData] {
-        viewModel.memories
-    }
     private var scrollViewBackgroundColor: Color {
-        memories.isEmpty ? Color(uiColor: .systemBackground) : Color(uiColor: .secondarySystemBackground)
+        viewModel.memories.isEmpty ? Color(uiColor: .systemBackground) : Color(uiColor: .secondarySystemBackground)
     }
     var body: some View {
         ScrollView(.vertical) {
@@ -57,7 +51,7 @@ struct SavedPinDetailsView: View {
                 .presentationDetents([.fraction(0.70)])
                 .interactiveDismissDisabled()
                 .onAppear {
-                    if let pin {
+                    if let pin = viewModel.pin {
                         viewModel.newPinName = pin.name
                         viewModel.newPinDescription = pin.description ?? ""
                     }
@@ -116,7 +110,7 @@ private extension SavedPinDetailsView {
     }
     var locationImageView: some View {
         ZStack(alignment: .bottomTrailing) {
-            if let photoUrl = pin?.photoUrl {
+            if let photoUrl = viewModel.pin?.photoUrl {
                 Rectangle()
                     .foregroundStyle(Color(uiColor: .secondarySystemBackground))
                     .frame(height: 240.0)
@@ -150,11 +144,11 @@ private extension SavedPinDetailsView {
     }
     var locationInfoView: some View {
         VStack(alignment: .leading, spacing: 8.0) {
-            Text(pin?.name ?? "Placeholder")
+            Text(viewModel.pin?.name ?? "Placeholder")
                 .font(.title)
                 .fontWeight(.semibold)
-                .redacted(reason: pin == nil ? .placeholder : [])
-            if let pin {
+                .redacted(reason: viewModel.pin == nil ? .placeholder : [])
+            if let pin = viewModel.pin {
                 Text(pin.description ?? "No description.")
                 HStack(spacing: 12.0) {
                     Button("Edit", systemImage: "pencil") {
@@ -175,14 +169,20 @@ private extension SavedPinDetailsView {
         .background(Color(uiColor: .systemBackground))
     }
     var memoriesSectionView: some View {
-        VStack(alignment: .leading, spacing: 16.0) {
+        VStack(alignment: .center, spacing: 16.0) {
             HStack {
                 memoriesHeaderView
                 Spacer()
                 addMemoryButtonView
             }
             .padding(.horizontal, 16.0)
-            memoriesView
+            switch viewModel.memoriesDataState {
+            case .initial, .loading:                ProgressView().controlSize(.large)
+            case .success(let memories):
+                memoriesView(memories)
+            case .failure(let errorDescription):
+                ErrorView(errorDescription: errorDescription)
+            }
         }
         .padding(.vertical, 16.0)
     }
@@ -193,7 +193,7 @@ private extension SavedPinDetailsView {
     }
     var addMemoryButtonView: some View {
         Button("Add", systemImage: "plus") {
-            if let pin {
+            if let pin = viewModel.pin {
                 navigateToAddNewMemoryView(pin: pin)
             }
         }
@@ -201,8 +201,8 @@ private extension SavedPinDetailsView {
         .popoverTip(tips.currentTip as? AddMemoryTip, arrowEdge: .top)
     }
     @ViewBuilder
-    var memoriesView: some View {
-        if memories.isEmpty {
+    func memoriesView(_ memories: [MemoryData]) -> some View {
+        if viewModel.memories.isEmpty {
             EmptyContentView(
                 image: .emptyData,
                 title: "There is no memories yet!",
@@ -210,7 +210,7 @@ private extension SavedPinDetailsView {
             )
         } else {
             LazyVStack(spacing: 16.0) {
-                ForEach(memories) { memory in
+                ForEach(viewModel.memories) { memory in
                     MemoryView(
                         memory: memory,
                         onDeleteMemory: {

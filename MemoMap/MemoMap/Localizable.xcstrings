@@ -209,7 +209,7 @@
     "Click here to delete this pin." : {
 
     },
-    "Click here to edit pin name and description," : {
+    "Click here to edit pin name and description." : {
 
     },
     "Click here to select this location." : {
@@ -923,6 +923,9 @@
         }
       }
     },
+    "Something went wrong!" : {
+
+    },
     "Tap here to find where you are on the map." : {
 
     },
@@ -941,6 +944,9 @@
           }
         }
       }
+    },
+    "Unknown" : {
+
     },
     "Update" : {
       "localizations" : {

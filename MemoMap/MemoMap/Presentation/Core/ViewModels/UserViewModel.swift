@@ -17,9 +17,9 @@ final class UserViewModel {
     
     @ObservationIgnored @Injected(\.userRepository) private var userRepository: UserRepository
     
-    private(set) var userProfileDataState: DataState<UserProfileData> = .initial
+    private(set) var userProfile: UserProfileData? = nil
     
-    private(set) var followingIdsDataState: DataState<[String]> = .initial
+    private(set) var followingIds: [String] = []
     
     private(set) var followerUsers: [UserProfileData] = []
     
@@ -35,59 +35,37 @@ final class UserViewModel {
         mutualUsers.count
     }
     
-    var userProfile: UserProfileData? {
-        if case .success(let data) = userProfileDataState {
-            return data
-        } else {
-            return nil
-        }
-    }
-    
-    var followingIds: [String] {
-        if case .success(let data) = followingIdsDataState {
-            return data
-        } else {
-            return []
-        }
-    }
-    
     func listenUserProfile() {
-        self.userProfileDataState = .loading
         let userData = authenticationRepository.getUserData()
         userProfileRepository.listenUserProfile(userData: userData) { [weak self] result in
             switch result {
             case .success(let userProfileData):
-                self?.userProfileDataState = .success(userProfileData)
+                self?.userProfile = userProfileData
             case .failure(let error):
                 if let listenUserProfileError = error as? ListenUserProfileError {
                     let errorDescription = listenUserProfileError.localizedDescription
                     print(errorDescription)
-                    self?.userProfileDataState = .failure(errorDescription)
                 } else {
                     let errorDescription = error.localizedDescription
                     print(errorDescription)
-                    self?.userProfileDataState = .failure(errorDescription)
                 }
             }
         }
     }
     
     func listenFollowingIds() {
-        followingIdsDataState = .loading
         let userData = authenticationRepository.getUserData()
         userRepository.listenFollowingIds(userData: userData) { [weak self] result in
             switch result {
             case .success(let followingIds):
-                self?.followingIdsDataState = .success(followingIds)
+                self?.followingIds = followingIds
             case .failure(let error):
                 if let listenFollowingIdsError = error as? ListenFollowingIdsError {
                     let errorDescription = listenFollowingIdsError.localizedDescription
                     print(errorDescription)
-                    self?.followingIdsDataState = .failure(errorDescription)
                 } else {
                     let errorDescription = error.localizedDescription
                     print(errorDescription)
-                    self?.followingIdsDataState = .failure(errorDescription)
                 }
             }
         }
@@ -105,8 +83,11 @@ final class UserViewModel {
                             followerUsers.append(userProfile)
                         }
                     }
+                    let sortedFollowerUsers = followerUsers.sorted { lhs, rhs in
+                        lhs.displayname.lowercased() < rhs.displayname.lowercased()
+                    }
                     await MainActor.run {
-                        self?.followerUsers = followerUsers
+                        self?.followerUsers = sortedFollowerUsers
                         self?.getMutualUsers()
                     }
                 }
@@ -132,8 +113,11 @@ final class UserViewModel {
                             followingUsers.append(userProfile)
                         }
                     }
+                    let sortedFollowingUsers = followingUsers.sorted { lhs, rhs in
+                        lhs.displayname.lowercased() < rhs.displayname.lowercased()
+                    }
                     await MainActor.run {
-                        self?.followingUsers = followingUsers
+                        self?.followingUsers = sortedFollowingUsers
                         self?.getMutualUsers()
                     }
                 }

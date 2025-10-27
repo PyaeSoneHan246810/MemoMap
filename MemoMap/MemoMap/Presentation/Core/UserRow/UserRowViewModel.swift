@@ -28,11 +28,7 @@ final class UserRowViewModel {
             case .success(let followingIds):
                 self?.userType = followingIds.contains(userId) ? .following : .notFollowing
             case .failure(let error):
-                if let listenFollowingIdsError = error as? ListenFollowingIdsError {
-                    print(listenFollowingIdsError.localizedDescription)
-                } else {
-                    print(error.localizedDescription)
-                }
+                self?.userType = nil
             }
         }
     }

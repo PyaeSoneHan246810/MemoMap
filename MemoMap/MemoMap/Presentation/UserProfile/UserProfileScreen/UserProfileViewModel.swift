@@ -22,16 +22,6 @@ final class UserProfileViewModel {
     
     private(set) var userProfileDataState: DataState<UserProfileData> = .initial
     
-    private(set) var memoriesDataState: DataState<[MemoryData]> = .initial
-    
-    var userType: UserType? = nil
-    
-    var followingsCount: Int = 0
-    
-    var followersCount: Int = 0
-    
-    var totalHeartsCount: Int = 0
-    
     var userProfile: UserProfileData? {
         if case .success(let data) = userProfileDataState {
             data
@@ -39,6 +29,8 @@ final class UserProfileViewModel {
             nil
         }
     }
+    
+    private(set) var memoriesDataState: DataState<[MemoryData]> = .initial
     
     var memories: [MemoryData] {
         if case .success(let data) = memoriesDataState {
@@ -48,6 +40,14 @@ final class UserProfileViewModel {
         }
     }
     
+    var userType: UserType? = nil
+    
+    var followingsCount: Int = 0
+    
+    var followersCount: Int = 0
+    
+    var totalHeartsCount: Int = 0
+    
     func getUserProfile(userId: String) async {
         userProfileDataState = .loading
         do {
@@ -56,14 +56,43 @@ final class UserProfileViewModel {
         } catch {
             if let getUserProfileError = error as? GetUserProfileError {
                 let errorDescription = getUserProfileError.localizedDescription
-                print(errorDescription)
                 userProfileDataState = .failure(errorDescription)
             } else {
                 let errorDescription = error.localizedDescription
-                print(errorDescription)
                 userProfileDataState = .failure(errorDescription)
             }
         }
+    }
+    
+    func getUserPublicMemories(userId: String) async {
+        memoriesDataState = .loading
+        do {
+            let memories = try await memoryRepository.getUserPublicMemories(userId: userId)
+            memoriesDataState = .success(memories)
+        } catch {
+            if let getUserPublicMemoriesError = error as? GetUserPublicMemoriesError {
+                let errorDescription = getUserPublicMemoriesError.localizedDescription
+                memoriesDataState = .failure(errorDescription)
+            } else {
+                let errorDescription = error.localizedDescription
+                memoriesDataState = .failure(errorDescription)
+            }
+        }
+    }
+    
+    func getTotalHeartsCount(userId: String) async {
+        let totalHeartsCount = try? await memoryRepository.getTotoalHeartsCount(userId: userId)
+        self.totalHeartsCount = totalHeartsCount ?? 0
+    }
+    
+    func getFollowingsCount(userId: String) async {
+        let followingsCount = try? await userRepository.getFollowingsCount(userId: userId)
+        self.followingsCount = followingsCount ?? 0
+    }
+    
+    func getFollowersCount(userId: String) async {
+        let followersCount = try? await userRepository.getFollowersCount(userId: userId)
+        self.followersCount = followersCount ?? 0
     }
     
     func listenFollowingsIds(userId: String) {
@@ -73,11 +102,7 @@ final class UserProfileViewModel {
             case .success(let followingIds):
                 self?.userType = followingIds.contains(userId) ? .following : .notFollowing
             case .failure(let error):
-                if let listenFollowingIdsError = error as? ListenFollowingIdsError {
-                    print(listenFollowingIdsError.localizedDescription)
-                } else {
-                    print(error.localizedDescription)
-                }
+                self?.userType = nil
             }
         }
     }
@@ -104,63 +129,6 @@ final class UserProfileViewModel {
                 print(unfollowUserError.localizedDescription)
             } else {
                 print(error.localizedDescription)
-            }
-        }
-    }
-    
-    func getTotalHeartsCount(userId: String) async {
-        do {
-            let totalHeartsCount = try await memoryRepository.getTotoalHeartsCount(userId: userId)
-            self.totalHeartsCount = totalHeartsCount
-        } catch {
-            if let getTotalHeartsCountError = error as? GetTotalHeartsCountError {
-                print(getTotalHeartsCountError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
-        }
-    }
-    
-    func getFollowingsCount(userId: String) async {
-        do {
-            let followingsCount = try await userRepository.getFollowingsCount(userId: userId)
-            self.followingsCount = followingsCount
-        } catch {
-            if let getCountError = error as? GetCountError {
-                print(getCountError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
-        }
-    }
-    
-    func getFollowersCount(userId: String) async {
-        do {
-            let followersCount = try await userRepository.getFollowersCount(userId: userId)
-            self.followersCount = followersCount
-        } catch {
-            if let getCountError = error as? GetCountError {
-                print(getCountError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
-        }
-    }
-    
-    func getUserPublicMemories(userId: String) async {
-        memoriesDataState = .loading
-        do {
-            let memories = try await memoryRepository.getUserPublicMemories(userId: userId)
-            memoriesDataState = .success(memories)
-        } catch {
-            if let getUserPublicMemoriesError = error as? GetUserPublicMemoriesError {
-                let errorDescription = getUserPublicMemoriesError.localizedDescription
-                print(errorDescription)
-                memoriesDataState = .failure(errorDescription)
-            } else {
-                let errorDescription = error.localizedDescription
-                print(errorDescription)
-                memoriesDataState = .failure(errorDescription)
             }
         }
     }

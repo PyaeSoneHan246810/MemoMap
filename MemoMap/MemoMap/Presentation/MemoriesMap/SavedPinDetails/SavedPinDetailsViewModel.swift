@@ -18,46 +18,31 @@ final class SavedPinDetailsViewModel {
     
     @ObservationIgnored @Injected(\.storageRepository) private var storageRepository: StorageRepository
     
-    private(set) var pinDataState: DataState<PinData> = .initial
+    var pin: PinData? = nil
     
-    private(set) var memories: [MemoryData] = []
+    private(set) var memoriesDataState: DataState<[MemoryData]> = .initial
     
-    var pin: PinData? {
-        if case .success(let data) = pinDataState {
+    var memories: [MemoryData] {
+        if case .success(let data) = memoriesDataState {
             return data
         } else {
-            return nil
+            return []
         }
     }
     
     func getPin(for pinId: String) async {
-        pinDataState = .loading
-        do {
-            let pin = try await pinRepository.getPin(pinId: pinId)
-            pinDataState = .success(pin)
-        } catch {
-            if let getPinError = error as? GetPinError {
-                let errorDescription = getPinError.localizedDescription
-                print(errorDescription)
-                pinDataState = .failure(errorDescription)
-            } else {
-                let errorDescription = error.localizedDescription
-                print(errorDescription)
-                pinDataState = .failure(errorDescription)
-            }
-        }
+        let pin = try? await pinRepository.getPin(pinId: pinId)
+        self.pin = pin
     }
     
     func getMemories(for pinId: String) async {
+        memoriesDataState = .loading
         do {
             let memories = try await memoryRepository.getPinMemories(pinId: pinId)
-            self.memories = memories
+            memoriesDataState = .success(memories)
         } catch {
-            if let getPinMemoriesError = error as? GetPinMemoriesError {
-                print(getPinMemoriesError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
+            let errorDescription = GetPinMemoriesError.failedToGet.localizedDescription
+            memoriesDataState = .failure(errorDescription)
         }
     }
     
@@ -196,9 +181,11 @@ final class SavedPinDetailsViewModel {
         do {
             try await memoryRepository.deleteMemory(memoryId: memoryId)
             try await storageRepository.deleteMemoryMedia(memoryId: memoryId)
-            memories.removeAll {
+            var upToDateMemories = memories
+            upToDateMemories.removeAll {
                 $0.id == memoryId
             }
+            memoriesDataState = .success(upToDateMemories)
             isDeleteMemoryInProgress = false
             deleteMemoryError = nil
             isDeleteMemoryAlertPresented = false
