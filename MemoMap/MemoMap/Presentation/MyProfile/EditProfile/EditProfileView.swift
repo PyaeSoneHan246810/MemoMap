@@ -160,8 +160,8 @@ private extension EditProfileView {
     }
     var displayNameInputView: some View {
         InputTextFieldView(
-            localizedTitle: "Display name",
-            localizedPlaceholder: "Enter your display name",
+            title: "Display name",
+            placeholder: "Enter your display name",
             text: $viewModel.newDisplayName,
             keyboardType: .namePhonePad,
             textContentType: .username,
@@ -171,8 +171,8 @@ private extension EditProfileView {
     }
     var bioInputView: some View {
         InputTextFieldView(
-            localizedTitle: "Bio",
-            localizedPlaceholder: "Tell us a bit about yourself",
+            title: "Bio",
+            placeholder: "Tell us a bit about yourself",
             text: $viewModel.newBio,
             autoCorrectionDisabled: true,
             submitLabel: .continue,

@@ -34,8 +34,8 @@ private extension LogInScreenView {
     var loginFormView: some View {
         VStack(spacing: 16.0) {
             InputTextFieldView(
-                localizedTitle: "Email address",
-                localizedPlaceholder: "Enter your email address",
+                title: "Email address",
+                placeholder: "Enter your email address",
                 text: $loginViewModel.emailAddress,
                 keyboardType: .emailAddress,
                 textContentType: .emailAddress,
@@ -43,8 +43,8 @@ private extension LogInScreenView {
                 submitLabel: .next
             )
             InputTextFieldView(
-                localizedTitle: "Password",
-                localizedPlaceholder: "Enter your password",
+                title: "Password",
+                placeholder: "Enter your password",
                 text: $loginViewModel.password,
                 isSecured: true,
                 textContentType: .password,

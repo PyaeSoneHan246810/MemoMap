@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ListItemNavigationLinkView<Content: View>: View {
     let systemName: String
-    let localizedText: String
+    let text: String
     @ViewBuilder let destination: Content
     var body: some View {
         NavigationLink {
@@ -20,7 +20,7 @@ struct ListItemNavigationLinkView<Content: View>: View {
                     Image(systemName: systemName)
                         .imageScale(.large)
                         .frame(width: 40.0)
-                    Text(LocalizedStringKey(localizedText))
+                    Text(text)
                 }
                 Spacer()
                 Image(systemName: "chevron.forward")
@@ -33,7 +33,7 @@ struct ListItemNavigationLinkView<Content: View>: View {
 
 #Preview {
     NavigationStack {
-        ListItemNavigationLinkView(systemName: "person", localizedText: "Account") {
+        ListItemNavigationLinkView(systemName: "person", text: "Account") {
             
         }
     }

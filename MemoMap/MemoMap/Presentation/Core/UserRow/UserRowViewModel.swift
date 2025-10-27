@@ -27,7 +27,7 @@ final class UserRowViewModel {
             switch result {
             case .success(let followingIds):
                 self?.userType = followingIds.contains(userId) ? .following : .notFollowing
-            case .failure(let error):
+            case .failure(_):
                 self?.userType = nil
             }
         }

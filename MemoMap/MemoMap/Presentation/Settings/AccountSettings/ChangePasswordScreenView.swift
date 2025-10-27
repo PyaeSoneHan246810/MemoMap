@@ -32,8 +32,8 @@ private extension ChangePasswordScreenView {
     @ViewBuilder
     var passwordTextFieldsView: some View {
         InputTextFieldView(
-            localizedTitle: "Current password",
-            localizedPlaceholder: "Enter your current password",
+            title: "Current password",
+            placeholder: "Enter your current password",
             text: $changePasswordViewModel.currentPassword,
             isSecured: true,
             textContentType: .password,
@@ -41,8 +41,8 @@ private extension ChangePasswordScreenView {
             submitLabel: .next
         )
         InputTextFieldView(
-            localizedTitle: "New password",
-            localizedPlaceholder: "Enter your new password",
+            title: "New password",
+            placeholder: "Enter your new password",
             text: $changePasswordViewModel.newPassword,
             isSecured: true,
             textContentType: .newPassword,
@@ -50,8 +50,8 @@ private extension ChangePasswordScreenView {
             submitLabel: .next
         )
         InputTextFieldView(
-            localizedTitle: "Confirm new password",
-            localizedPlaceholder: "Confirm your new password",
+            title: "Confirm new password",
+            placeholder: "Confirm your new password",
             text: $changePasswordViewModel.confirmNewPassword,
             isSecured: true,
             textContentType: .newPassword,
