@@ -31,7 +31,7 @@ struct UserProfileModel: Codable {
     let profilePhotoUrl: String?
     let coverPhotoUrl: String?
     let birthday: Date
-    let bio: String
+    let bio: String?
     let createdAt: Date
 }
 
@@ -47,7 +47,7 @@ extension UserProfileModel {
             Self.CodingKeys.profilePhotoUrl.rawValue: profilePhotoUrl as Any,
             Self.CodingKeys.coverPhotoUrl.rawValue: coverPhotoUrl as Any,
             Self.CodingKeys.birthday.rawValue: Timestamp(date: birthday),
-            Self.CodingKeys.bio.rawValue: bio,
+            Self.CodingKeys.bio.rawValue: bio as Any,
             Self.CodingKeys.createdAt.rawValue: Timestamp(date: createdAt),
         ]
     }

@@ -9,22 +9,22 @@ import Foundation
 
 enum CreateUserError: Error, LocalizedError {
     case invalidEmail
-    case weakPassword
     case emailAlreadyInUse
+    case weakPassword
     case networkError
     case unknownError
     var errorDescription: String? {
         switch self {
         case .invalidEmail:
-            "Invalid Email"
-        case .weakPassword:
-            "Weak Password"
+            "Please enter a valid email address and try again."
         case .emailAlreadyInUse:
-            "Email Already In Use"
+            "This email is already in use. Please use a different one."
+        case .weakPassword:
+            "Your password is weak. Try using a stronger password."
         case .networkError:
-            "Network Error"
+            "You’re offline. Check your internet connection and try again."
         case .unknownError:
-            "Unknown Error"
+            "Something went wrong. Please try again later."
         }
     }
 }

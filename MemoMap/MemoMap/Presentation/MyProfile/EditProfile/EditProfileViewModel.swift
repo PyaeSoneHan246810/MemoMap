@@ -50,7 +50,7 @@ final class EditProfileViewModel {
     
     func getInitialData(userProfile: UserProfileData) {
         newDisplayName = userProfile.displayname
-        newBio = userProfile.bio
+        newBio = userProfile.bio ?? ""
         newBirthday = userProfile.birthday
         existingProfilePhotoUrl = userProfile.profilePhotoUrl
         existingCoverPhotoUrl = userProfile.coverPhotoUrl

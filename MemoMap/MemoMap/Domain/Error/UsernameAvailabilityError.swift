@@ -9,13 +9,10 @@ import Foundation
 
 enum UsernameAvailabilityError: Error, LocalizedError {
     case taken
-    case checkFailed
     var errorDescription: String? {
         switch self {
         case .taken:
-            "Taken"
-        case .checkFailed:
-            "Check Failed"
+            "This username is already taken. Please choose another one."
         }
     }
 }
