@@ -7,6 +7,12 @@
 
 import Foundation
 
-enum GetPinMemoriesError: Error {
+enum GetPinMemoriesError: Error, LocalizedError {
     case failedToGet
+    var errorDescription: String? {
+        switch self {
+        case .failedToGet:
+            "Failed To Get"
+        }
+    }
 }

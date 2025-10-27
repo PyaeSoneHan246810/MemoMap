@@ -17,14 +17,6 @@ final class UserFollowingsViewModel {
     
     private(set) var followingUsersDataState: DataState<[UserProfileData]> = .initial
     
-    var followingUsers: [UserProfileData] {
-        if case .success(let data) = followingUsersDataState {
-            data
-        } else {
-            []
-        }
-    }
-    
     func getFollowingUsers(of userId: String) async {
         followingUsersDataState = .loading
         do {
@@ -35,15 +27,16 @@ final class UserFollowingsViewModel {
                     followingUsers.append(followingUser)
                 }
             }
-            followingUsersDataState = .success(followingUsers)
+            let sortedFollowingUsers = followingUsers.sorted { lhs, rhs in
+                lhs.displayname.lowercased() < rhs.displayname.lowercased()
+            }
+            followingUsersDataState = .success(sortedFollowingUsers)
         } catch {
             if let getFollowingsError = error as? GetFollowingsError {
                 let errorDescription = getFollowingsError.localizedDescription
-                print(errorDescription)
                 followingUsersDataState = .failure(errorDescription)
             } else {
                 let errorDescription = error.localizedDescription
-                print(errorDescription)
                 followingUsersDataState = .failure(errorDescription)
             }
         }

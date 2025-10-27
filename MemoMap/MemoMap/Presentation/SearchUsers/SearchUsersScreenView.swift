@@ -165,10 +165,7 @@ private extension SearchUsersScreenView {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     func searchFailureView(errorDescription: String) -> some View {
-        ZStack {
-            Text(errorDescription)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        ErrorView(errorDescription: errorDescription)
     }
     var searchResultsHeaderView: some View {
         Text("Results for \"\(viewModel.trimmedSearchText)\"")

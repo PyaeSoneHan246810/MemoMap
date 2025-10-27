@@ -13,7 +13,7 @@ struct UserFollowersView: View {
     @State private var viewModel: UserFollowersViewModel = .init()
     @State private var userProfileScreenModel: UserProfileScreenModel? = nil
     var body: some View {
-        followersView
+        mainContentView
         .navigationTitle("Followers")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -38,8 +38,25 @@ private extension UserFollowersView {
         }
     }
     @ViewBuilder
-    var followersView: some View {
-        if viewModel.followerUsers.isEmpty {
+    var mainContentView: some View {
+        switch viewModel.followerUsersDataState {
+        case .initial, .loading:
+            loadingProgressView
+        case .success(let followers):
+            followersView(followers)
+        case .failure(let errorDescription):
+            ErrorView(errorDescription: errorDescription)
+        }
+    }
+    var loadingProgressView: some View {
+        ZStack {
+            ProgressView().controlSize(.large)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    @ViewBuilder
+    func followersView(_ followers: [UserProfileData]) -> some View {
+        if followers.isEmpty {
             EmptyContentView(
                 image: .connection,
                 title: "No Followers",
@@ -48,9 +65,9 @@ private extension UserFollowersView {
         } else {
             ScrollView(.vertical) {
                 LazyVStack(spacing: 16.0) {
-                    ForEach(viewModel.followerUsers) { followerUser in
+                    ForEach(followers) { follower in
                         UserRowView(
-                            userProfile: followerUser,
+                            userProfile: follower,
                             userProfileScreenModel: $userProfileScreenModel
                         )
                     }

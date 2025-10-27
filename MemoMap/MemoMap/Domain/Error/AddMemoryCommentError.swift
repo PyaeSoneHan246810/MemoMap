@@ -7,6 +7,12 @@
 
 import Foundation
 
-enum AddMemoryCommentError: Error {
+enum AddMemoryCommentError: Error, LocalizedError {
     case addFailed
+    var errorDescription: String? {
+        switch self {
+        case .addFailed:
+            "Add Failed"
+        }
+    }
 }

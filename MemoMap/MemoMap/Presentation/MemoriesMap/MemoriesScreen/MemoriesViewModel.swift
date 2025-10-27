@@ -16,8 +16,6 @@ final class MemoriesViewModel {
     
     @ObservationIgnored @Injected(\.pinRepository) private var pinRepository: PinRepository
     
-    private(set) var pinsDataState: DataState<[PinData]> = .initial
-    
     var viewport: Viewport = .followPuck(zoom: 12.0, bearing: .constant(0.0), pitch: 0.0)
     
     var clusterOptions: ClusterOptions = .init()
@@ -26,28 +24,21 @@ final class MemoriesViewModel {
     
     var pinTapped: PinData? = nil
     
-    var pins: [PinData] {
-        if case .success(let data) = pinsDataState {
-            return data
-        } else {
-            return []
-        }
-    }
+    private(set) var pins: [PinData] = []
     
     func listenPins() {
-        self.pinsDataState = .loading
         let userData = authenticationRepository.getUserData()
         pinRepository.listenPins(userData: userData) { [weak self]  result in
             switch result {
             case .success(let pins):
-                self?.pinsDataState = .success(pins)
+                self?.pins = pins
             case .failure(let error):
                 if let listenPinsError = error as? ListenPinsError {
-                    print(listenPinsError.localizedDescription)
-                    self?.pinsDataState = .failure(listenPinsError.localizedDescription)
+                    let errorDescription = listenPinsError.localizedDescription
+                    print(errorDescription)
                 } else {
-                    print(error.localizedDescription)
-                    self?.pinsDataState = .failure(error.localizedDescription)
+                    let errorDescription = error.localizedDescription
+                    print(errorDescription)
                 }
             }
         }

@@ -118,7 +118,24 @@ private extension FeedScreenView {
     }
     @ViewBuilder
     var memoriesFeedView: some View {
-        if feedViewModel.memories.isEmpty {
+        switch feedViewModel.memoriesDataState {
+        case .initial, .loading:
+            loadingProgressView
+        case .success(let memories):
+            memoriesView(memories)
+        case .failure(let errorDescription):
+            ErrorView(errorDescription: errorDescription)
+        }
+    }
+    var loadingProgressView: some View {
+        ZStack {
+            ProgressView().controlSize(.large)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    @ViewBuilder
+    func memoriesView(_ memories: [MemoryData]) -> some View {
+        if memories.isEmpty {
             EmptyContentView(
                 image: .followUser,
                 title: "Make your feed come alive!",
@@ -127,7 +144,7 @@ private extension FeedScreenView {
         } else {
             ScrollView(.vertical) {
                 MemoryPostsView(
-                    memories: feedViewModel.memories,
+                    memories: memories,
                     userProfileScreenModel: $userProfileScreenModel
                 )
             }

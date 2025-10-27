@@ -20,23 +20,8 @@ struct UserProfileScreenView: View {
     private var userProfile: UserProfileData? {
         viewModel.userProfile
     }
-    private var memories: [MemoryData] {
-        viewModel.memories
-    }
-    private var userType: UserType? {
-        viewModel.userType
-    }
     private var isFollowingUser: Bool {
-        userType == .following
-    }
-    private var followingsCount: Int {
-        viewModel.followingsCount
-    }
-    private var followersCount: Int {
-        viewModel.followersCount
-    }
-    private var totalHeartsCount: Int {
-        viewModel.totalHeartsCount
+        viewModel.userType == .following
     }
     var body: some View {
         ScrollView(.vertical) {
@@ -47,10 +32,13 @@ struct UserProfileScreenView: View {
                     profileInfoView
                 }
                 .background(Color(uiColor: .systemBackground))
-                if isFollowingUser {
-                    memoriesView
-                } else {
-                    followUserView
+                switch viewModel.memoriesDataState {
+                case .initial, .loading:
+                    ProgressView().controlSize(.large)
+                case .success(let memories):
+                    memoriesView(memories)
+                case .failure(let errorDescription):
+                    ErrorView(errorDescription: errorDescription)
                 }
             }
         }
@@ -70,7 +58,7 @@ struct UserProfileScreenView: View {
 
 private extension UserProfileScreenView {
     var scrollViewBackgroundColor: Color {
-        isFollowingUser && !memories.isEmpty ? Color(uiColor: .secondarySystemBackground) : Color(uiColor: .systemBackground)
+        isFollowingUser && !viewModel.memories.isEmpty ? Color(uiColor: .secondarySystemBackground) : Color(uiColor: .systemBackground)
     }
     var profilePhotosView: some View {
         ProfileCoverPhotoView(
@@ -87,10 +75,13 @@ private extension UserProfileScreenView {
     var buttonSectionView: some View {
         HStack {
             Spacer()
-            if isFollowingUser {
+            switch viewModel.userType {
+            case .following:
                 followingButtonView
-            } else {
+            case .notFollowing:
                 followButtonView
+            case .none:
+                unknownLabelView
             }
         }
         .padding(.top, 16.0)
@@ -112,6 +103,9 @@ private extension UserProfileScreenView {
         }
         .primaryFilledSmallButtonStyle()
     }
+    var unknownLabelView: some View {
+        Label("Unknown", systemImage: "questionmark")
+    }
     var profileInfoView: some View {
         ProfileInfoView(
             id: userProfile?.id,
@@ -121,9 +115,9 @@ private extension UserProfileScreenView {
             bio: userProfile?.bio ?? "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
             birthday: userProfile?.birthday.formatted(date: .abbreviated, time: .omitted) ?? "placeholder",
             joined: userProfile?.createdAt.formatted(date: .abbreviated, time: .omitted) ?? "placeholder",
-            followersCount: followersCount,
-            followingCount: followingsCount,
-            heartsCount: totalHeartsCount,
+            followersCount: viewModel.followersCount,
+            followingCount: viewModel.followingsCount,
+            heartsCount: viewModel.totalHeartsCount,
             profileInfoType: .otherUser
         )
         .padding(16)
@@ -142,7 +136,7 @@ private extension UserProfileScreenView {
         .frame(width: 240.0)
     }
     @ViewBuilder
-    var memoriesView: some View {
+    func memoriesView(_ memories: [MemoryData]) -> some View {
         if memories.isEmpty {
             EmptyContentView(
                 image: .emptyData,

@@ -17,32 +17,29 @@ final class CommentsViewModel {
     
     @ObservationIgnored @Injected(\.userProfileRepository) private var userProfileRepository: UserProfileRepository
     
-    var comment: String = ""
+    var userData: UserData? {
+        authenticationRepository.getUserData()
+    }
     
     private(set) var userCommentsDataState: DataState<[UserComment]> = .loading
     
-    private(set) var addCommentError: AddMemoryCommentError? = nil
+    var comment: String = ""
     
     private var trimmedComment: String {
         comment.trimmed()
     }
     
-    var userComments: [UserComment] {
-        if case .success(let data) = userCommentsDataState {
-            return data
-        } else {
-            return []
-        }
-    }
+    private(set) var isAddCommentInProgress: Bool = false
     
-    var currentUserId: String? {
-        authenticationRepository.getUserData()?.uid
-    }
+    private(set) var addCommentError: AddMemoryCommentError? = nil
+    
+    var isAddCommentAlertPresented: Bool = false
     
     func addComment(memoryId: String) async {
-        guard let userId = authenticationRepository.getUserData()?.uid else {
+        guard let userId = userData?.uid else {
             return
         }
+        isAddCommentInProgress = true
         let commentData = CommentData(
             id: "",
             comment: trimmedComment,
@@ -51,15 +48,19 @@ final class CommentsViewModel {
         )
         do {
             try await memoryRepository.addMemoryComment(memoryId: memoryId, commentData: commentData)
-            comment = ""
             await getUserComments(memoryId: memoryId)
+            isAddCommentInProgress = false
+            addCommentError = nil
+            isAddCommentAlertPresented = false
+            comment = ""
         } catch {
+            isAddCommentInProgress = false
             if let addMemoryCommentError = error as? AddMemoryCommentError {
-                print(addMemoryCommentError.localizedDescription)
                 self.addCommentError = addMemoryCommentError
             } else {
-                print(error.localizedDescription)
+                self.addCommentError = .addFailed
             }
+            isAddCommentAlertPresented = true
         }
     }
     
@@ -73,15 +74,16 @@ final class CommentsViewModel {
                 let userComment = UserComment(comment: comment, userProfile: userProfile)
                 userComments.append(userComment)
             }
-            userCommentsDataState = .success(userComments)
+            let sortedUserComments = userComments.sorted { lhs, rhs in
+                lhs.comment.createdAt > rhs.comment.createdAt
+            }
+            userCommentsDataState = .success(sortedUserComments)
         } catch {
             if let getMemoryCommentsError = error as? GetMemoryCommentsError {
                 let errorDescription = getMemoryCommentsError.localizedDescription
-                print(errorDescription)
                 userCommentsDataState = .failure(errorDescription)
             } else {
                 let errorDescription = error.localizedDescription
-                print(errorDescription)
                 userCommentsDataState = .failure(errorDescription)
             }
         }

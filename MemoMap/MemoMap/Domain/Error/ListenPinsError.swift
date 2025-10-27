@@ -7,7 +7,15 @@
 
 import Foundation
 
-enum ListenPinsError: Error {
+enum ListenPinsError: Error, LocalizedError {
     case userNotFound
     case listenFailed
+    var errorDescription: String? {
+        switch self {
+        case .userNotFound:
+            "User Not Found"
+        case .listenFailed:
+            "Listen Failed"
+        }
+    }
 }

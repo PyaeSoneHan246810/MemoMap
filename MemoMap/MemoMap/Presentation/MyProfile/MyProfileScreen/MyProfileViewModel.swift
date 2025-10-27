@@ -17,10 +17,6 @@ final class MyProfileViewModel {
     
     private(set) var memoriesDataState: DataState<[MemoryData]> = .initial
     
-    private(set) var totalHeartsCount: Int = 0
-    
-    var userProfileToEdit: UserProfileData? = nil
-
     var memories: [MemoryData] {
         if case .success(let data) = memoriesDataState {
             return data
@@ -28,6 +24,10 @@ final class MyProfileViewModel {
             return []
         }
     }
+    
+    private(set) var totalHeartsCount: Int = 0
+    
+    var userProfileToEdit: UserProfileData? = nil
     
     func getUserPublicMemories() async {
         memoriesDataState = .loading
@@ -38,11 +38,9 @@ final class MyProfileViewModel {
         } catch {
             if let getUserPublicMemoriesError = error as? GetUserPublicMemoriesError {
                 let errorDescription = getUserPublicMemoriesError.localizedDescription
-                print(errorDescription)
                 memoriesDataState = .failure(errorDescription)
             } else {
                 let errorDescription = error.localizedDescription
-                print(errorDescription)
                 memoriesDataState = .failure(errorDescription)
             }
         }
@@ -50,15 +48,7 @@ final class MyProfileViewModel {
     
     func getTotalHeartsCount() async {
         let userData = authenticationRepository.getUserData()
-        do {
-            let totalHeartsCount = try await memoryRepository.getTotalHeartsCount(userData: userData)
-            self.totalHeartsCount = totalHeartsCount
-        } catch {
-            if let getTotalHeartsCountError = error as? GetTotalHeartsCountError {
-                print(getTotalHeartsCountError.localizedDescription)
-            } else {
-                print(error.localizedDescription)
-            }
-        }
+        let totalHeartsCount = try? await memoryRepository.getTotalHeartsCount(userData: userData)
+        self.totalHeartsCount = totalHeartsCount ?? 0
     }
 }

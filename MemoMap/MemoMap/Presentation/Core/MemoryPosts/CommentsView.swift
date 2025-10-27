@@ -13,7 +13,7 @@ struct CommentsView: View {
     @State private var viewModel: CommentsViewModel = .init()
     let memoryId: String
     var body: some View {
-        commentsScrollView
+        mainContentView
         .safeAreaInset(edge: .bottom) {
             bottomBarView
         }
@@ -28,6 +28,11 @@ struct CommentsView: View {
         .task {
             await viewModel.getUserComments(memoryId: memoryId)
         }
+        .alert(
+            isPresented: $viewModel.isAddCommentAlertPresented,
+            error: viewModel.addCommentError
+        ){
+        }
     }
 }
 
@@ -40,10 +45,27 @@ private extension CommentsView {
             }
         }
     }
-    var commentsScrollView: some View {
+    @ViewBuilder
+    var mainContentView: some View {
+        switch viewModel.userCommentsDataState {
+        case .initial, .loading:
+            loadingProgressView
+        case .success(let userComments):
+            userCommentsView(userComments)
+        case .failure(let errorDescription):
+            ErrorView(errorDescription: errorDescription)
+        }
+    }
+    var loadingProgressView: some View {
+        ZStack {
+            ProgressView().controlSize(.large)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    func userCommentsView(_ userComments: [UserComment]) -> some View {
         ScrollView(.vertical) {
             LazyVStack(spacing: 32.0) {
-                ForEach(viewModel.userComments) { userComment in
+                ForEach(userComments) { userComment in
                     CommentView(
                         userComment: userComment,
                         userProfileScreenModel: $userProfileScreenModel,
@@ -77,23 +99,28 @@ private extension CommentsView {
                     .stroke(.gray, lineWidth: 1.0)
             }
     }
+    @ViewBuilder
     var commentButtonView: some View {
-        Button {
-            Task { await addComment() }
-        } label: {
-            Image(systemName: "paperplane.fill")
-                .imageScale(.large)
-                .fontWeight(.semibold)
+        if viewModel.isAddCommentInProgress {
+            ProgressView().controlSize(.large)
+        } else {
+            Button {
+                Task { await addComment() }
+            } label: {
+                Image(systemName: "paperplane.fill")
+                    .imageScale(.large)
+                    .fontWeight(.semibold)
+            }
+            .buttonStyle(.glassProminent)
+            .buttonBorderShape(.circle)
+            .controlSize(.large)
         }
-        .buttonStyle(.glassProminent)
-        .buttonBorderShape(.circle)
-        .controlSize(.large)
     }
 }
 
 private extension CommentsView {
     func navigateToUserProfile(userId: String) {
-        guard let currentUserId = viewModel.currentUserId, currentUserId != userId else { return }
+        guard let currentUserId = viewModel.userData?.uid, currentUserId != userId else { return }
         let userProfileScreenModel: UserProfileScreenModel = .init(userId: userId)
         self.userProfileScreenModel = userProfileScreenModel
     }

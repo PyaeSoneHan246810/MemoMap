@@ -39,11 +39,9 @@ final class FeedViewModel {
         } catch {
             if let getFollowingsPublicMemoriesError = error as? GetFollowingsPublicMemoriesError {
                 let errorDescription = getFollowingsPublicMemoriesError.localizedDescription
-                print(errorDescription)
                 memoriesDataState = .failure(errorDescription)
             } else {
                 let errorDescription = error.localizedDescription
-                print(errorDescription)
                 memoriesDataState = .failure(errorDescription)
             }
         }

@@ -162,10 +162,7 @@ private extension SearchMemoriesScreenView {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     func searchFailureView(errorDescription: String) -> some View {
-        ZStack {
-            Text(errorDescription)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        ErrorView(errorDescription: errorDescription)
     }
     @ViewBuilder
     func searchMemoriesView(memories: [MemoryData]) -> some View {
