@@ -25,6 +25,10 @@ final class LoginViewModel {
         password.trimmed()
     }
     
+    var isSignInValid: Bool {
+        !trimmedEmailAddress.isEmpty && !trimmedPassword.isEmpty
+    }
+    
     private(set) var isSignInUserInProgress: Bool = false
     
     private(set) var signInUserError: SignInUserError? = nil
@@ -35,8 +39,8 @@ final class LoginViewModel {
         isSignInUserInProgress = true
         do {
             try await authenticationRepository.signInUser(
-                email: emailAddress,
-                password: password
+                email: trimmedEmailAddress,
+                password: trimmedPassword
             )
             isSignInUserInProgress = false
             signInUserError = nil

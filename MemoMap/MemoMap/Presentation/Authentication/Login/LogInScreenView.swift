@@ -76,6 +76,7 @@ private extension LogInScreenView {
         }
         .primaryFilledLargeButtonStyle()
         .progressButtonStyle(isInProgress: loginViewModel.isSignInUserInProgress)
+        .disabled(!loginViewModel.isSignInValid)
     }
 }
 
