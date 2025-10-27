@@ -9,7 +9,6 @@ import SwiftUI
 
 struct WelcomeScreenView: View {
     @AppStorage(AppStorageKeys.isOnboardingCompleted) private var isOnboardingCompleted: Bool = false
-    @AppStorage(AppStorageKeys.language) private var selectedLanguage: Language = .english
     private var isOnboardingSheetPresented: Binding<Bool> {
         Binding {
             !isOnboardingCompleted
@@ -19,12 +18,10 @@ struct WelcomeScreenView: View {
     }
     var body: some View {
         VStack(spacing: 0.0) {
-            Spacer().frame(height: 136.0)
+            Spacer().frame(height: 140.0)
             infoView
-            Spacer().frame(height: 136.0)
+            Spacer().frame(height: 140.0)
             navigationLinksView
-            Spacer().frame(height: 12.0)
-            languagePickerView
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .padding(.horizontal, 16.0)
@@ -66,11 +63,6 @@ private extension WelcomeScreenView {
             }
             .secondaryFilledLargeButtonStyle()
         }
-    }
-    var languagePickerView: some View {
-        LanguagePickerView(selectedLanguage: $selectedLanguage)
-            .pickerStyle(.navigationLink)
-            .padding(.vertical, 8.0)
     }
     var onboardingSheetView: some View {
         NavigationStack {

@@ -12,19 +12,16 @@ struct SettingsScreenView: View {
     @State private var settingsViewModel: SettingsViewModel = .init()
     var body: some View {
         List {
-            ListItemNavigationLinkView(systemName: "person", localizedText: "Account") {
+            ListItemNavigationLinkView(systemName: "person", text: "Account") {
                 AccountSettingsScreenView()
             }
-            ListItemNavigationLinkView(systemName: "sun.min", localizedText: "Apperance") {
+            ListItemNavigationLinkView(systemName: "sun.min", text: "Apperance") {
                 ApperanceSettingsScreenView()
             }
-            ListItemNavigationLinkView(systemName: "globe", localizedText: "Languages") {
-                LanguageSettingsScreenView()
-            }
-            ListItemNavigationLinkView(systemName: "info.circle", localizedText: "About") {
+            ListItemNavigationLinkView(systemName: "info.circle", text: "About") {
                 AboutScreenView()
             }
-            ListItemNavigationLinkView(systemName: "questionmark.circle", localizedText: "Help") {
+            ListItemNavigationLinkView(systemName: "questionmark.circle", text: "Help") {
                 HelpScreenView()
             }
             logOutButtonView

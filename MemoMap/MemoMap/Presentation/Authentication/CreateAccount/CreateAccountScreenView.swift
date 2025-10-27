@@ -45,8 +45,8 @@ private extension CreateAccountScreenView {
     var accountInfoFormView: some View {
         VStack(spacing: 16.0) {
             InputTextFieldView(
-                localizedTitle: "Email address",
-                localizedPlaceholder: "Enter your email address",
+                title: "Email address",
+                placeholder: "Enter your email address",
                 text: $createAccountViewModel.createAccountInfo.emailAddress,
                 keyboardType: .emailAddress,
                 textContentType: .emailAddress,
@@ -54,8 +54,8 @@ private extension CreateAccountScreenView {
                 submitLabel: .next
             )
             InputTextFieldView(
-                localizedTitle: "Password",
-                localizedPlaceholder: "Enter your password",
+                title: "Password",
+                placeholder: "Enter your password",
                 text: $createAccountViewModel.createAccountInfo.password,
                 isSecured: true,
                 textContentType: .newPassword,
@@ -63,8 +63,8 @@ private extension CreateAccountScreenView {
                 submitLabel: .next
             )
             InputTextFieldView(
-                localizedTitle: "Confirm Password",
-                localizedPlaceholder: "Confirm password",
+                title: "Confirm Password",
+                placeholder: "Confirm your password",
                 text: $createAccountViewModel.createAccountInfo.confirmPassword,
                 isSecured: true,
                 textContentType: .newPassword,
@@ -77,8 +77,8 @@ private extension CreateAccountScreenView {
         VStack(spacing: 16.0) {
             profilePhotoPickerView
             InputTextFieldView(
-                localizedTitle: "Display name",
-                localizedPlaceholder: "Enter your display name",
+                title: "Display name",
+                placeholder: "Enter your display name",
                 text: $createAccountViewModel.createAccountInfo.displayName,
                 keyboardType: .namePhonePad,
                 textContentType: .username,
@@ -86,8 +86,8 @@ private extension CreateAccountScreenView {
                 submitLabel: .next
             )
             InputTextFieldView(
-                localizedTitle: "Username",
-                localizedPlaceholder: "Enter your user name",
+                title: "Username",
+                placeholder: "Enter your username",
                 text: $createAccountViewModel.createAccountInfo.username,
                 keyboardType: .namePhonePad,
                 textContentType: .username,
@@ -96,8 +96,8 @@ private extension CreateAccountScreenView {
             )
             birthdayPickerView
             InputTextFieldView(
-                localizedTitle: "Bio",
-                localizedPlaceholder: "Tell us a bit about yourself",
+                title: "Bio",
+                placeholder: "Tell us a bit about yourself",
                 text: $createAccountViewModel.createAccountInfo.bio,
                 submitLabel: .done,
                 axis: .vertical,

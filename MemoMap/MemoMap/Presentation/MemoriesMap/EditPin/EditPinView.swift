@@ -19,16 +19,16 @@ struct EditPinView: View {
         ScrollView(.vertical) {
             LazyVStack(spacing: 16.0) {
                 InputTextFieldView(
-                    localizedTitle: "Location name",
-                    localizedPlaceholder: "Enter name of a location",
+                    title: "Location name",
+                    placeholder: "Enter name of a location",
                     text: $newPinName,
                     textContentType: .name,
                     autoCorrectionDisabled: true,
                     submitLabel: .next
                 )
                 InputTextFieldView(
-                    localizedTitle: "Location description",
-                    localizedPlaceholder: "Enter description for a location",
+                    title: "Location description",
+                    placeholder: "Enter description for a location",
                     text: $newPinDescription,
                     axis: .vertical,
                     lineLimit: 5

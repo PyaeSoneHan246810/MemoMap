@@ -10,30 +10,29 @@ import Lottie
 
 struct OnboardingPage: Identifiable {
     let id: UUID = UUID()
-    let localizedTitle: String
-    let localizedDescription: String
+    let title: String
+    let description: String
     let animationName: String
 }
 
 struct OnboardingView: View {
     let onboardingPages: [OnboardingPage] = [
         OnboardingPage(
-            localizedTitle: "onboardingTitle1",
-            localizedDescription: "onboardingDesc1",
+            title: "Capture Memories on the Map",
+            description: "Pin places you’ve visited and attach your memories",
             animationName: "animation_onboarding_1"
         ),
         OnboardingPage(
-            localizedTitle: "onboardingTitle2",
-            localizedDescription: "onboardingDesc2",
+            title: "Relive Your Journeys",
+            description: "Rediscover the places you’ve loved and the memories you’ve made there.",
             animationName: "animation_onboarding_2"
         ),
         OnboardingPage(
-            localizedTitle: "onboardingTitle3",
-            localizedDescription: "onboardingDesc3",
+            title: "Share & Connect",
+            description: "Choose what stays private and what goes public. Follow friends and explore their shared memories.",
             animationName: "animation_onboarding_3"
         )
     ]
-    @AppStorage(AppStorageKeys.language) private var selectedLanguage: Language = .english
     @Binding var isOnboardingCompleted: Bool
     @State private var selectedTabIndex: Int = 0
     private var isFirstTab: Bool {
@@ -44,14 +43,13 @@ struct OnboardingView: View {
     }
     var body: some View {
         VStack(spacing: 0.0) {
-            Spacer(minLength: 12.0)
+            Spacer(minLength: 20.0)
             logoView
-            Spacer(minLength: 12.0)
+            Spacer(minLength: 20.0)
             tabsView
-            Spacer(minLength: 8.0)
+            Spacer(minLength: 20.0)
             buttonsView
-            Spacer(minLength: 8.0)
-            languagePickerView
+            Spacer(minLength: 20.0)
         }
     }
 }
@@ -88,11 +86,11 @@ private extension OnboardingView {
             .playing(loopMode: .loop)
             .frame(width: 320.0, height: 320.0)
             VStack(spacing: 8.0) {
-                Text(LocalizedStringKey(onboardingPage.localizedTitle))
+                Text(onboardingPage.title)
                     .font(.title2)
                     .fontWeight(.semibold)
                     .frame(maxWidth: .infinity)
-                Text(LocalizedStringKey(onboardingPage.localizedDescription))
+                Text(onboardingPage.description)
                     .font(.callout)
                     .fontWeight(.regular)
                     .frame(maxWidth: .infinity)
@@ -140,12 +138,6 @@ private extension OnboardingView {
             .textLargeButtonStyle()
         }
         .padding(.horizontal, 16.0)
-    }
-    var languagePickerView: some View {
-        LanguagePickerView(selectedLanguage: $selectedLanguage)
-            .pickerStyle(.navigationLink)
-            .padding(.vertical, 8.0)
-            .padding(.horizontal, 16.0)
     }
 }
 
