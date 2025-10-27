@@ -12,7 +12,7 @@ struct ProfileInfoView: View {
     let displayName: String
     let username: String
     let email: String
-    let bio: String
+    let bio: String?
     let birthday: String
     let joined: String
     let followersCount: Int
@@ -33,8 +33,10 @@ struct ProfileInfoView: View {
                     .font(.footnote)
                     .tint(.primary)
             }
-            Text(bio)
-                .font(.subheadline)
+            if let bio {
+                Text(bio)
+                    .font(.subheadline)
+            }
             HStack(spacing: 8.0) {
                 HStack(spacing: 4.0) {
                     Image(systemName: "birthday.cake.fill")

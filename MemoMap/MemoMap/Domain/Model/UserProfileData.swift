@@ -15,7 +15,7 @@ struct UserProfileData: Identifiable {
     let profilePhotoUrl: String?
     let coverPhotoUrl: String?
     let birthday: Date
-    let bio: String
+    let bio: String?
     let createdAt: Date
 }
 

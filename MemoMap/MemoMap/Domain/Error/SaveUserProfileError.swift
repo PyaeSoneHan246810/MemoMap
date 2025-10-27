@@ -12,7 +12,7 @@ enum SaveUserProfileError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .saveFailed:
-            "Save Failed"
+            "Unable to save your profile. Please try again."
         }
     }
 }
