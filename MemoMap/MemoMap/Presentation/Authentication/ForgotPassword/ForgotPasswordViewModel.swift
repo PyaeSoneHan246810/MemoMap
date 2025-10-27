@@ -19,6 +19,10 @@ final class ForgotPasswordViewModel {
         emailAddress.trimmed()
     }
     
+    var isPasswordResetValid: Bool {
+        !trimmedEmailAddress.isEmpty
+    }
+    
     private(set) var isPasswordResetInProgress: Bool = false
     
     private(set) var sendPasswordResetError: SendPasswordResetError? = nil
