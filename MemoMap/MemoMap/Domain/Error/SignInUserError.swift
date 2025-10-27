@@ -10,24 +10,21 @@ import Foundation
 enum SignInUserError: Error, LocalizedError {
     case invalidEmail
     case invalidCredential
-    case wrongPassword
     case userDisabled
     case networkError
     case unknownError
     var errorDescription: String? {
         switch self {
         case .invalidEmail:
-            "Invalid Email"
+            "Please enter a valid email address and try again."
         case .invalidCredential:
-            "Invalid Credential"
-        case .wrongPassword:
-            "Wrong Password"
+            "The email or password you entered doesn’t match. Please try again."
         case .userDisabled:
-            "User Disabled"
+            "Your account has been disabled. Please contact support for help."
         case .networkError:
-            "Network Error"
+            "You’re offline. Check your internet connection and try again."
         case .unknownError:
-            "Unknown Error"
+            "Something went wrong. Please try again later."
         }
     }
 }

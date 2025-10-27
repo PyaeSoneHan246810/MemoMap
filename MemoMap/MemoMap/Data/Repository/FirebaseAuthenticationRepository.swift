@@ -79,8 +79,6 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
                     throw SignInUserError.invalidEmail
                 case .invalidCredential:
                     throw SignInUserError.invalidCredential
-                case .wrongPassword:
-                    throw SignInUserError.wrongPassword
                 case .userDisabled:
                     throw SignInUserError.userDisabled
                 case .networkError:
