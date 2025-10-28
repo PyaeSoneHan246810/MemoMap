@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct TabBarView: View {
+    @Environment(AppSessionViewModel.self) private var appSessionViewModel: AppSessionViewModel
     @State private var tabBarViewModel: TabBarViewModel = .init()
     @State private var userViewModel: UserViewModel = .init()
     var body: some View {
@@ -41,15 +42,10 @@ struct TabBarView: View {
             isPresented: $tabBarViewModel.isReloadUserAlertPresented,
             error: tabBarViewModel.reloadUserError
         ) {
-            switch tabBarViewModel.reloadUserError {
-            case .userNotFound:
-                Button("Log out") {
-                    
-                }
-            default:
-                Button("Retry") {
-                    
-                }
+            if case .userNotFound = tabBarViewModel.reloadUserError {
+                logOutAlertButtonView
+            } else {
+                retryAlertButtonView
             }
         }
         .environment(userViewModel)
@@ -77,6 +73,22 @@ private extension TabBarView {
             isPresented: $tabBarViewModel.isVerifyAccountSheetPresented
         )
     }
+    var logOutAlertButtonView: some View {
+        Button("Log out") {
+            tabBarViewModel.logOutUser(
+                onSuccess: {
+                    appSessionViewModel.changeAppSession(.unauthenticated)
+                }
+            )
+        }
+    }
+    var retryAlertButtonView: some View {
+        Button("Retry") {
+            Task {
+                await tabBarViewModel.checkEmailVerificationStatus()
+            }
+        }
+    }
 }
 
 private extension TabBarView {
@@ -91,5 +103,7 @@ private extension TabBarView {
 }
 
 #Preview {
+    @Previewable @State var appSessionViewModel: AppSessionViewModel = .init()
     TabBarView()
+        .environment(appSessionViewModel)
 }

@@ -112,7 +112,7 @@ private extension UserProfileScreenView {
             displayName: userProfile?.displayname ?? "Placeholder",
             username: userProfile?.username ?? "@placeholder",
             email: userProfile?.emailAddress ?? "placeholder@example.com",
-            bio: userProfile?.bio ?? "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            bio: userProfile?.bio,
             birthday: userProfile?.birthday.formatted(date: .abbreviated, time: .omitted) ?? "placeholder",
             joined: userProfile?.createdAt.formatted(date: .abbreviated, time: .omitted) ?? "placeholder",
             followersCount: viewModel.followersCount,

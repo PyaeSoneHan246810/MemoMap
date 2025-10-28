@@ -44,4 +44,13 @@ final class TabBarViewModel {
             isReloadUserAlertPresented = true
         }
     }
+    
+    func logOutUser(onSuccess: () -> Void) {
+        do {
+            try authenticationRepository.signOutUser()
+            onSuccess()
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
 }
