@@ -68,6 +68,15 @@ final class VerifyAccountViewModel {
             isSendEmailVerificationAlertPresented = true
         }
     }
+    
+    func logOutUser(onSuccess: () -> Void) {
+        do {
+            try authenticationRepository.signOutUser()
+            onSuccess()
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
 }
 
 extension VerifyAccountViewModel {

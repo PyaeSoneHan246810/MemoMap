@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct VerifyAccountView: View {
+    @Environment(AppSessionViewModel.self) private var appSessionViewModel
+    @State private var verifyAccountViewModel: VerifyAccountViewModel = .init()
     @Binding var isPresented: Bool
-    @State private var viewModel: VerifyAccountViewModel = .init()
     var body: some View {
         VStack(spacing: 0.0) {
             Spacer().frame(height: 20.0)
@@ -23,13 +24,21 @@ struct VerifyAccountView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 16.0)
         .alert(
-            isPresented: $viewModel.isReloadUserAlertPresented,
-            error: viewModel.reloadUserError
-        ) {}
+            isPresented: $verifyAccountViewModel.isReloadUserAlertPresented,
+            error: verifyAccountViewModel.reloadUserError
+        ) {
+            if case .userNotFound = verifyAccountViewModel.reloadUserError {
+                logOutAlertButtonView
+            }
+        }
         .alert(
-            isPresented: $viewModel.isSendEmailVerificationAlertPresented,
-            error: viewModel.sendEmailVerificationError
-        ) {}
+            isPresented: $verifyAccountViewModel.isSendEmailVerificationAlertPresented,
+            error: verifyAccountViewModel.sendEmailVerificationError
+        ) {
+            if case .userNotFound = verifyAccountViewModel.reloadUserError {
+                logOutAlertButtonView
+            }
+        }
     }
 }
 
@@ -69,24 +78,33 @@ private extension VerifyAccountView {
                 Text("I've verified")
             }
             .primaryFilledLargeButtonStyle()
-            .progressButtonStyle(isInProgress: viewModel.isReloadUserInProgress)
+            .progressButtonStyle(isInProgress: verifyAccountViewModel.isReloadUserInProgress)
             Button {
                 Task {
-                    await viewModel.sendEmailVerification()
+                    await verifyAccountViewModel.sendEmailVerification()
                 }
             } label: {
                 Text("Resend verification link")
                     .frame(maxWidth: .infinity)
             }
             .textLargeButtonStyle()
-            .progressButtonStyle(isInProgress: viewModel.isSendEmailVerificationInProgress)
+            .progressButtonStyle(isInProgress: verifyAccountViewModel.isSendEmailVerificationInProgress)
+        }
+    }
+    var logOutAlertButtonView: some View {
+        Button("Log out") {
+            verifyAccountViewModel.logOutUser(
+                onSuccess: {
+                    appSessionViewModel.changeAppSession(.unauthenticated)
+                }
+            )
         }
     }
 }
 
 private extension VerifyAccountView {
     func checkEmailVerificationStatus() async {
-        let emailVerificationStatus = await viewModel.checkEmailVerificationStatus()
+        let emailVerificationStatus = await verifyAccountViewModel.checkEmailVerificationStatus()
         if case .verified = emailVerificationStatus {
             isPresented = false
         }
@@ -94,7 +112,9 @@ private extension VerifyAccountView {
 }
 
 #Preview {
+    @Previewable @State var appSessionViewModel: AppSessionViewModel = .init()
     VerifyAccountView(
         isPresented: .constant(true)
     )
+    .environment(appSessionViewModel)
 }

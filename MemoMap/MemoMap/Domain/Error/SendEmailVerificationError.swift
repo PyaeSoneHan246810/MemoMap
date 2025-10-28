@@ -14,11 +14,11 @@ enum SendEmailVerificationError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .userNotFound:
-            "User Not Found"
+            "We couldn’t find your account. Please sign in again."
         case .networkError:
-            "Network Error"
+            "You’re offline. Check your internet connection and try again."
         case .unknownError:
-            "Unknown Error"
+            "Something went wrong. Please try again later."
         }
     }
 }
