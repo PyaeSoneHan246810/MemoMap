@@ -12,7 +12,7 @@ enum GetMemoryHeartsError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .failedToGet:
-            "Failed To Get"
+            "Unable to load users who gave hearts for this memory. Please try again later."
         }
     }
 }

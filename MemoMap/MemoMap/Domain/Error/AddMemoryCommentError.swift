@@ -12,7 +12,7 @@ enum AddMemoryCommentError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .addFailed:
-            "Add Failed"
+            "Unable to add your comment. Please try again later."
         }
     }
 }

@@ -85,6 +85,7 @@ private extension EditMemoryMediaView {
         }
         .primaryFilledLargeButtonStyle()
         .progressButtonStyle(isInProgress: viewModel.isAddingNewItemsInProgress)
+        .disabled(viewModel.newMemoryMediaItems.isEmpty)
         .padding(.horizontal, 16.0)
     }
     var editExistingMediaView: some View {

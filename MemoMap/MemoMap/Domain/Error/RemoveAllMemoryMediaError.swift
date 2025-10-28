@@ -12,7 +12,7 @@ enum RemoveAllMemoryMediaError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .removeFailed:
-            "Remove Failed"
+            "Unable to remove the media. Please try again later."
         }
     }
 }

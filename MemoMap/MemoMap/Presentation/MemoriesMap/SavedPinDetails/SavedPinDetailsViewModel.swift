@@ -54,7 +54,7 @@ final class SavedPinDetailsViewModel {
     
     var newPinName: String = ""
     
-    private var trimmedNewPinName: String {
+    var trimmedNewPinName: String {
         newPinName.trimmed()
     }
     
@@ -79,7 +79,7 @@ final class SavedPinDetailsViewModel {
             case .updatePinPhotoUrlError(let updatePinPhotoUrlError):
                 updatePinPhotoUrlError.localizedDescription
             case .unknownError:
-                "Unknown Error"
+                "Something went wrong. Please try again later."
             }
         }
     }
@@ -120,7 +120,9 @@ final class SavedPinDetailsViewModel {
     func editPinInfo(for pinId: String) async {
         isEditPinInfoInProgress = true
         do {
-            try await pinRepository.updatePinInfo(pinId: pinId, pinName: trimmedNewPinName, pinDescription: trimmedNewPinDescription)
+            let pinName = trimmedNewPinName
+            let pinDescription = trimmedNewPinDescription.isEmpty ? nil : trimmedNewPinDescription
+            try await pinRepository.updatePinInfo(pinId: pinId, pinName: pinName, pinDescription: pinDescription)
             await updateMemoriesPinInfo(pinId: pinId)
             isEditPinInfoInProgress = false
             updatePinInfoError = nil

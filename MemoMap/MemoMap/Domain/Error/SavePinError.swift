@@ -13,9 +13,9 @@ enum SavePinError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .userNotFound:
-            "User Not Found"
+            "We couldn’t find your account. Please sign in again."
         case .saveFailed:
-            "Save Failed"
+            "Unable to save the pin. Please try again later."
         }
     }
 }

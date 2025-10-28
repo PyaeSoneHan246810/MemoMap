@@ -55,9 +55,7 @@ final class MemoryPostViewModel {
             }
             await checkIsHeartGiven(memoryId: memoryId)
         } catch {
-            if let checkHeartError = error as? CheckHeartError {
-                print(checkHeartError.localizedDescription)
-            } else if let addMemoryHeartError = error as? AddMemoryHeartError {
+            if let addMemoryHeartError = error as? AddMemoryHeartError {
                 print(addMemoryHeartError.localizedDescription)
             } else if let removeMemoryHeartError = error as? RemoveMemoryHeartError {
                 print(removeMemoryHeartError.localizedDescription)

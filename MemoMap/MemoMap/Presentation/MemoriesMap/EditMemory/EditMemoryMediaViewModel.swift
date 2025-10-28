@@ -118,7 +118,6 @@ class EditMemoryMediaViewModel {
             isDeleteItemInProgress = false
             onSuccess()
         } catch {
-            print(error.localizedDescription)
             isDeleteItemInProgress = false
         }
     }
@@ -127,7 +126,7 @@ class EditMemoryMediaViewModel {
         isDeleteAllItemsInProgress = true
         do {
             try await memoryRepository.removeAllMemoryMedia(memoryId: memoryId)
-            await deleteAllMemoryMediaStorageItems(for: memoryId)
+            try? await storageRepository.deleteMemoryMedia(memoryId: memoryId)
             mediaList.removeAll()
             isDeleteAllItemsInProgress = false
             removeAllMemoryMediaError = nil
@@ -142,10 +141,6 @@ class EditMemoryMediaViewModel {
             }
             isDeleteAllItemsAlertPresented = true
         }
-    }
-    
-    private func deleteAllMemoryMediaStorageItems(for memoryId: String) async {
-        try? await storageRepository.deleteMemoryMedia(memoryId: memoryId)
     }
     
     func addNewMemoryMediaItem(for memoryId: String, onSuccess: () -> Void) async {

@@ -11,22 +11,29 @@ struct MemoryView: View {
     let memory: MemoryData
     let onDeleteMemory: () -> Void
     @State private var viewModel: MemoryViewModel = .init()
-    var title: String {
-        viewModel.updatedMemory?.title ?? ""
+    var updatedMemory: MemoryData? {
+        viewModel.updatedMemory
+    }
+    var title: String? {
+        updatedMemory?.title
+    }
+    var description: String? {
+        updatedMemory?.description
+    }
+    var dateTime: Date? {
+        updatedMemory?.dateTime
     }
     var tags: [String] {
-        viewModel.updatedMemory?.tags ?? []
+        updatedMemory?.tags ?? []
     }
     var media: [String] {
-        viewModel.updatedMemory?.media ?? []
+        updatedMemory?.media ?? []
     }
     var body: some View {
         VStack(spacing: 12.0) {
             memoryInfoView
                 .padding(.horizontal, 16.0)
-            if !media.isEmpty {
-                memoryMediasView
-            }
+            memoryMediasView
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 16.0)
@@ -36,13 +43,13 @@ struct MemoryView: View {
                 .presentationBackground(Color(uiColor: .systemBackground))
                 .interactiveDismissDisabled()
                 .onAppear {
-                    if let memory = viewModel.updatedMemory {
+                    if let updatedMemory {
                         viewModel.editMemoryInfo = .init(
-                            title: memory.title,
-                            description: memory.description ?? "",
-                            tags: memory.tags,
-                            dateTime: memory.dateTime,
-                            publicStatus: memory.publicStatus
+                            title: updatedMemory.title,
+                            description: updatedMemory.description ?? "",
+                            tags: updatedMemory.tags,
+                            dateTime: updatedMemory.dateTime,
+                            publicStatus: updatedMemory.publicStatus
                         )
                     }
                 }
@@ -63,14 +70,16 @@ struct MemoryView: View {
 private extension MemoryView {
     var memoryInfoView: some View {
         VStack(alignment: .leading, spacing: 8.0) {
-            Text(title)
-                .font(.headline)
-            if let description = viewModel.updatedMemory?.description {
+            if let title {
+                Text(title)
+                    .font(.headline)
+            }
+            if let description {
                 Text(description)
                     .font(.subheadline)
             }
             HStack {
-                if let dateTime = viewModel.updatedMemory?.dateTime {
+                if let dateTime {
                     Text(dateTime.formatted())
                         .font(.footnote)
                         .foregroundStyle(.secondary)
@@ -103,10 +112,13 @@ private extension MemoryView {
             }
         }
     }
+    @ViewBuilder
     var memoryMediasView: some View {
-        MemoryMediasView(
-            mediaUrlStrings: media
-        )
+        if !media.isEmpty {
+            MemoryMediasView(
+                mediaUrlStrings: media
+            )
+        }
     }
     var editMemoryInfoView: some View {
         NavigationStack {
@@ -115,6 +127,7 @@ private extension MemoryView {
                 isErrorAlertPresented: $viewModel.isEditMemoryInfoAlertPresented,
                 updateMemoryInfoError: viewModel.updateMemoryInfoError,
                 isEditInProgress: viewModel.isEditMemoryInfoInProgress,
+                isSaveButtonDisable: viewModel.editMemoryInfo.title.trimmed().isEmpty,
                 onSaveClick: {
                     if let memory = viewModel.updatedMemory {
                         Task {
@@ -131,7 +144,7 @@ private extension MemoryView {
                 memoryId: memoryId,
                 mediaUrlStrings: media,
                 onEdited: {
-                    if let memoryId = viewModel.updatedMemory?.id {
+                    if let memoryId = updatedMemory?.id {
                         Task {
                             await viewModel.getUpdatedMemory(for: memoryId)
                         }

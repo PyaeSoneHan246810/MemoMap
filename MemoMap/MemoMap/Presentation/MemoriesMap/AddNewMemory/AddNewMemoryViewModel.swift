@@ -41,6 +41,10 @@ final class AddNewMemoryViewModel {
     
     var isMemoryPublic: Bool = true
     
+    var isSaveMemoryValid: Bool {
+        !trimmedMemoryTitle.isEmpty
+    }
+    
     private(set) var isSaveMemoryInProgress: Bool = false
     
     private(set) var saveMemoryError: SaveMemoryError? = nil
@@ -54,7 +58,7 @@ final class AddNewMemoryViewModel {
             pinId: "",
             ownerId: "",
             title: trimmedMemoryTitle,
-            description: trimmedMemoryDescription,
+            description: trimmedMemoryDescription.isEmpty ? nil : trimmedMemoryDescription,
             media: [],
             tags: memoryTags,
             dateTime: memoryDateTime,

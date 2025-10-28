@@ -12,7 +12,7 @@ enum GetMemoryCommentsError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .failedToGet:
-            "Failed To Get"
+            "Unable to load comments for this memory. Please try again later."
         }
     }
 }

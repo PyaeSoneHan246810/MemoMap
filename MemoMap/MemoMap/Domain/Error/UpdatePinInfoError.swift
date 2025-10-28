@@ -12,7 +12,7 @@ enum UpdatePinInfoError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .updateFailed:
-            "Update Failed"
+            "Unable to update the pin. Please try again later."
         }
     }
 }

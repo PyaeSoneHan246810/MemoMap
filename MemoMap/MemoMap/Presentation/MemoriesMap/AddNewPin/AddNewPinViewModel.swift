@@ -40,6 +40,8 @@ final class AddNewPinViewModel {
         locationDescription.trimmed()
     }
     
+    var addMemory: Bool = true
+    
     var memoryMediaItems: [MemoryMediaItem] = []
     
     var memoryTitle: String = ""
@@ -60,6 +62,14 @@ final class AddNewPinViewModel {
     
     var isMemoryPublic: Bool = true
     
+    var isSavePinValid: Bool {
+        if addMemory {
+            return !trimmedLocationName.isEmpty && !trimmedMemoryTitle.isEmpty
+        } else {
+            return !trimmedLocationName.isEmpty
+        }
+    }
+    
     private(set) var isSaveNewPinInProgress: Bool = false
     
     enum SaveNewPinError: Error, LocalizedError {
@@ -73,7 +83,7 @@ final class AddNewPinViewModel {
             case .saveMemoryError(let saveMemoryError):
                 saveMemoryError.localizedDescription
             case .unknownError:
-                "Unknown Error"
+                "Something went wrong. Please try again later."
             }
         }
     }
@@ -100,16 +110,18 @@ final class AddNewPinViewModel {
                 if let pinPhotoUrlString = await uploadPinPhoto(pinId: savedPinId) {
                     await updatePinPhotoUrl(pinId: savedPinId, pinPhotoUrlString: pinPhotoUrlString)
                 }
-                let savedMemoryId = try await saveMemory(
-                    pinId: savedPinId,
-                    locationName: trimmedLocationName,
-                    latitude: latitude,
-                    longitude: longitude,
-                    userData: userData
-                )
-                let uploadedMemoryMedia = await uploadMemoryMedia(memoryId: savedMemoryId)
-                if !uploadedMemoryMedia.isEmpty {
-                    await updateMemoryMedia(memoryId: savedMemoryId, media: uploadedMemoryMedia)
+                if addMemory {
+                    let savedMemoryId = try await saveMemory(
+                        pinId: savedPinId,
+                        locationName: trimmedLocationName,
+                        latitude: latitude,
+                        longitude: longitude,
+                        userData: userData
+                    )
+                    let uploadedMemoryMedia = await uploadMemoryMedia(memoryId: savedMemoryId)
+                    if !uploadedMemoryMedia.isEmpty {
+                        await updateMemoryMedia(memoryId: savedMemoryId, media: uploadedMemoryMedia)
+                    }
                 }
             }
             isSaveNewPinInProgress = false
@@ -120,12 +132,12 @@ final class AddNewPinViewModel {
             isSaveNewPinInProgress = false
             if let savePinError = error as? SavePinError {
                 saveNewPinError = .savePinError(savePinError)
-            } else if let saveMemeoryError = error as? SaveMemoryError {
+            } else if let saveMemoryError = error as? SaveMemoryError {
                 if let savedPinId {
                     await deletePin(pinId: savedPinId)
                     await deletePinPhoto(pinId: savedPinId)
                 }
-                saveNewPinError = .saveMemoryError(saveMemeoryError)
+                saveNewPinError = .saveMemoryError(saveMemoryError)
             } else {
                 saveNewPinError = .unknownError
             }
@@ -150,7 +162,7 @@ final class AddNewPinViewModel {
             pinId: "",
             ownerId: "",
             title: trimmedMemoryTitle,
-            description: trimmedMemoryDescription,
+            description: trimmedMemoryDescription.isEmpty ? nil : trimmedMemoryDescription,
             media: [],
             tags: memoryTags,
             dateTime: memoryDateTime,
