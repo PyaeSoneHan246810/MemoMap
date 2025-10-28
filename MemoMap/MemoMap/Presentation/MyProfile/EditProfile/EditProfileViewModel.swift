@@ -42,6 +42,10 @@ final class EditProfileViewModel {
     
     var existingCoverPhotoUrl: String? = nil
     
+    var isDisplayNameValid: Bool {
+        !trimmedNewDisplayName.isEmpty
+    }
+    
     private(set) var isEditProfileInProgress: Bool = false
     
     private(set) var updateUserProfileInfoError: UpdateUserProfileInfoError? = nil
@@ -65,7 +69,7 @@ final class EditProfileViewModel {
             profilePhotoUrl: newProfilePhotoUrl,
             coverPhotoUrl: newCoverPhotoUrl,
             birthday: newBirthday,
-            bio: trimmedNewBio
+            bio: trimmedNewBio.isEmpty ? nil : trimmedNewBio
         )
         do {
             try await userProfileRepository.updateUserProfileInfo(userid: userId, updateUserProfileData: updateUserProfileData)
@@ -78,7 +82,7 @@ final class EditProfileViewModel {
             if let updateUserProfileInfoError = error as? UpdateUserProfileInfoError {
                 self.updateUserProfileInfoError = updateUserProfileInfoError
             } else {
-                updateUserProfileInfoError = .unknownError
+                updateUserProfileInfoError = .updateFailed
             }
             isEditProfileAlertPresented = true
         }

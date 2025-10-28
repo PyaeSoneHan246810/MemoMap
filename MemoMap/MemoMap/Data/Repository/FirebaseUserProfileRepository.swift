@@ -97,7 +97,7 @@ final class FirebaseUserProfileRepository: UserProfileRepository {
         let updatedData: [String: Any] = [
             UserProfileModel.CodingKeys.displayname.rawValue: updateUserProfileData.displayname,
             UserProfileModel.CodingKeys.displaynameLowercased.rawValue: updateUserProfileData.displayname.lowercased(),
-            UserProfileModel.CodingKeys.bio.rawValue: updateUserProfileData.bio,
+            UserProfileModel.CodingKeys.bio.rawValue: updateUserProfileData.bio as Any,
             UserProfileModel.CodingKeys.birthday.rawValue: Timestamp(date: updateUserProfileData.birthday),
             UserProfileModel.CodingKeys.profilePhotoUrl.rawValue: updateUserProfileData.profilePhotoUrl as Any,
             UserProfileModel.CodingKeys.coverPhotoUrl.rawValue: updateUserProfileData.coverPhotoUrl as Any

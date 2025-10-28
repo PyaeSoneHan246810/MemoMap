@@ -28,6 +28,7 @@ struct EditProfileView: View {
                     }
                     .padding(.horizontal, 16.0)
                     .offset(y: 180.0)
+                    .animation(.smooth, value: viewModel.isDisplayNameValid)
                 }
             }
         }
@@ -159,15 +160,22 @@ private extension EditProfileView {
         }
     }
     var displayNameInputView: some View {
-        InputTextFieldView(
-            title: "Display name",
-            placeholder: "Enter your display name",
-            text: $viewModel.newDisplayName,
-            keyboardType: .namePhonePad,
-            textContentType: .username,
-            autoCorrectionDisabled: true,
-            submitLabel: .next
-        )
+        VStack(alignment: .leading, spacing: 8.0) {
+            InputTextFieldView(
+                title: "Display name",
+                placeholder: "Enter your display name",
+                text: $viewModel.newDisplayName,
+                keyboardType: .namePhonePad,
+                textContentType: .username,
+                autoCorrectionDisabled: true,
+                submitLabel: .next
+            )
+            if !viewModel.isDisplayNameValid {
+                Text("Please enter a display name.")
+                    .font(.callout)
+                    .foregroundStyle(.red)
+            }
+        }
     }
     var bioInputView: some View {
         InputTextFieldView(
@@ -187,6 +195,7 @@ private extension EditProfileView {
             DatePicker(
                 "Pick your birthday",
                 selection: $viewModel.newBirthday,
+                in: ...Date(),
                 displayedComponents: .date
             )
             .labelsHidden()
@@ -207,6 +216,7 @@ private extension EditProfileView {
         }
         .primaryFilledLargeButtonStyle()
         .progressButtonStyle(isInProgress: viewModel.isEditProfileInProgress)
+        .disabled(!viewModel.isDisplayNameValid)
     }
 }
 

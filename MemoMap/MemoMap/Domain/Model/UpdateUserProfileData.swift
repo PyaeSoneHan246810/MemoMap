@@ -12,5 +12,5 @@ struct UpdateUserProfileData {
     let profilePhotoUrl: String?
     let coverPhotoUrl: String?
     let birthday: Date
-    let bio: String
+    let bio: String?
 }
