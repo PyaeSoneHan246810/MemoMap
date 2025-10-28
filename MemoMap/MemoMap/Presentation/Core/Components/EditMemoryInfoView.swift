@@ -29,7 +29,7 @@ private extension EditMemoryInfoView {
         VStack(alignment: .leading, spacing: 12.0) {
             TextField(
                 text: $memoryTitle,
-                prompt: Text("Add a title for your memory...")
+                prompt: Text("Add a title for your memory *")
                     .font(.headline)
                     .foregroundStyle(.gray),
                 axis: .vertical

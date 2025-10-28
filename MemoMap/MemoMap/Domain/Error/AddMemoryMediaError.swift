@@ -13,9 +13,9 @@ enum AddMemoryMediaError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .mediaNotExist:
-            "Media Not Exist"
+            "The media file doesn’t exist. Please check and try again."
         case .addFailed:
-            "Add Failed"
+            "Unable to add the media. Please try again later."
         }
     }
 }

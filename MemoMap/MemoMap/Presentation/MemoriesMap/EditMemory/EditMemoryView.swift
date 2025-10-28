@@ -21,6 +21,7 @@ struct EditMemoryView: View {
     @Binding var isErrorAlertPresented: Bool
     let updateMemoryInfoError: UpdateMemoryInfoError?
     let isEditInProgress: Bool
+    let isSaveButtonDisable: Bool
     let onSaveClick: () -> Void
     var body: some View {
         ScrollView(.vertical) {
@@ -35,6 +36,7 @@ struct EditMemoryView: View {
                 Button("Save", action: onSaveClick)
                     .primaryFilledLargeButtonStyle()
                     .progressButtonStyle(isInProgress: isEditInProgress)
+                    .disabled(isSaveButtonDisable)
             }
         }
         .disableBouncesVertically()
@@ -67,6 +69,7 @@ private extension EditMemoryView {
             isErrorAlertPresented: .constant(false),
             updateMemoryInfoError: nil,
             isEditInProgress: false,
+            isSaveButtonDisable: false,
             onSaveClick: {}
         )
     }

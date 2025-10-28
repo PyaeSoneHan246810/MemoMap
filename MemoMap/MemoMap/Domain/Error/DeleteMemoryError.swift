@@ -12,7 +12,7 @@ enum DeleteMemoryError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .deleteFailed:
-            "Delete Failed"
+            "Unable to delete the memory. Please try again later."
         }
     }
 }

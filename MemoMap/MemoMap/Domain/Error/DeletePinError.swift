@@ -12,7 +12,7 @@ enum DeletePinError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .deleteFailed:
-            "Delete Failed"
+            "Unable to delete the pin. Please try again later."
         }
     }
 }

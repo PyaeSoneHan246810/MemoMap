@@ -10,6 +10,7 @@ import SwiftUI
 struct EditPinView: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var newPinName: String
+    let trimmedNewPinName: String
     @Binding var newPinDescription: String
     @Binding var isErrorAlertPresented: Bool
     let updatePinInfoError: UpdatePinInfoError?
@@ -18,14 +19,21 @@ struct EditPinView: View {
     var body: some View {
         ScrollView(.vertical) {
             LazyVStack(spacing: 16.0) {
-                InputTextFieldView(
-                    title: "Location name",
-                    placeholder: "Enter name of a location",
-                    text: $newPinName,
-                    textContentType: .name,
-                    autoCorrectionDisabled: true,
-                    submitLabel: .next
-                )
+                VStack(alignment: .leading, spacing: 8.0) {
+                    InputTextFieldView(
+                        title: "Location name",
+                        placeholder: "Enter name of a location",
+                        text: $newPinName,
+                        textContentType: .name,
+                        autoCorrectionDisabled: true,
+                        submitLabel: .next
+                    )
+                    if trimmedNewPinName.isEmpty {
+                        Text("Please enter a location name.")
+                            .font(.callout)
+                            .foregroundStyle(.red)
+                    }
+                }
                 InputTextFieldView(
                     title: "Location description",
                     placeholder: "Enter description for a location",
@@ -36,7 +44,9 @@ struct EditPinView: View {
                 Button("Save", action: onSaveClick)
                     .primaryFilledLargeButtonStyle()
                     .progressButtonStyle(isInProgress: isEditInProgress)
+                    .disabled(trimmedNewPinName.isEmpty)
             }
+            .animation(.smooth, value: trimmedNewPinName.isEmpty)
         }
         .disableBouncesVertically()
         .contentMargins(16.0)
@@ -57,6 +67,7 @@ struct EditPinView: View {
     NavigationStack {
         EditPinView(
             newPinName: .constant(""),
+            trimmedNewPinName: "",
             newPinDescription: .constant(""),
             isErrorAlertPresented: .constant(false),
             updatePinInfoError: nil,

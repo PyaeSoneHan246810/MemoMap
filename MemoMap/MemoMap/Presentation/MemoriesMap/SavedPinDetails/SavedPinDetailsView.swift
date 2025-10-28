@@ -149,7 +149,9 @@ private extension SavedPinDetailsView {
                 .fontWeight(.semibold)
                 .redacted(reason: viewModel.pin == nil ? .placeholder : [])
             if let pin = viewModel.pin {
-                Text(pin.description ?? "No description.")
+                if let description = pin.description {
+                    Text(description)
+                }
                 HStack(spacing: 12.0) {
                     Button("Edit", systemImage: "pencil") {
                         viewModel.isEditPinSheetPresented = true
@@ -227,6 +229,7 @@ private extension SavedPinDetailsView {
         NavigationStack {
             EditPinView(
                 newPinName: $viewModel.newPinName,
+                trimmedNewPinName: viewModel.trimmedNewPinName,
                 newPinDescription: $viewModel.newPinDescription,
                 isErrorAlertPresented: $viewModel.isEditPinInfoAlertPresented,
                 updatePinInfoError: viewModel.updatePinInfoError,

@@ -18,24 +18,11 @@ struct AddNewPinView: View {
                 locationImagePickerView
                 VStack(spacing: 20.0) {
                     locationInfoTextFieldsView
-                        .padding(.horizontal, 16.0)
-                    VStack(alignment: .leading, spacing: 20.0) {
-                        Text("Add a memory")
-                            .font(.headline)
-                            .padding(.horizontal, 16.0)
-                        AddMemoryView(
-                            memoryMediaItems: $viewModel.memoryMediaItems,
-                            memoryTitle: $viewModel.memoryTitle,
-                            memoryDescription: $viewModel.memoryDescription,
-                            memoryTags: $viewModel.memoryTags,
-                            memoryDateTime: $viewModel.memoryDateTime,
-                            isMemoryPublic: $viewModel.isMemoryPublic
-                        )
-                    }
+                    addMemoryView
                     saveButtonView
-                        .padding(.horizontal, 16.0)
                 }
                 .padding(.vertical, 16.0)
+                .animation(.smooth, value: viewModel.addMemory)
             }
         }
         .disableBouncesVertically()
@@ -84,24 +71,52 @@ private extension AddNewPinView {
             .padding(.trailing, 16.0)
         }
     }
-    @ViewBuilder
     var locationInfoTextFieldsView: some View {
-        InputTextFieldView(
-            title: "Location name",
-            placeholder: "Enter name of a location",
-            text: $viewModel.locationName,
-            textContentType: .name,
-            autoCorrectionDisabled: true,
-            submitLabel: .next
-        )
-        InputTextFieldView(
-            title: "Location description",
-            placeholder: "Enter description for a location",
-            text: $viewModel.locationDescription,
-            submitLabel: .next,
-            axis: .vertical,
-            lineLimit: 5
-        )
+        Group {
+            VStack(alignment: .leading, spacing: 8.0) {
+                InputTextFieldView(
+                    title: "Location name *",
+                    placeholder: "Enter name of a location",
+                    text: $viewModel.locationName,
+                    textContentType: .name,
+                    autoCorrectionDisabled: true,
+                    submitLabel: .next
+                )
+            }
+            InputTextFieldView(
+                title: "Location description",
+                placeholder: "Enter description for a location",
+                text: $viewModel.locationDescription,
+                submitLabel: .next,
+                axis: .vertical,
+                lineLimit: 5
+            )
+        }
+        .padding(.horizontal, 16.0)
+    }
+    @ViewBuilder
+    var addMemoryView: some View {
+        VStack(alignment: .leading, spacing: 20.0) {
+            HStack {
+                Text("Add a memory")
+                    .font(.headline)
+                Spacer()
+                Toggle(isOn: $viewModel.addMemory) {
+                }
+                .tint(.accent)
+            }
+            .padding(.horizontal, 16.0)
+            if viewModel.addMemory {
+                AddMemoryView(
+                    memoryMediaItems: $viewModel.memoryMediaItems,
+                    memoryTitle: $viewModel.memoryTitle,
+                    memoryDescription: $viewModel.memoryDescription,
+                    memoryTags: $viewModel.memoryTags,
+                    memoryDateTime: $viewModel.memoryDateTime,
+                    isMemoryPublic: $viewModel.isMemoryPublic
+                )
+            }
+        }
     }
     var saveButtonView: some View {
         Button {
@@ -111,6 +126,8 @@ private extension AddNewPinView {
         }
         .primaryFilledLargeButtonStyle()
         .progressButtonStyle(isInProgress: viewModel.isSaveNewPinInProgress)
+        .disabled(!viewModel.isSavePinValid)
+        .padding(.horizontal, 16.0)
     }
 }
 

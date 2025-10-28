@@ -114,6 +114,7 @@ private extension CommentsView {
             .buttonStyle(.glassProminent)
             .buttonBorderShape(.circle)
             .controlSize(.large)
+            .disabled(!viewModel.isAddCommentValid)
         }
     }
 }

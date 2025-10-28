@@ -25,10 +25,7 @@ struct AddNewMemoryView: View {
                 locationImageView
                 locationInfoView
                 VStack(alignment: .leading, spacing: 16.0) {
-                    Text("Add a memory")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .padding(.horizontal, 16.0)
+                    addMemoryTitleView
                     AddMemoryView(
                         memoryMediaItems: $viewModel.memoryMediaItems,
                         memoryTitle: $viewModel.memoryTitle,
@@ -38,7 +35,6 @@ struct AddNewMemoryView: View {
                         isMemoryPublic: $viewModel.isMemoryPublic
                     )
                     saveButtonView
-                        .padding(.horizontal, 16.0)
                 }
             }
         }
@@ -70,7 +66,6 @@ private extension AddNewMemoryView {
             }
         }
     }
-    
     @ViewBuilder
     var locationImageView: some View {
         if let photoUrl = pin.photoUrl {
@@ -87,7 +82,6 @@ private extension AddNewMemoryView {
             LocationImagePlaceholderView()
         }
     }
-    
     var locationInfoView: some View {
         VStack(alignment: .leading, spacing: 8.0) {
             Text(pin.name)
@@ -97,7 +91,12 @@ private extension AddNewMemoryView {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16.0)
     }
-    
+    var addMemoryTitleView: some View {
+        Text("Add a memory")
+            .font(.title2)
+            .fontWeight(.semibold)
+            .padding(.horizontal, 16.0)
+    }
     var saveButtonView: some View {
         Button {
             Task { await saveMemory() }
@@ -106,6 +105,8 @@ private extension AddNewMemoryView {
         }
         .primaryFilledLargeButtonStyle()
         .progressButtonStyle(isInProgress: viewModel.isSaveMemoryInProgress)
+        .disabled(!viewModel.isSaveMemoryValid)
+        .padding(.horizontal, 16.0)
     }
 }
 

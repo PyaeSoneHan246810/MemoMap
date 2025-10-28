@@ -35,6 +35,10 @@ final class CommentsViewModel {
     
     var isAddCommentAlertPresented: Bool = false
     
+    var isAddCommentValid: Bool {
+        !trimmedComment.isEmpty && userData?.uid != nil
+    }
+    
     func addComment(memoryId: String) async {
         guard let userId = userData?.uid else {
             return

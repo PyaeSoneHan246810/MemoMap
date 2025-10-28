@@ -293,12 +293,17 @@ final class FirebaseMemoryRepository: MemoryRepository {
     }
     
     func updateMemoryInfo(memoryId: String, editMemoryInfo: EditMemoryInfo) async throws {
+        let title = editMemoryInfo.title.trimmed()
+        let description = editMemoryInfo.description.trimmed().isEmpty ? nil : editMemoryInfo.description.trimmed()
+        let tags = editMemoryInfo.tags
+        let dateTime = editMemoryInfo.dateTime
+        let publicStatus = editMemoryInfo.publicStatus
         let updatedData: [String: Any] = [
-            MemoryModel.CodingKeys.title.rawValue: editMemoryInfo.title,
-            MemoryModel.CodingKeys.description.rawValue: editMemoryInfo.description,
-            MemoryModel.CodingKeys.tags.rawValue: editMemoryInfo.tags,
-            MemoryModel.CodingKeys.dateTime.rawValue: Timestamp(date: editMemoryInfo.dateTime),
-            MemoryModel.CodingKeys.publicStatus.rawValue: editMemoryInfo.publicStatus
+            MemoryModel.CodingKeys.title.rawValue: title,
+            MemoryModel.CodingKeys.description.rawValue: description as Any,
+            MemoryModel.CodingKeys.tags.rawValue: tags,
+            MemoryModel.CodingKeys.dateTime.rawValue: Timestamp(date: dateTime),
+            MemoryModel.CodingKeys.publicStatus.rawValue: publicStatus
         ]
         do {
             try await getMemoryDocument(memoryId: memoryId).updateData(updatedData)

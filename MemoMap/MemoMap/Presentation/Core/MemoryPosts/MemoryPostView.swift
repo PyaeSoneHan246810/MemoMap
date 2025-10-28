@@ -118,16 +118,21 @@ private extension MemoryPostView {
                 Text(memoryDescription)
                     .font(.subheadline)
             }
-            MemoryTagsView(
-                tags: memory.tags
-            )
+            if !memory.tags.isEmpty {
+                MemoryTagsView(
+                    tags: memory.tags
+                )
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
+    @ViewBuilder
     var memoryMediasView: some View {
-        MemoryMediasView(
-            mediaUrlStrings: memory.media
-        )
+        if !memory.media.isEmpty {
+            MemoryMediasView(
+                mediaUrlStrings: memory.media
+            )
+        }
     }
     var locationInfoView: some View {
         HStack {

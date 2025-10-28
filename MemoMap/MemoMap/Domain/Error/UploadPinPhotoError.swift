@@ -12,7 +12,7 @@ enum UploadPinPhotoError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .uploadFailed:
-            "Upload Failed"
+            "Unable to upload the photo. Please try again later."
         }
     }
 }

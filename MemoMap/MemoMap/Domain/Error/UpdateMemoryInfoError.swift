@@ -12,7 +12,7 @@ enum UpdateMemoryInfoError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .updateFailed:
-            "Update Failed"
+            "Unable to update the memory. Please try again later."
         }
     }
 }
