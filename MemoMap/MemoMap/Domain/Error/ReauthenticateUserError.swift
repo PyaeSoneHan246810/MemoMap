@@ -11,7 +11,6 @@ enum ReauthenticateUserError: Error, LocalizedError {
     case userNotFound
     case userEmailNotFound
     case invalidCredential
-    case invalidEmail
     case wrongPassword
     case userMismatch
     case userDisabled
@@ -20,23 +19,21 @@ enum ReauthenticateUserError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .userNotFound:
-            "User Not Found"
+            "We couldn’t find your account. Please sign in again."
         case .userEmailNotFound:
-            "User Email Not Found"
+            "We couldn’t find your email address. Please sign in again."
         case .invalidCredential:
-            "Invalid Credential"
-        case .invalidEmail:
-            "Invalid Email"
+            "Your credentials are invalid. Please try again."
         case .wrongPassword:
-            "Wrong Password"
+            "Your current password is invalid. Please try again."
         case .userMismatch:
-            "User Mismatch"
+            "The credentials don’t match the current user. Please sign in again."
         case .userDisabled:
-            "User Disabled"
+            "Your account has been disabled. Please contact support for help."
         case .networkError:
-            "Network Error"
+            "You’re offline. Check your internet connection and try again."
         case .unknownError:
-            "Unknown Error"
+            "Something went wrong. Please try again later."
         }
     }
 }

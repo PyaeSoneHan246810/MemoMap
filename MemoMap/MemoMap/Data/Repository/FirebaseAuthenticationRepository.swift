@@ -190,8 +190,6 @@ final class FirebaseAuthenticationRepository: AuthenticationRepository {
                 switch errorCode {
                 case .invalidCredential:
                     throw ReauthenticateUserError.invalidCredential
-                case .invalidEmail:
-                    throw ReauthenticateUserError.invalidEmail
                 case .wrongPassword:
                     throw ReauthenticateUserError.wrongPassword
                 case .userMismatch:

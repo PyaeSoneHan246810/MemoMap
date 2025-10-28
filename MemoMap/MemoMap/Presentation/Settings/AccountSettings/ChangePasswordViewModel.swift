@@ -32,6 +32,50 @@ final class ChangePasswordViewModel {
         confirmNewPassword.trimmed()
     }
     
+    var isChangePasswordValid: Bool {
+        isCurrentPasswordVaid && isNewPasswordValid
+    }
+    
+    var isCurrentPasswordVaid: Bool {
+        !currentPassword.isEmpty
+    }
+    
+    private var isNewPasswordValid: Bool {
+        passwordHasEightCharsOrMore && passwordHasAtLeastOneUppercaseChar && passwordHasAtLeastOneLowercaseChar && passwordHasAtLeastOneNumericChar && passwordHasAtLeastOneSpecialChar && isConfirmPasswordCorrect
+    }
+    
+    var passwordHasEightCharsOrMore: Bool {
+        trimmedNewPassword.count >= 8
+    }
+    
+    var passwordHasAtLeastOneUppercaseChar: Bool {
+        trimmedNewPassword.contains { $0.isUppercase }
+    }
+    
+    var passwordHasAtLeastOneLowercaseChar: Bool {
+        trimmedNewPassword.contains { $0.isLowercase }
+    }
+    
+    var passwordHasAtLeastOneNumericChar: Bool {
+        trimmedNewPassword.contains { $0.isNumber }
+    }
+    
+    var passwordHasAtLeastOneSpecialChar: Bool {
+        trimmedNewPassword.rangeOfCharacter(from: CharacterSet(charactersIn: "^$*.[]{}()?\"!@#%&/\\,><':;|_~")) != nil
+    }
+    
+    private var isConfirmPasswordCorrect: Bool {
+        trimmedNewPassword == trimmedConfirmNewPassword
+    }
+    
+    var showNewPasswordValidationMessages: Bool {
+        !trimmedNewPassword.isEmpty
+    }
+    
+    var showNewPasswordMismatchMessage: Bool {
+        !trimmedNewPassword.isEmpty && !trimmedConfirmNewPassword.isEmpty && !isConfirmPasswordCorrect
+    }
+    
     private(set) var isChangePasswordInProgress: Bool = false
     
     enum ChangePasswordError: Error, LocalizedError {
@@ -45,7 +89,7 @@ final class ChangePasswordViewModel {
             case .updatePasswordError(let updatePasswordError):
                 updatePasswordError.localizedDescription
             case .unknownError:
-                "Unknown Error"
+                "Something went wrong. Please try again later."
             }
         }
     }
