@@ -33,7 +33,7 @@ struct PinSelectionView: View {
 private extension PinSelectionView {
     var pinInfoView: some View {
         HStack(spacing: 16.0) {
-            pinImageView(urlString: pin.photoUrl ?? "")
+            pinImageView(urlString: pin.photoUrl)
             VStack(alignment: .leading, spacing: 12.0) {
                 Text(pin.name)
                     .font(.headline)
@@ -44,14 +44,22 @@ private extension PinSelectionView {
         .padding(16.0)
         .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 24.0))
     }
-    func pinImageView(urlString: String) -> some View {
+    func pinImageView(urlString: String?) -> some View {
         RoundedRectangle(cornerRadius: 8.0)
             .foregroundStyle(Color(uiColor: .secondarySystemBackground))
             .frame(width: 160.0, height: 120.0)
             .overlay {
-                KFImage(URL(string: urlString))
-                    .resizable()
-                    .scaledToFill()
+                if let urlString {
+                    KFImage(URL(string: urlString))
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    Image(.imagePlaceholder)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 60.0, height: 60.0)
+                        .foregroundStyle(Color(uiColor: .systemBackground))
+                }
             }
             .clipShape(RoundedRectangle(cornerRadius: 12.0))
     }

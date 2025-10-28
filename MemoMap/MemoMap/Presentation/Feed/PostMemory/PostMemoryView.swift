@@ -23,9 +23,7 @@ struct PostMemoryView: View {
                     isMemoryPublic: .constant(true)
                 )
                 selectLocationView
-                    .padding(.horizontal, 16.0)
                 postButtonView
-                    .padding(.horizontal, 16.0)
             }
         }
         .scrollIndicators(.hidden)
@@ -68,6 +66,7 @@ private extension PostMemoryView {
         .onTapGesture {
             viewModel.isChooseLocationViewPresented = true
         }
+        .padding(.horizontal, 16.0)
     }
     var postButtonView: some View {
         Button {
@@ -83,6 +82,8 @@ private extension PostMemoryView {
         }
         .primaryFilledLargeButtonStyle()
         .progressButtonStyle(isInProgress: viewModel.isPostMemoryInProgress)
+        .disabled(!viewModel.isMemoryTitleValid)
+        .padding(.horizontal, 16.0)
     }
 }
 

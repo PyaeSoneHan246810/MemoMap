@@ -156,6 +156,7 @@ final class SavedPinDetailsViewModel {
         isDeletePinInProgress = true
         do {
             try await pinRepository.deletePin(pinId: pinId)
+            try? await storageRepository.deletePinPhoto(pinId: pinId)
             try await memoryRepository.deletePinMemories(pinId: pinId)
             isDeletePinInProgress = false
             deletePinError = nil

@@ -43,6 +43,10 @@ class PostMemoryViewModel {
     
     var selectedPin: PinData? = nil
     
+    var isMemoryTitleValid: Bool {
+        !trimmedMemoryTitle.isEmpty
+    }
+    
     private(set) var isPostMemoryInProgress: Bool = false
     
     private(set) var saveMemoryError: SaveMemoryError? = nil
@@ -50,7 +54,11 @@ class PostMemoryViewModel {
     var isSaveMemoryAlertPresented: Bool = false
     
     func postMemory(onSuccess: () -> Void) async {
-        guard let pin = selectedPin else { return }
+        guard let pin = selectedPin else {
+            saveMemoryError = .pinNotSelected
+            isSaveMemoryAlertPresented = true
+            return
+        }
         isPostMemoryInProgress = true
         let memoryData: MemoryData = .init(
             id: "",

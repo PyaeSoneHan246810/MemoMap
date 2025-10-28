@@ -7,10 +7,8 @@
 
 import Foundation
 import FirebaseFirestore
-import Factory
 
 final class FirebasePinRepository: PinRepository {
-    @Injected(\.storageRepository) private var storageRepository: StorageRepository
     
     func savePin(pinData: PinData, userData: UserData?) async throws -> String {
         guard let userId = userData?.uid else {
@@ -50,7 +48,6 @@ final class FirebasePinRepository: PinRepository {
     func deletePin(pinId: String) async throws {
         do {
             try await pinCollectionReference.document(pinId).delete()
-            try await storageRepository.deletePinPhoto(pinId: pinId)
         } catch {
             throw DeletePinError.deleteFailed
         }
