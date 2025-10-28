@@ -86,10 +86,17 @@ private extension ChooseLocationView {
     }
     func pinItemView(pin: PinData) -> some View {
         VStack(alignment: .leading, spacing: 8.0) {
-            HStack(spacing: 4.0) {
-                Image(systemName: "mappin.square")
-                Text(pin.name)
-                    .font(.headline)
+            HStack(spacing: 0.0) {
+                HStack(spacing: 4.0) {
+                    Image(systemName: "mappin.square")
+                    Text(pin.name)
+                        .font(.headline)
+                }
+                if pin == selectedPin {
+                    Spacer()
+                    Image(systemName: "checkmark.app.fill")
+                        .foregroundStyle(.accent)
+                }
             }
             Text(pin.description ?? "No description.")
                 .font(.subheadline)
@@ -116,6 +123,7 @@ private extension ChooseLocationView {
             AddPinView(
                 locationPhotoImage: $viewModel.locationPhotoImage,
                 locationName: $viewModel.locationName,
+                trimmedLocationName: viewModel.trimmedLocationName,
                 locationDescription: $viewModel.locationDescription,
                 locationPlace: $viewModel.locationPlace,
                 isSavePinInProgress: viewModel.isSavePinInProgress,

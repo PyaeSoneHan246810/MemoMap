@@ -14,6 +14,7 @@ struct AddPinView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Binding var locationPhotoImage: UIImage?
     @Binding var locationName: String
+    let trimmedLocationName: String
     @Binding var locationDescription: String
     @Binding var locationPlace: Place?
     let isSavePinInProgress: Bool
@@ -136,7 +137,7 @@ private extension AddPinView {
     @ViewBuilder
     var locationInfoTextFieldsView: some View {
         InputTextFieldView(
-            title: "Location name",
+            title: "Location name *",
             placeholder: "Enter name of a location",
             text: $locationName,
             textContentType: .name,
@@ -158,6 +159,7 @@ private extension AddPinView {
         }
         .primaryFilledLargeButtonStyle()
         .progressButtonStyle(isInProgress: isSavePinInProgress)
+        .disabled(trimmedLocationName.isEmpty)
     }
 }
 
@@ -166,6 +168,7 @@ private extension AddPinView {
         AddPinView(
             locationPhotoImage: .constant(nil),
             locationName: .constant(""),
+            trimmedLocationName: "",
             locationDescription: .constant(""),
             locationPlace: .constant(nil),
             isSavePinInProgress: false,

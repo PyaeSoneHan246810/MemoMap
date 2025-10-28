@@ -13,9 +13,9 @@ enum GetPinsError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .userNotFound:
-            "User Not Found"
+            "We couldn’t find your account. Please sign in again."
         case .failedToGet:
-            "Failed To Get"
+            "Unable to load your pins. Please try again later."
         }
     }
 }

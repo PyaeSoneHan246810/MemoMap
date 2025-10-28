@@ -34,7 +34,7 @@ class ChooseLocationViewModel {
     
     var locationName: String = ""
     
-    private var trimmedLocationName: String {
+    var trimmedLocationName: String {
         locationName.trimmed()
     }
     
