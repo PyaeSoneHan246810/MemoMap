@@ -1,13 +1,13 @@
 //
-//  DeleteUserProfileError.swift
+//  DeleteCoverPhotoError.swift
 //  MemoMap
 //
-//  Created by Dylan on 2/10/25.
+//  Created by Dylan on 28/10/25.
 //
 
 import Foundation
 
-enum DeleteUserProfileError: Error, LocalizedError {
+enum DeleteCoverPhotoError: Error, LocalizedError {
     case userNotFound
     case deleteFailed
     var errorDescription: String? {
@@ -15,7 +15,7 @@ enum DeleteUserProfileError: Error, LocalizedError {
         case .userNotFound:
             "We couldn’t find your account. Please sign in again."
         case .deleteFailed:
-            "Unable to delete your profile. Please try again later."
+            "Unable to delete your profile photo. Please try again later."
         }
     }
 }

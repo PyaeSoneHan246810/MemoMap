@@ -13,9 +13,9 @@ enum SignOutUserError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .keychainError:
-            "Keychain Error"
+            "We couldn’t sign you out completely due to a credential issue. Please try again."
         case .unknownError:
-            "Unknown Error"
+            "Something went wrong while signing out. Please try again later."
         }
     }
 }

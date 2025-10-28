@@ -99,23 +99,23 @@ private extension CreateAccountScreenView {
     }
     var passwordValidationMessagesView: some View {
         VStack(alignment: .leading, spacing: 4.0) {
-            passwordValidationMessageView(
+            PasswordValidationMessageView(
                 isValid: createAccountViewModel.passwordHasEightCharsOrMore,
                 message: "8 characters or more"
             )
-            passwordValidationMessageView(
+            PasswordValidationMessageView(
                 isValid: createAccountViewModel.passwordHasAtLeastOneUppercaseChar,
                 message: "At least one uppercase character"
             )
-            passwordValidationMessageView(
+            PasswordValidationMessageView(
                 isValid: createAccountViewModel.passwordHasAtLeastOneLowercaseChar,
                 message: "At least one lowercase character"
             )
-            passwordValidationMessageView(
+            PasswordValidationMessageView(
                 isValid: createAccountViewModel.passwordHasAtLeastOneNumericChar,
                 message: "At least one numeric character"
             )
-            passwordValidationMessageView(
+            PasswordValidationMessageView(
                 isValid: createAccountViewModel.passwordHasAtLeastOneSpecialChar,
                 message: "At least one special character"
             )
@@ -125,16 +125,6 @@ private extension CreateAccountScreenView {
         Text("Passwords do not match.")
             .font(.callout)
             .foregroundStyle(.red)
-    }
-    func passwordValidationMessageView(isValid: Bool, message: String) -> some View {
-        HStack {
-            Image(systemName: isValid ? "checkmark.square" : "square")
-                .foregroundStyle(isValid ? .accent : .secondary)
-                .animation(.smooth, value: isValid)
-            Text(message)
-                .font(.callout)
-                .foregroundStyle(.primary.opacity(0.8))
-        }
     }
     var profileInfoFormView: some View {
         VStack(spacing: 16.0) {
@@ -273,6 +263,21 @@ private extension CreateAccountScreenView {
                 appSessionViewModel.changeAppSession(.authenticated)
             }
         )
+    }
+}
+
+struct PasswordValidationMessageView: View {
+    let isValid: Bool
+    let message: String
+    var body: some View {
+        HStack {
+            Image(systemName: isValid ? "checkmark.square" : "square")
+                .foregroundStyle(isValid ? .accent : .secondary)
+                .animation(.smooth, value: isValid)
+            Text(message)
+                .font(.callout)
+                .foregroundStyle(.primary.opacity(0.8))
+        }
     }
 }
 

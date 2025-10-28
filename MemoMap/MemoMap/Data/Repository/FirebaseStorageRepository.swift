@@ -49,6 +49,17 @@ final class FirebaseStorageRepository: StorageRepository {
         }
     }
     
+    func deleteCoverPhoto(userData: UserData?) async throws {
+        guard let userId = userData?.uid else {
+            throw DeleteCoverPhotoError.userNotFound
+        }
+        do {
+            try await getCoverPhotoStorageRefernce(userId: userId).delete()
+        } catch {
+            throw DeleteCoverPhotoError.deleteFailed
+        }
+    }
+    
     func uploadPinPhoto(data: Data, pinId: String) async throws -> String {
         let metaData = StorageMetadata()
         metaData.contentType = "image/jpeg"

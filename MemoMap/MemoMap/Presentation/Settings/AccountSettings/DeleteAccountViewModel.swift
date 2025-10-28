@@ -24,8 +24,6 @@ final class DeleteAccountViewModel {
     enum DeleteAccountError: Error, LocalizedError {
         case deleteUserError(DeleteUserError)
         case deleteUserProfileError(DeleteUserProfileError)
-        case deleteProfilePhotoError(DeleteProfilePhotoError)
-        case signOutUserError(SignOutUserError)
         case unknownError
         var errorDescription: String? {
             switch self {
@@ -33,12 +31,8 @@ final class DeleteAccountViewModel {
                 deleteUserError.localizedDescription
             case .deleteUserProfileError(let deleteUserProfileError):
                 deleteUserProfileError.localizedDescription
-            case .deleteProfilePhotoError(let deleteProfilePhotoError):
-                deleteProfilePhotoError.localizedDescription
-            case .signOutUserError(let signOutUserError):
-                signOutUserError.localizedDescription
             case .unknownError:
-                "Unknown Error"
+                "Something went wrong. Please try again later."
             }
         }
     }
@@ -53,8 +47,9 @@ final class DeleteAccountViewModel {
             let userData = authenticationRepository.getUserData()
             try await authenticationRepository.deleteUser()
             try await userProfileRepository.deleteUserProfile(userData: userData)
-            try await storageRepository.deleteProfilePhoto(userData: userData)
-            try authenticationRepository.signOutUser()
+            try? await storageRepository.deleteProfilePhoto(userData: userData)
+            try? await storageRepository.deleteCoverPhoto(userData: userData)
+            try? authenticationRepository.signOutUser()
             isDeleteAccountInProgress = false
             deleteAccountError = nil
             isDeleteAccountAlertPresented = false
@@ -65,10 +60,6 @@ final class DeleteAccountViewModel {
                 deleteAccountError = .deleteUserError(deleteUserError)
             } else if let deleteUserProfileError = error as? DeleteUserProfileError{
                 deleteAccountError = .deleteUserProfileError(deleteUserProfileError)
-            } else if let deleteProfilePhotoError = error as? DeleteProfilePhotoError {
-                deleteAccountError = .deleteProfilePhotoError(deleteProfilePhotoError)
-            } else if let signOutUserError = error as? SignOutUserError {
-                deleteAccountError = .signOutUserError(signOutUserError)
             } else {
                 deleteAccountError = .unknownError
             }

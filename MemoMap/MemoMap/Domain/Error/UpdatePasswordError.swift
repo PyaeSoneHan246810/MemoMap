@@ -17,17 +17,17 @@ enum UpdatePasswordError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .userNotFound:
-            "User Not Found"
+            "We couldn’t find your account. Please sign in again."
         case .operationNotAllowed:
-            "Operation Not Allowed"
+            "Password update is not allowed. Please contact support for help."
         case .requiresRecentLogin:
-            "Requires Recent Login"
+            "For security reasons, please sign in again before changing your password."
         case .weakPassword:
-            "Weak Password"
+            "Your password is weak. Try using a stronger password."
         case .networkError:
-            "Network Error"
+            "You’re offline. Check your internet connection and try again."
         case .unknownError:
-            "Unknown Error"
+            "Something went wrong. Please try again later."
         }
     }
 }

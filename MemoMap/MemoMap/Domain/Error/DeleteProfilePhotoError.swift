@@ -13,9 +13,9 @@ enum DeleteProfilePhotoError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .userNotFound:
-            "User Not Foun"
+            "We couldn’t find your account. Please sign in again."
         case .deleteFailed:
-            "Delete Failed"
+            "Unable to delete your profile photo. Please try again later."
         }
     }
 }

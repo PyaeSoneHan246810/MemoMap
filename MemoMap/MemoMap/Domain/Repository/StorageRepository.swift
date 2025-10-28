@@ -15,6 +15,8 @@ protocol StorageRepository {
     
     func deleteProfilePhoto(userData: UserData?) async throws
     
+    func deleteCoverPhoto(userData: UserData?) async throws
+    
     func uploadPinPhoto(data: Data, pinId: String) async throws -> String
     
     func deletePinPhoto(pinId: String) async throws
