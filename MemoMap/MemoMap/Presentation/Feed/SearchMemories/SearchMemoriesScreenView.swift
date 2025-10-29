@@ -129,6 +129,9 @@ private extension SearchMemoriesScreenView {
     func recentMemorySearchView(_ recentMemorySearch: RecentMemorySearch) -> some View {
         RecentSearchView(
             searchText: recentMemorySearch.searchText,
+            onTextTapped: {
+                viewModel.searchText = recentMemorySearch.searchText
+            },
             onRemove: {
                 viewModel.deleteRecentMemorySearch(recentMemorySearch)
                 viewModel.getRecentMemorySearches()

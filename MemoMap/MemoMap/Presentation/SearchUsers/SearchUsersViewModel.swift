@@ -43,11 +43,9 @@ final class SearchUsersViewModel {
         } catch {
             if let searchUserError = error as? SearchUsersError {
                 let errorDescription = searchUserError.localizedDescription
-                print(errorDescription)
                 searchUsersDataState = .failure(errorDescription)
             } else {
                 let errorDescription = error.localizedDescription
-                print(errorDescription)
                 searchUsersDataState = .failure(errorDescription)
             }
         }

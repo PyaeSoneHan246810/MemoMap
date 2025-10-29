@@ -18,12 +18,34 @@ final class LocalRecentSearchRepository: RecentSearchRepository {
     }
     
     func saveRecentUserSearch(_ recentUserSearch: RecentUserSearch) {
-        context?.insert(recentUserSearch)
+        let searchText = recentUserSearch.searchText
+        let predicate: Predicate<RecentUserSearch> = #Predicate { recentSearch in
+            recentSearch.searchText == searchText
+        }
+        let fetchDescriptor: FetchDescriptor<RecentUserSearch> = .init(
+            predicate: predicate
+        )
+        if let existing = try? context?.fetch(fetchDescriptor).first {
+            existing.date = recentUserSearch.date
+        } else {
+            context?.insert(recentUserSearch)
+        }
         try? context?.save()
     }
     
     func saveRecentMemorySearch(_ recentMemorySearch: RecentMemorySearch) {
-        context?.insert(recentMemorySearch)
+        let searchText = recentMemorySearch.searchText
+        let predicate: Predicate<RecentMemorySearch> = #Predicate { recentSearch in
+            recentSearch.searchText == searchText
+        }
+        let fetchDescriptor: FetchDescriptor<RecentMemorySearch> = .init(
+            predicate: predicate
+        )
+        if let existing = try? context?.fetch(fetchDescriptor).first {
+            existing.date = recentMemorySearch.date
+        } else {
+            context?.insert(recentMemorySearch)
+        }
         try? context?.save()
     }
     
