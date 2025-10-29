@@ -7,6 +7,12 @@
 
 import Foundation
 
-enum SearchMemoriesError: Error {
+enum SearchMemoriesError: Error, LocalizedError {
     case searchFailed
+    var errorDescription: String? {
+        switch self {
+        case .searchFailed:
+            "Unable to search memories. Please try again later."
+        }
+    }
 }

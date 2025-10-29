@@ -43,11 +43,9 @@ final class SearchMemoriesViewModel {
         } catch {
             if let searchMemoriesError = error as? SearchMemoriesError {
                 let errorDescription = searchMemoriesError.localizedDescription
-                print(errorDescription)
                 searchMemoriesDataState = .failure(errorDescription)
             } else {
                 let errorDescription = error.localizedDescription
-                print(errorDescription)
                 searchMemoriesDataState = .failure(errorDescription)
             }
         }

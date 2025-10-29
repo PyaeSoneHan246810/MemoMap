@@ -132,6 +132,9 @@ private extension SearchUsersScreenView {
     func recentUserSearchView(_ recentSearch: RecentUserSearch) -> some View {
         RecentSearchView(
             searchText: recentSearch.searchText,
+            onTextTapped: {
+                viewModel.searchText = recentSearch.searchText
+            },
             onRemove: {
                 viewModel.deleteRecentUserSearch(recentSearch)
                 viewModel.getRecentUserSearches()

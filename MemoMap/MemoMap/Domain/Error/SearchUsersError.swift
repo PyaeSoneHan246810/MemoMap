@@ -7,6 +7,12 @@
 
 import Foundation
 
-enum SearchUsersError: Error {
+enum SearchUsersError: Error, LocalizedError {
     case searchFailed
+    var errorDescription: String? {
+        switch self {
+        case .searchFailed:
+            "Unable to search users. Please try again later."
+        }
+    }
 }
