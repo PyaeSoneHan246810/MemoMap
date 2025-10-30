@@ -92,6 +92,8 @@ private extension CommentsView {
     var commentTextFieldView: some View {
         TextField("Write a comment...", text: $viewModel.comment, axis: .vertical)
             .lineLimit(2)
+            .textInputAutocapitalization(.never)
+            .submitLabel(.done)
             .padding(.horizontal, 16.0)
             .padding(.vertical, 12.0)
             .overlay {
