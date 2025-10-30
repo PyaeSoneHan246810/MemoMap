@@ -7,7 +7,12 @@
 
 import Foundation
 
-enum DeletePinPhotoError: Error {
+enum DeletePinPhotoError: Error, LocalizedError {
     case deleteFailed
-    case unknownError
+    var errorDescription: String? {
+        switch self {
+        case .deleteFailed:
+            "Unable to delete the pin photo. Please try again later."
+        }
+    }
 }

@@ -12,7 +12,7 @@ enum UpdateUserProfileInfoError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .updateFailed:
-            "Unable to update your profile. Please try again."
+            "Unable to update your profile information. Please try again."
         }
     }
 }

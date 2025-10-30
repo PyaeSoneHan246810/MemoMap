@@ -15,7 +15,7 @@ enum AddMemoryMediaError: Error, LocalizedError {
         case .mediaNotExist:
             "The media file doesn’t exist. Please check and try again."
         case .addFailed:
-            "Unable to add the media. Please try again later."
+            "Unable to add the memory media. Please try again later."
         }
     }
 }

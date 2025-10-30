@@ -12,7 +12,7 @@ enum GetUserProfileError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .failedToGet:
-            "Failed To Get"
+            "Unable to load the user profile. Please try again later."
         }
     }
 }

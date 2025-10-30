@@ -15,9 +15,9 @@ enum ListenUserProfileError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .userNotFound:
-            "User Not Found"
+            "We couldn’t find your account. Please sign in again."
         case .listenFailed:
-            "Listen Failed"
+            "Unable to listen the user profile. Please try again later."
         case .documentNotFound:
             "Document Not Found"
         case .getDataFailed:

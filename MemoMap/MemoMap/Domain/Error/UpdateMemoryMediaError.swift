@@ -12,7 +12,7 @@ enum UpdateMemoryMediaError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .updateFailed:
-            "Unable to update the media. Please try again later."
+            "Unable to update the memory media. Please try again later."
         }
     }
 }

@@ -12,7 +12,7 @@ enum GetFollowersError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .failedToGet:
-            "Failed To Get"
+            "Unable to load the followers. Please try again later."
         }
     }
 }

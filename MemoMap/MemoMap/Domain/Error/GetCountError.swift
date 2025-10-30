@@ -7,6 +7,12 @@
 
 import Foundation
 
-enum GetCountError: Error {
+enum GetCountError: Error, LocalizedError {
     case failedToGet
+    var errorDescription: String? {
+        switch self {
+        case .failedToGet:
+            "Unable to get the count. Please try again later."
+        }
+    }
 }

@@ -7,6 +7,12 @@
 
 import Foundation
 
-enum AddMemoryHeartError: Error {
+enum AddMemoryHeartError: Error, LocalizedError {
     case addFailed
+    var errorDescription: String? {
+        switch self {
+        case .addFailed:
+            "Unable to add your heart. Please try again later."
+        }
+    }
 }

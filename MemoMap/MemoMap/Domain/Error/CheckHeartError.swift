@@ -7,6 +7,12 @@
 
 import Foundation
 
-enum CheckHeartError: Error {
+enum CheckHeartError: Error, LocalizedError {
     case checkFailed
+    var errorDescription: String? {
+        switch self {
+        case .checkFailed:
+            "Unable to verify whether you’ve already given a heart. Please try again later."
+        }
+    }
 }

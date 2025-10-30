@@ -7,6 +7,12 @@
 
 import Foundation
 
-enum DeleteMemoryMediaItemError: Error {
+enum DeleteMemoryMediaItemError: Error, LocalizedError {
     case deleteFailed
+    var errorDescription: String? {
+        switch self {
+        case .deleteFailed:
+            "Unable to delete the memory media item. Please try again later."
+        }
+    }
 }

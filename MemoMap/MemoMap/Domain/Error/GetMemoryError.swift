@@ -7,6 +7,12 @@
 
 import Foundation
 
-enum GetMemoryError: Error {
+enum GetMemoryError: Error, LocalizedError {
     case failedToGet
+    var errorDescription: String? {
+        switch self {
+        case .failedToGet:
+            "Unable to load the memory. Please try again later."
+        }
+    }
 }
