@@ -27,7 +27,7 @@ final class FirebaseUserProfileRepository: UserProfileRepository {
         )
         let firestoreDocumentData = userProfileModel.firestoreDocumentData
         do {
-            try await getUserCollectionDocumentReference(userId: id)
+            try await getUserProfileDocumentReference(userId: id)
                 .setData(firestoreDocumentData, merge: false)
         } catch {
             throw SaveUserProfileError.saveFailed
@@ -52,8 +52,18 @@ final class FirebaseUserProfileRepository: UserProfileRepository {
         guard let userId = userData?.uid else {
             throw DeleteUserProfileError.userNotFound
         }
+        let userProfileDocRef = getUserProfileDocumentReference(userId: userId)
         do {
-            try await getUserCollectionDocumentReference(userId: userId).delete()
+            let subCollections = ["followers", "followings"]
+            for subCollection in subCollections {
+                let subCollectionRef = userProfileDocRef.collection(subCollection)
+                let querySnapshot = try? await subCollectionRef.getDocuments()
+                for document in querySnapshot?.documents ?? [] {
+                    let documentId = document.documentID
+                    try? await subCollectionRef.document(documentId).delete()
+                }
+            }
+            try await userProfileDocRef.delete()
         } catch {
             throw DeleteUserProfileError.deleteFailed
         }
@@ -64,7 +74,7 @@ final class FirebaseUserProfileRepository: UserProfileRepository {
             completion(.failure(ListenUserProfileError.userNotFound))
             return
         }
-        getUserCollectionDocumentReference(userId: userId).addSnapshotListener { documentSnapshot, error in
+        getUserProfileDocumentReference(userId: userId).addSnapshotListener { documentSnapshot, error in
             if error != nil {
                 completion(.failure(ListenUserProfileError.listenFailed))
                 return
@@ -85,7 +95,7 @@ final class FirebaseUserProfileRepository: UserProfileRepository {
     
     func getUserProfile(userId: String) async throws -> UserProfileData {
         do {
-            let userProfileModel = try await getUserCollectionDocumentReference(userId: userId).getDocument(as: UserProfileModel.self)
+            let userProfileModel = try await getUserProfileDocumentReference(userId: userId).getDocument(as: UserProfileModel.self)
             let userProfile = getUserProfileData(from: userProfileModel)
             return userProfile
         } catch {
@@ -103,7 +113,7 @@ final class FirebaseUserProfileRepository: UserProfileRepository {
             UserProfileModel.CodingKeys.coverPhotoUrl.rawValue: updateUserProfileData.coverPhotoUrl as Any
         ]
         do {
-            try await getUserCollectionDocumentReference(userId: userid).updateData(updatedData)
+            try await getUserProfileDocumentReference(userId: userid).updateData(updatedData)
         } catch {
             throw UpdateUserProfileInfoError.updateFailed
         }
@@ -120,7 +130,7 @@ private extension FirebaseUserProfileRepository {
         firestoreDatabase.collection("users")
     }
     
-    func getUserCollectionDocumentReference(userId: String) -> DocumentReference {
+    func getUserProfileDocumentReference(userId: String) -> DocumentReference {
         userCollectionReference.document(userId)
     }
     
