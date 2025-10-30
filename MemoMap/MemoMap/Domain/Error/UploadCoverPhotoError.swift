@@ -9,4 +9,10 @@ import Foundation
 
 enum UploadCoverPhotoError: Error {
     case uploadFailed
+    var errorDescription: String? {
+        switch self {
+        case .uploadFailed:
+            "Unable to upload cover photo. Please try again later."
+        }
+    }
 }

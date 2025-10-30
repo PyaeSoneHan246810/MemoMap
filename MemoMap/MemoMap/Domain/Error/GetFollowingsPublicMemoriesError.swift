@@ -12,7 +12,7 @@ enum GetFollowingsPublicMemoriesError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .failedToGet:
-            "Failed To Get"
+            "Unable to load memories. Please try again later."
         }
     }
 }

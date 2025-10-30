@@ -7,7 +7,15 @@
 
 import Foundation
 
-enum UnfollowUserError: Error {
+enum UnfollowUserError: Error, LocalizedError {
     case userNotFound
     case unfollowFailed
+    var errorDescription: String? {
+        switch self {
+        case .userNotFound:
+            "We couldn’t find your account. Please sign in again."
+        case .unfollowFailed:
+            "Unable to unfollow the user. Please try again later."
+        }
+    }
 }

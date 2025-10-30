@@ -7,6 +7,12 @@
 
 import Foundation
 
-enum RemoveMemoryHeartError: Error {
+enum RemoveMemoryHeartError: Error, LocalizedError {
     case removeFailed
+    var errorDescription: String? {
+        switch self {
+        case .removeFailed:
+            "Unable to remove your heart. Please try again later."
+        }
+    }
 }

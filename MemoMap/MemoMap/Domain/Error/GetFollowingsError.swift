@@ -12,7 +12,7 @@ enum GetFollowingsError: Error, LocalizedError {
     var errorDescription: String? {
         switch self {
         case .failedToGet:
-            "Failed To Get"
+            "Unable to load the followings. Please try again later."
         }
     }
 }

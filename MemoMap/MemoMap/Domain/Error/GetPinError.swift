@@ -7,6 +7,12 @@
 
 import Foundation
 
-enum GetPinError: Error {
+enum GetPinError: Error, LocalizedError {
     case failedToGet
+    var errorDescription: String? {
+        switch self {
+        case .failedToGet:
+            "Unable to load the pin. Please try again later."
+        }
+    }
 }

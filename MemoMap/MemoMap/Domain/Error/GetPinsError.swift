@@ -15,7 +15,7 @@ enum GetPinsError: Error, LocalizedError {
         case .userNotFound:
             "We couldn’t find your account. Please sign in again."
         case .failedToGet:
-            "Unable to load your pins. Please try again later."
+            "Unable to load the pins. Please try again later."
         }
     }
 }
