@@ -69,7 +69,7 @@ private extension MemoryPostView {
             profilePhotoView
             VStack(alignment: .leading, spacing: 0.0) {
                 displayNameView
-                Text(memory.createdAt.formatted())
+                Text(memory.dateTime.formatted())
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
