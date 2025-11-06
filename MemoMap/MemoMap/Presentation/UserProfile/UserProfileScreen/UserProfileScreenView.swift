@@ -32,13 +32,17 @@ struct UserProfileScreenView: View {
                     profileInfoView
                 }
                 .background(Color(uiColor: .systemBackground))
-                switch viewModel.memoriesDataState {
-                case .initial, .loading:
-                    ProgressView().controlSize(.large)
-                case .success(let memories):
-                    memoriesView(memories)
-                case .failure(let errorDescription):
-                    ErrorView(errorDescription: errorDescription)
+                if isFollowingUser {
+                    switch viewModel.memoriesDataState {
+                    case .initial, .loading:
+                        ProgressView().controlSize(.large)
+                    case .success(let memories):
+                        memoriesView(memories)
+                    case .failure(let errorDescription):
+                        ErrorView(errorDescription: errorDescription)
+                    }
+                } else {
+                    followUserView
                 }
             }
         }

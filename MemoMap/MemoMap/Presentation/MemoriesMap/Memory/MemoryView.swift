@@ -33,6 +33,7 @@ struct MemoryView: View {
         VStack(spacing: 12.0) {
             memoryInfoView
                 .padding(.horizontal, 16.0)
+                .zIndex(1.0)
             memoryMediasView
         }
         .frame(maxWidth: .infinity, alignment: .leading)

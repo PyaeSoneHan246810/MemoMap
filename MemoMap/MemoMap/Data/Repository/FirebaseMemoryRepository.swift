@@ -172,11 +172,9 @@ final class FirebaseMemoryRepository: MemoryRepository {
     
     func getFollowingsPublicMemories(followingIds: [String]) async throws -> [MemoryData] {
         do {
-            let oneWeekAgo = Calendar.current.date(byAdding: .day, value: -7, to: .now) ?? Date.distantPast
             let memoryModels = try await memoryCollectionReference
                 .whereField(MemoryModel.CodingKeys.publicStatus.rawValue, isEqualTo: true)
                 .whereField(MemoryModel.CodingKeys.ownerId.rawValue, in: followingIds)
-                .whereField(MemoryModel.CodingKeys.dateTime.rawValue, isGreaterThanOrEqualTo: oneWeekAgo)
                 .order(by: MemoryModel.CodingKeys.dateTime.rawValue, descending: true)
                 .getDocumentModels(as: MemoryModel.self)
             let memories = memoryModels.map { memoryModel in
