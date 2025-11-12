@@ -1,5 +1,5 @@
 //
-//  OnboardingScreenView.swift
+//  OnboardingView.swift
 //  MemoMap
 //
 //  Created by Dylan on 21/9/25.
@@ -15,7 +15,7 @@ struct OnboardingPage: Identifiable {
     let animationName: String
 }
 
-struct OnboardingScreenView: View {
+struct OnboardingView: View {
     let onboardingPages: [OnboardingPage] = [
         OnboardingPage(
             title: "Capture Memories on the Map",
@@ -33,6 +33,7 @@ struct OnboardingScreenView: View {
             animationName: "animation_onboarding_3"
         )
     ]
+    @Binding var isOnboardingCompleted: Bool
     @State private var selectedTabIndex: Int = 0
     private var isFirstTab: Bool {
         selectedTabIndex == 0
@@ -46,19 +47,19 @@ struct OnboardingScreenView: View {
             logoView
             Spacer(minLength: 20.0)
             tabsView
-            Spacer(minLength: 12.0)
+            Spacer(minLength: 20.0)
             buttonsView
             Spacer(minLength: 20.0)
         }
     }
 }
 
-private extension OnboardingScreenView {
+private extension OnboardingView {
     var logoView: some View {
         Image(.appLogo)
             .resizable()
             .scaledToFit()
-            .frame(width: 160.0)
+            .frame(width: 140.0)
     }
     var tabsView: some View {
         TabView(selection: $selectedTabIndex) {
@@ -106,49 +107,41 @@ private extension OnboardingScreenView {
             Group {
                 if isLastTab {
                     Button{
-
+                        isOnboardingCompleted = true
                     } label: {
                         Text("Get started")
-                            .frame(maxWidth: .infinity)
                     }
                 } else {
                     Button{
                         goToNextTab()
                     } label: {
                         Text("Next")
-                            .frame(maxWidth: .infinity)
                     }
                 }
             }
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.roundedRectangle(radius: 8.0))
-            .controlSize(.large)
+            .primaryFilledLargeButtonStyle()
             Group {
                 if isFirstTab {
                     Button{
                         skipToLastTab()
                     } label: {
                         Text("Skip")
-                            .frame(maxWidth: .infinity)
                     }
                 } else {
                     Button{
                         goBackToPreviousTab()
                     } label: {
                         Text("Back")
-                            .frame(maxWidth: .infinity)
                     }
                 }
             }
-            .buttonStyle(.borderless)
-            .buttonBorderShape(.roundedRectangle(radius: 8.0))
-            .controlSize(.large)
+            .textLargeButtonStyle()
         }
         .padding(.horizontal, 16.0)
     }
 }
 
-private extension OnboardingScreenView {
+private extension OnboardingView {
     func goToNextTab() {
         withAnimation {
             selectedTabIndex = selectedTabIndex + 1
@@ -167,5 +160,9 @@ private extension OnboardingScreenView {
 }
 
 #Preview {
-    OnboardingScreenView()
+    NavigationStack {
+        OnboardingView(
+            isOnboardingCompleted: .constant(false)
+        )
+    }
 }

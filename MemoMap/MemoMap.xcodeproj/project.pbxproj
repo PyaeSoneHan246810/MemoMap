@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		043DB25B2E891B0400859A34 /* WrappingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = 043DB25A2E891B0400859A34 /* WrappingHStack */; };
+		0441C1272E92BDB500187BE0 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 0441C1262E92BDB500187BE0 /* Kingfisher */; };
+		0441C12A2E92C30800187BE0 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 0441C1292E92C30800187BE0 /* SwiftUIIntrospect */; };
+		045DBC5C2E80298F006A2CFE /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 045DBC5B2E80298F006A2CFE /* FirebaseAnalytics */; };
+		045DBC5E2E80298F006A2CFE /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 045DBC5D2E80298F006A2CFE /* FirebaseAuth */; };
+		045DBC602E80298F006A2CFE /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 045DBC5F2E80298F006A2CFE /* FirebaseFirestore */; };
+		045DBC622E80298F006A2CFE /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 045DBC612E80298F006A2CFE /* FirebaseStorage */; };
+		045DBD782E807A90006A2CFE /* MapboxMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 045DBD772E807A90006A2CFE /* MapboxMaps */; };
+		046899D92E8437BE007C62AC /* SearchBar in Frameworks */ = {isa = PBXBuildFile; productRef = 046899D82E8437BE007C62AC /* SearchBar */; };
+		0482036B2E8BB734002EDCA5 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = 0482036A2E8BB734002EDCA5 /* Factory */; };
+		0482036D2E8BB734002EDCA5 /* FactoryKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0482036C2E8BB734002EDCA5 /* FactoryKit */; };
 		0494C74A2E7F1F5C00EBCB60 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 0494C7492E7F1F5C00EBCB60 /* Lottie */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +51,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				045DBD782E807A90006A2CFE /* MapboxMaps in Frameworks */,
+				045DBC5C2E80298F006A2CFE /* FirebaseAnalytics in Frameworks */,
+				0482036D2E8BB734002EDCA5 /* FactoryKit in Frameworks */,
+				0441C12A2E92C30800187BE0 /* SwiftUIIntrospect in Frameworks */,
+				045DBC602E80298F006A2CFE /* FirebaseFirestore in Frameworks */,
+				046899D92E8437BE007C62AC /* SearchBar in Frameworks */,
+				043DB25B2E891B0400859A34 /* WrappingHStack in Frameworks */,
+				045DBC5E2E80298F006A2CFE /* FirebaseAuth in Frameworks */,
+				0482036B2E8BB734002EDCA5 /* Factory in Frameworks */,
+				0441C1272E92BDB500187BE0 /* Kingfisher in Frameworks */,
+				045DBC622E80298F006A2CFE /* FirebaseStorage in Frameworks */,
 				0494C74A2E7F1F5C00EBCB60 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -84,6 +106,17 @@
 			name = MemoMap;
 			packageProductDependencies = (
 				0494C7492E7F1F5C00EBCB60 /* Lottie */,
+				045DBC5B2E80298F006A2CFE /* FirebaseAnalytics */,
+				045DBC5D2E80298F006A2CFE /* FirebaseAuth */,
+				045DBC5F2E80298F006A2CFE /* FirebaseFirestore */,
+				045DBC612E80298F006A2CFE /* FirebaseStorage */,
+				045DBD772E807A90006A2CFE /* MapboxMaps */,
+				046899D82E8437BE007C62AC /* SearchBar */,
+				043DB25A2E891B0400859A34 /* WrappingHStack */,
+				0482036A2E8BB734002EDCA5 /* Factory */,
+				0482036C2E8BB734002EDCA5 /* FactoryKit */,
+				0441C1262E92BDB500187BE0 /* Kingfisher */,
+				0441C1292E92C30800187BE0 /* SwiftUIIntrospect */,
 			);
 			productName = MemoMap;
 			productReference = 0494C5662E7EFE2000EBCB60 /* MemoMap.app */;
@@ -110,11 +143,20 @@
 			knownRegions = (
 				en,
 				Base,
+				th,
+				my,
 			);
 			mainGroup = 0494C55D2E7EFE2000EBCB60;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				0494C7482E7F1F5C00EBCB60 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				045DBC5A2E80298F006A2CFE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				045DBD762E807A90006A2CFE /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */,
+				046899D72E8437BE007C62AC /* XCRemoteSwiftPackageReference "SearchBar" */,
+				043DB2592E891B0400859A34 /* XCRemoteSwiftPackageReference "WrappingHStack" */,
+				048203692E8BB734002EDCA5 /* XCRemoteSwiftPackageReference "Factory" */,
+				0441C1252E92BDB500187BE0 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				0441C1282E92C30800187BE0 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 0494C5672E7EFE2000EBCB60 /* Products */;
@@ -149,6 +191,8 @@
 /* Begin XCBuildConfiguration section */
 		0494C56F2E7EFE2100EBCB60 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 0494C5682E7EFE2000EBCB60 /* MemoMap */;
+			baseConfigurationReferenceRelativePath = Config.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -206,12 +250,15 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		0494C5702E7EFE2100EBCB60 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 0494C5682E7EFE2000EBCB60 /* MemoMap */;
+			baseConfigurationReferenceRelativePath = Config.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -262,22 +309,27 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
 		0494C5722E7EFE2100EBCB60 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 0494C5682E7EFE2000EBCB60 /* MemoMap */;
+			baseConfigurationReferenceRelativePath = Config.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CL5Q2QY8FV;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MemoMap/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MemoMap;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "MemoMap needs your location to display your current position on the map.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
@@ -301,16 +353,20 @@
 		};
 		0494C5732E7EFE2100EBCB60 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 0494C5682E7EFE2000EBCB60 /* MemoMap */;
+			baseConfigurationReferenceRelativePath = Config.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CL5Q2QY8FV;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MemoMap/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MemoMap;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "MemoMap needs your location to display your current position on the map.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
@@ -356,6 +412,62 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		043DB2592E891B0400859A34 /* XCRemoteSwiftPackageReference "WrappingHStack" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ksemianov/WrappingHStack";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.0;
+			};
+		};
+		0441C1252E92BDB500187BE0 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.6.0;
+			};
+		};
+		0441C1282E92C30800187BE0 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 26.0.0;
+			};
+		};
+		045DBC5A2E80298F006A2CFE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.3.0;
+			};
+		};
+		045DBD762E807A90006A2CFE /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mapbox/mapbox-maps-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.0.0;
+			};
+		};
+		046899D72E8437BE007C62AC /* XCRemoteSwiftPackageReference "SearchBar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SzpakKamil/SearchBar";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.4;
+			};
+		};
+		048203692E8BB734002EDCA5 /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Factory";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.3;
+			};
+		};
 		0494C7482E7F1F5C00EBCB60 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/airbnb/lottie-ios";
@@ -367,6 +479,61 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		043DB25A2E891B0400859A34 /* WrappingHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 043DB2592E891B0400859A34 /* XCRemoteSwiftPackageReference "WrappingHStack" */;
+			productName = WrappingHStack;
+		};
+		0441C1262E92BDB500187BE0 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0441C1252E92BDB500187BE0 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		0441C1292E92C30800187BE0 /* SwiftUIIntrospect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0441C1282E92C30800187BE0 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = SwiftUIIntrospect;
+		};
+		045DBC5B2E80298F006A2CFE /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 045DBC5A2E80298F006A2CFE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		045DBC5D2E80298F006A2CFE /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 045DBC5A2E80298F006A2CFE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		045DBC5F2E80298F006A2CFE /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 045DBC5A2E80298F006A2CFE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		045DBC612E80298F006A2CFE /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 045DBC5A2E80298F006A2CFE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		045DBD772E807A90006A2CFE /* MapboxMaps */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 045DBD762E807A90006A2CFE /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */;
+			productName = MapboxMaps;
+		};
+		046899D82E8437BE007C62AC /* SearchBar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 046899D72E8437BE007C62AC /* XCRemoteSwiftPackageReference "SearchBar" */;
+			productName = SearchBar;
+		};
+		0482036A2E8BB734002EDCA5 /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 048203692E8BB734002EDCA5 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
+		};
+		0482036C2E8BB734002EDCA5 /* FactoryKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 048203692E8BB734002EDCA5 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = FactoryKit;
+		};
 		0494C7492E7F1F5C00EBCB60 /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0494C7482E7F1F5C00EBCB60 /* XCRemoteSwiftPackageReference "lottie-ios" */;

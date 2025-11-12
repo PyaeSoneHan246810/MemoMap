@@ -1,0 +1,152 @@
+//
+//  MyProfileScreenView.swift
+//  MemoMap
+//
+//  Created by Dylan on 21/9/25.
+//
+
+import SwiftUI
+import TipKit
+
+struct MyProfileScreenView: View {
+    @State private var myProfileViewModel: MyProfileViewModel = .init()
+    @Environment(UserViewModel.self) private var userViewModel: UserViewModel
+    private var userProfile: UserProfileData? {
+        userViewModel.userProfile
+    }
+    let editProfileTip: EditProfileTip = .init()
+    var scrollViewBackgroundColor: Color {
+        myProfileViewModel.memories.isEmpty ? Color(uiColor: .systemBackground) : Color(uiColor: .secondarySystemBackground)
+    }
+    var body: some View {
+        ScrollView(.vertical) {
+            LazyVStack(spacing: 0.0) {
+                VStack(spacing: 0.0) {
+                    profilePhotosView
+                    buttonSectionView
+                    profileInfoView
+                }
+                .background(Color(uiColor: .systemBackground))
+                switch myProfileViewModel.memoriesDataState {
+                case .initial, .loading:
+                    ProgressView().controlSize(.large)
+                case .success(let memories):
+                    memoriesView(memories)
+                case .failure(let errorDescription):
+                    ErrorView(errorDescription: errorDescription)
+                }
+            }
+        }
+        .disableBouncesVertically()
+        .scrollIndicators(.hidden)
+        .ignoresSafeArea(.all, edges: .top)
+        .background(scrollViewBackgroundColor)
+        .background(Color(uiColor: .secondarySystemBackground))
+        .toolbar {
+            toolbarContentView
+        }
+        .fullScreenCover(item: $myProfileViewModel.userProfileToEdit) { userProfile in
+            editProfileView(
+                userProfile: userProfile
+            )
+        }
+        .task {
+            await myProfileViewModel.getTotalHeartsCount()
+            await myProfileViewModel.getUserPublicMemories()
+        }
+    }
+}
+
+private extension MyProfileScreenView {
+    @ToolbarContentBuilder
+    var toolbarContentView: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            NavigationLink {
+                SettingsScreenView()
+            } label: {
+                Image(systemName: "gear")
+            }
+        }
+    }
+    var profilePhotosView: some View {
+        ProfileCoverPhotoView(
+            coverPhoto: userProfile?.coverPhotoUrl
+        )
+        .overlay(alignment: .bottomLeading) {
+            ProfilePhotoView(
+                profilePhoto: userProfile?.profilePhotoUrl
+            )
+            .padding(.leading, 16.0)
+            .offset(y: 60.0)
+        }
+    }
+    var buttonSectionView: some View {
+        HStack {
+            Spacer()
+            editButtonView
+        }
+        .padding(.top, 16.0)
+        .padding(.horizontal, 16.0)
+    }
+    var editButtonView: some View {
+        Button("Edit profile", systemImage: "pencil") {
+            myProfileViewModel.userProfileToEdit = userProfile
+        }
+        .primaryFilledSmallButtonStyle()
+        .popoverTip(editProfileTip, arrowEdge: .top)
+    }
+    var profileInfoView: some View {
+        ProfileInfoView(
+            id: userProfile?.id,
+            displayName: userProfile?.displayname ?? "Placeholder",
+            username: userProfile?.username ?? "@placeholder",
+            email: userProfile?.emailAddress ?? "placeholder@example.com",
+            bio: userProfile?.bio,
+            birthday: userProfile?.birthday.formatted(date: .abbreviated, time: .omitted) ?? "placeholder",
+            joined: userProfile?.createdAt.formatted(date: .abbreviated, time: .omitted) ?? "placeholder",
+            followersCount: userViewModel.followersCount,
+            followingCount: userViewModel.followingsCount,
+            heartsCount: myProfileViewModel.totalHeartsCount,
+            profileInfoType: .ownUser
+        )
+        .padding(16)
+        .redacted(reason: userProfile == nil ? .placeholder : [])
+    }
+    @ViewBuilder
+    func memoriesView(_ memories: [MemoryData]) -> some View {
+        if memories.isEmpty {
+            EmptyContentView(
+                image: .emptyData,
+                title: "There is no public memories yet!",
+                description: "Share your favorite moments to let others discover them!"
+            )
+        } else {
+            MemoryPostsView(
+                memories: myProfileViewModel.memories,
+                userProfileScreenModel: .constant(nil)
+            )
+            .padding(.vertical, 16.0)
+        }
+    }
+    func editProfileView(userProfile: UserProfileData) -> some View {
+        NavigationStack {
+            EditProfileView(
+                userProfile: userProfile,
+                onEdited: {
+                    Task {
+                        await myProfileViewModel.getUserPublicMemories()
+                    }
+                }
+            )
+        }
+    }
+}
+
+
+#Preview {
+    @Previewable @State var userViewModel: UserViewModel = .init()
+    NavigationStack {
+        MyProfileScreenView()
+    }
+    .environment(userViewModel)
+}
