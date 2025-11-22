@@ -4,6 +4,9 @@
 
 **MemoMap** is an iOS app built with Swift, SwiftUI, and Firebase that lets users save and revisit memories through an interactive map, using Mapbox integration. It also allows users to share their memories publicly with followers and explore memories shared by others. The app is developed using Clean Architecture with MVVM and Dependency Injection.
 
+<img width="240" height="240" src="https://github.com/user-attachments/assets/f24cae13-f2bf-410b-9866-44b4b83c92ac" />
+<img width="240" height="240" src="https://github.com/user-attachments/assets/bcaa6aa1-0477-47dd-aa56-c5d37be83b95" />
+
 ## 🧩 Tech Stack
 
 - **Language:** Swift
@@ -121,42 +124,8 @@ Before running the app, ensure you meet the following system requirements:
 | **Simulator** | iOS 26.0+ recommended |
 | **Network** | Internet connection for Firebase |
 
-## ⚙️ Installation and Setup
-
-### 1. 📦 Unzip the Project File
-
-1. Download and unzip the provided `.zip` file.
-2. Move the unzipped folder to a desired location.
-
-### 2. 💻 Install Xcode
-
-1. Open the Mac App Store and search for `Xcode`.  
-2. Click `Get > Install` to download and install Xcode.  
-3. Once installation is complete, launch Xcode to finish the initial setup process.  
-4. When prompted with available simulator runtimes, review the list of built-in and downloadable options.  
-5. Select `iOS 26.0` and click `Download & Install` to ensure the required simulator is available for testing.
-
-### 3. 🧭 Open the Project in Xcode
-
-1. Open Xcode.
-2. From the menu bar, choose:  
-   `File > Open...`
-3. Select the `MemoMap.xcodeproj` file in the unzipped project directory.
-
-### 4. 📦 Resolve Dependencies
-
-1. In Xcode, go to:  
-   `File > Packages > Resolve Package Versions`
-2. Xcode will automatically fetch and build all required dependencies.
-
-### 5. 📱 Run the App
-
-1. Select a simulator (e.g., iPhone 17) from the Xcode toolbar.
-2. Press `Cmd + R` or click ▶️ to build and run the application.
-
 ## 📄 License
 
 This project was developed as part of an academic dissertation project.
 
 ---
-
